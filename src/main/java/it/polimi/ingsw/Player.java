@@ -9,14 +9,17 @@ public class Player {
     private God playerGod;
     private List<Worker> workers;
     private boolean inGame;
-    
-    //costruttore con argomento nome
+    private WinConditionAB winCondition;
+    private RestrictionAB restriction;
+    private BuildAB build;
+    private MovementAB move;
+
     public Player(String playerName){
         this.playerName = playerName;
-        this.playerColor = null;
-        this.playerGod = null;
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
+        workers.add(new Worker());
+        workers.add(new Worker());
     }
 
     public void chooseYourGod(List <God> godList){
@@ -61,5 +64,41 @@ public class Player {
 
     public boolean isInGame() {
         return inGame;
+    }
+
+    public WinConditionAB getWinCondition() {
+        return winCondition;
+    }
+
+    public void setWinCondition(WinConditionAB winCondition) {
+        this.winCondition = winCondition;
+    }
+
+    public Worker chooseWorker(int input) {
+        return workers.get(input);
+    }
+
+    public RestrictionAB getRestriction() {
+        return restriction;
+    }
+
+    public void setRestriction(RestrictionAB restriction) {
+        this.restriction = restriction;
+    }
+
+    public BuildAB getBuild() {
+        return build;
+    }
+
+    public void setBuild(BuildAB build) {
+        this.build = build;
+    }
+
+    public MovementAB getMove() {
+        return move;
+    }
+
+    public void setMove(MovementAB move) {
+        this.move = move;
     }
 }

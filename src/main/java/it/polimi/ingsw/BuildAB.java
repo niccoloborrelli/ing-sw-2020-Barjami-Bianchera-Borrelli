@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-public abstract class AbstractBuild {
+public abstract class BuildAB {
 
     private Player player;
     private Worker worker;

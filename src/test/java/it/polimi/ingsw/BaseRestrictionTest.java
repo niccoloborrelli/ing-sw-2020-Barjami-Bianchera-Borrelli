@@ -112,7 +112,7 @@ class BaseRestrictionTest {
         player1.getWorkers().add(worker1);
         worker1.setWorkerSpace(island.getSpace(0,0));
         worker1.getWorkerSpace().setOccupator(worker1);
-        br.restrictionEffectBuilding(player1, island);
+        br.restrictionEffectBuilding(worker1, island);
 
         for(int i = 0; i < 5; i++)
             for( int j = 0; j < 5; j++)
@@ -145,7 +145,8 @@ class BaseRestrictionTest {
         worker1.getWorkerSpace().setOccupator(worker1);
         worker2.getWorkerSpace().setOccupator(worker2);
         island.getSpace(1,0).setHasDome(true);
-        br.restrictionEffectBuilding(player1, island);
+        br.restrictionEffectBuilding(worker1, island);
+        br.restrictionEffectBuilding(worker2, island);
 
         if(island.getSpace(1,0).isAvailableBuilding().size() == 0)
             System.out.println("Funzionamento cupola corretto");

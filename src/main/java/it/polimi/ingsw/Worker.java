@@ -3,9 +3,7 @@ package it.polimi.ingsw;
 public class Worker {
     private Player workerPlayer;
     private Space workerSpace;
-    private boolean inGame;
-    private boolean chosen;
-    private boolean usable;
+    private boolean inGame; //solo per divinità con possibilità di eliminare workers
 
     public Player getWorkerPlayer() {
         return workerPlayer;
@@ -17,14 +15,6 @@ public class Worker {
 
     public boolean isInGame() {
         return inGame;
-    }
-
-    public boolean isChosen() {
-        return chosen;
-    }
-
-    public boolean isUsable() {
-        return usable;
     }
 
     public void setWorkerPlayer(Player workerPlayer) {
@@ -39,11 +29,4 @@ public class Worker {
         this.inGame = inGame;
     }
 
-    public void setChosen(boolean chosen) {
-        this.chosen = chosen;
-    }
-
-    public void setUsable(boolean usable) {
-        this.usable = usable;
-    }
 }

@@ -2,16 +2,73 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IslandBoardTest {
 
     @Test
-    void checkAvailableMovement() {
+    void checkAvailableMovementW1() {
+             int i=3;
+             int j=3;
+             Worker workerA;
+             Player player=new Player("nome");
+             workerA=player.getWorkers().get(0);
+             IslandBoard board=new IslandBoard();
+             board.getSpace(i,j).addAvailableMovement(workerA);
+             List<Space>[] ritorno =board.checkAvailableMovement(player);
+
+             assertTrue(ritorno[0].contains(board.getSpace(i,j))&&!ritorno[1].contains(board.getSpace(i,j)));
+             assertFalse(!(ritorno[0].contains(board.getSpace(i,j))&&!ritorno[1].contains(board.getSpace(i,j))));
+
     }
 
     @Test
-    void checkAvailableBuilding() {
+    void checkAvailableMovementW2() {
+        int i=3;
+        int j=3;
+        Worker workerA;
+        Player player=new Player("nome");
+        workerA=player.getWorkers().get(1);
+        IslandBoard board=new IslandBoard();
+        board.getSpace(i,j).addAvailableMovement(workerA);
+        List<Space>[] ritorno =board.checkAvailableMovement(player);
+
+        assertTrue(ritorno[1].contains(board.getSpace(i,j))&&!ritorno[0].contains(board.getSpace(i,j)));
+        assertFalse(!(ritorno[1].contains(board.getSpace(i,j))&&!ritorno[0].contains(board.getSpace(i,j))));
+
+    }
+
+    @Test
+    void checkAvailableBuildingW1() {
+            int i=3;
+            int j=3;
+            Worker workerA;
+            Player player=new Player("nome");
+            workerA=player.getWorkers().get(0);
+            IslandBoard board=new IslandBoard();
+            board.getSpace(i,j).addAvailableBuilding(workerA);
+            List<Space>[] ritorno =board.checkAvailableBuilding(player);
+
+            assertTrue(ritorno[0].contains(board.getSpace(i,j))&&!ritorno[1].contains(board.getSpace(i,j)));
+            assertFalse(!(ritorno[0].contains(board.getSpace(i,j))&&!ritorno[1].contains(board.getSpace(i,j))));
+
+    }
+    @Test
+    void checkAvailableBuildingW2() {
+        int i=3;
+        int j=3;
+        Worker workerA;
+        Player player=new Player("nome");
+        workerA=player.getWorkers().get(1);
+        IslandBoard board=new IslandBoard();
+        board.getSpace(i,j).addAvailableBuilding(workerA);
+        List<Space>[] ritorno =board.checkAvailableBuilding(player);
+
+        assertTrue(ritorno[1].contains(board.getSpace(i,j))&&!ritorno[0].contains(board.getSpace(i,j)));
+        assertFalse(!(ritorno[1].contains(board.getSpace(i,j))&&!ritorno[0].contains(board.getSpace(i,j))));
+
     }
 
     @Test
