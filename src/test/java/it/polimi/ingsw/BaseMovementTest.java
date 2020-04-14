@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +13,8 @@ class BaseMovementTest {
     @Test
     void moveTest1() {
         BaseMovement bm = new BaseMovement();
-        assertFalse(bm.move(null, null));
+        IslandBoard islandBoard = new IslandBoard();
+        assertFalse(bm.move(null, null, islandBoard));
     }
 
     /*moveTest2 controlla sia se startPlace diventa vuoto
@@ -22,6 +24,7 @@ class BaseMovementTest {
     void moveTest2(){
         BaseMovement bm = new BaseMovement();
         Worker worker1 = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         Space finishPlace = new Space(0,0);
         Space startPlace = new Space(1,1);
         boolean moved = false;
@@ -29,7 +32,7 @@ class BaseMovementTest {
         worker1.setWorkerSpace(startPlace);
         startPlace.setOccupator(worker1);
         finishPlace.addAvailableMovement(worker1);
-        moved = bm.move(worker1,finishPlace);
+        moved = bm.move(worker1,finishPlace, islandBoard);
 
         if(startPlace.getOccupator() == null && moved)
             System.out.println("Il worker si è mosso");
@@ -46,9 +49,10 @@ class BaseMovementTest {
         BaseMovement bm = new BaseMovement();
         Worker worker1 = new Worker();
         Worker worker2 = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         Space finishSpace = new Space(0, 0);
         finishSpace.addAvailableMovement(worker2);
-        assertFalse(bm.move(worker1,finishSpace));
+        assertFalse(bm.move(worker1,finishSpace, islandBoard));
 
     }
 }

@@ -46,7 +46,7 @@ public class IslandBoard {
 
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
-                controlIfWorkersInList(spaces[i][j].isAvailableMovement(),firstWorker,secondWorker,i,j,availableSpaces1,availableSpaces2);
+                controlIfWorkersInList(spaces[i][j].isAvailableMovement(), firstWorker, secondWorker, i, j, availableSpaces1, availableSpaces2);
 
         List[] returnList = new ArrayList[2];
         returnList[0] = availableSpaces1;
@@ -67,7 +67,7 @@ public class IslandBoard {
 
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 5; j++)
-                controlIfWorkersInList(spaces[i][j].isAvailableBuilding(),firstWorker,secondWorker,i,j,availableSpaces1,availableSpaces2);
+                controlIfWorkersInList(spaces[i][j].isAvailableBuilding(), firstWorker, secondWorker, i, j, availableSpaces1, availableSpaces2);
 
         List[] returnList = new ArrayList[2];
         returnList[0] = availableSpaces1;
@@ -75,8 +75,8 @@ public class IslandBoard {
         return returnList;
     }
 
-    //controlla se i 2 worker appartengono alla lista listtocheck e se lo sono inserisce lo spazio i,j dentro availablespaces1 e 2
-    private void controlIfWorkersInList(List <Worker> listToCheck,Worker firstWorker,Worker secondWorker,int i,int j, List<Space> availableSpaces1,List<Space> availableSpaces2 ){
+    //controlla se i 2 worker appartengono alla lista listToCheck e se lo sono inserisce lo spazio i,j dentro availablespaces1 e 2
+    private void controlIfWorkersInList(List <Worker> listToCheck, Worker firstWorker, Worker secondWorker, int i, int j, List<Space> availableSpaces1, List<Space> availableSpaces2){
         if (listToCheck.contains(firstWorker))
             availableSpaces1.add(spaces[i][j]);
         if (listToCheck.contains(secondWorker))

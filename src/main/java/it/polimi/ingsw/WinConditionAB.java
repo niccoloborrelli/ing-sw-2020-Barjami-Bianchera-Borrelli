@@ -1,16 +1,9 @@
 package it.polimi.ingsw;
 
+import java.util.List;
+
 public abstract class WinConditionAB {
-    private Player player;
     private boolean hasWon;
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
 
     public boolean gethasWon() {
         return hasWon;
@@ -20,5 +13,7 @@ public abstract class WinConditionAB {
         this.hasWon = hasWon;
     }
 
-    public abstract void checkHasWon(Worker worker, int startLevel);
+    public abstract void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard);
+
+    public abstract void checkHasWon(List<Player> players);
 }

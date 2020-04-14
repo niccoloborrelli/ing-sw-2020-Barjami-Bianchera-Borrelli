@@ -6,10 +6,10 @@ public class BaseMovement extends MovementAB{
     booleano perchè restituisce true se si è effettivamente mosso
      */
     @Override //(VERIFICATA)
-    public boolean move(Worker worker, Space finishSpace) {     //controlla che worker e buildspace siano diversi da null
-        if (worker != null && finishSpace != null)              //e ritorna true se si è mosso, false altrimenti
-            return changeSpace(worker, finishSpace);            //se uno dei due argomenti è null stampa errore
-        System.out.println("Worker o Space hanno valore null");
+    public boolean move(Worker worker, Space finishSpace, IslandBoard islandBoard) {
+        if (worker != null && finishSpace != null)              //controlla che worker e buildspace siano diversi da null
+            return changeSpace(worker, finishSpace);            //e ritorna true se si è mosso, false altrimenti
+        System.out.println("Worker o Space hanno valore null"); //se uno dei due argomenti è null stampa errore
         return false;
     }
 

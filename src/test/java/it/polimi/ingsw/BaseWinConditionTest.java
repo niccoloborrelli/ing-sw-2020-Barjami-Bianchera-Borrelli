@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +13,8 @@ class BaseWinConditionTest {
     @Test
     void checkHasWonTest1() {
         BaseWinCondition bwc = new BaseWinCondition();
-        bwc.checkHasWon(null, 2);
+        IslandBoard islandBoard = new IslandBoard();
+        bwc.checkHasWon(null, 2, islandBoard);
         assertFalse(bwc.gethasWon());
     }
 
@@ -22,11 +24,12 @@ class BaseWinConditionTest {
     @Test
     void checkHasWonTest2() {
         Worker worker = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         BaseWinCondition bwc = new BaseWinCondition();
         Space space = new Space(2,2);
         space.setLevel(3);
         worker.setWorkerSpace(space);
-        bwc.checkHasWon(worker,2);
+        bwc.checkHasWon(worker,2, islandBoard);
         assertTrue(bwc.gethasWon());
     }
 
@@ -36,11 +39,12 @@ class BaseWinConditionTest {
     @Test
     void checkHasWonTest3(){
         Worker worker = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         BaseWinCondition bwc = new BaseWinCondition();
         Space space = new Space(2,2);
         space.setLevel(3);
         worker.setWorkerSpace(space);
-        bwc.checkHasWon(worker,3);
+        bwc.checkHasWon(worker, 3, islandBoard);
         assertFalse(bwc.gethasWon());
     }
 }

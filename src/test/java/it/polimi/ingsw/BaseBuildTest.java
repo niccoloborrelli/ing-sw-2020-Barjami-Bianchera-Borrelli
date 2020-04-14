@@ -11,20 +11,22 @@ class BaseBuildTest {
     @Test
     void buildTest1() {
         Worker worker = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
         BaseBuild myBuild = new BaseBuild();
-        assertTrue(!myBuild.build(worker, space));
+        assertTrue(!myBuild.build(worker, space, islandBoard));
     }
 
     //costruendo su un space di livello 2 il suo livello dopo la costruzione deve andare a 3
     @Test
     void buildTest2() {
         Worker worker = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
         BaseBuild myBuild = new BaseBuild();
         space.setLevel(2);
         space.addAvailableBuilding(worker);
-        myBuild.build(worker,space);
+        myBuild.build(worker, space, islandBoard);
         assertTrue(space.getLevel() == 3);
     }
 
@@ -32,11 +34,12 @@ class BaseBuildTest {
     @Test
     void buildTest3() {
         Worker worker = new Worker();
+        IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
         BaseBuild myBuild = new BaseBuild();
         space.setLevel(3);
         space.addAvailableBuilding(worker);
-        myBuild.build(worker,space);
+        myBuild.build(worker, space, islandBoard);
         assertTrue(space.HasDome());
     }
 
