@@ -11,7 +11,7 @@ public class FileReader {
         this.file=file;
     }
 
-    public void parsamiIlFileCats() throws FileNotFoundException {
+    public void parsamiIlFile() throws FileNotFoundException {
         file = new File("C:\\Users\\Rei\\IdeaProjects\\ing-sw-2020-Barjami-Bianchera-Borrelli\\File.txt");
         Scanner sc = new Scanner(file);
         String tutto = sc.next();

@@ -2,25 +2,29 @@ package it.polimi.ingsw;
 
 public class BaseMovement extends MovementAB{
 
-    /*
-    booleano perchè restituisce true se si è effettivamente mosso
+    /**
+     * This method implements the base move
+     * @param worker is the worker that moves
+     * @param finishSpace is the final space of the worker
      */
     @Override //(VERIFICATA)
-    public boolean move(Worker worker, Space finishSpace, IslandBoard islandBoard) {
-        if (worker != null && finishSpace != null)              //controlla che worker e buildspace siano diversi da null
-            return changeSpace(worker, finishSpace);            //e ritorna true se si è mosso, false altrimenti
-        System.out.println("Worker o Space hanno valore null"); //se uno dei due argomenti è null stampa errore
-        return false;
+    public void move(Worker worker, Space finishSpace, IslandBoard islandBoard) {
+        if (worker != null && finishSpace != null)
+            changeSpace(worker, finishSpace);
+        System.out.println("Worker or space is null");
     }
 
-    private boolean changeSpace(Worker worker, Space finishSpace) { //restituisce true se il movimento è andato abuon fine
+    /**
+     * This method change the worker space and the space occupatore
+     * @param worker is the worker of the move
+     * @param finishSpace is the final space of the worker
+     */
+    private void changeSpace(Worker worker, Space finishSpace) {
         if (finishSpace.isAvailableMovement().contains(worker)) {
             worker.getWorkerSpace().setOccupator(null);
             worker.setWorkerSpace(finishSpace);
             finishSpace.setOccupator(worker);
-            return true;
         }
-        return false;
     }
 
 }

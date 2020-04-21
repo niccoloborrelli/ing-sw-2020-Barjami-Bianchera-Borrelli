@@ -1,51 +1,52 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.List;
 
+import static it.polimi.ingsw.ControllerUtility.communicate;
+import static it.polimi.ingsw.ControllerUtility.getInt;
+
+/*
+Demeter power: "Your worker may build one additional time, but not in the same space"
+ */
 public class ConcreteDemeterBuild extends PowerBuildingDecoratorAB {
 
-    public ConcreteDemeterBuild(BuildAB buildAB){
+    public ConcreteDemeterBuild(BuildAB buildAB) {
         this.build = buildAB;
     }
 
-
-    /*
-    Potere di Demetra: costruisci un blocco aggiuntivo in una posizione diversa da quella di partenza
-    Procedura:
-        -build normale
-        -richiede al giocatore tramite il controller se deve usare il potere
-        -se accetta il controller setta a true "usepower", altrimenti a false
-        -in caso negativo finisce il metodo, in caso positivo calcola se può costruire altri blocchi
-        -nel caso potesse, chiede di inserire lo spazio (valido) in cui vuole costruire tramite il controller
-        -effettua una seconda build
-     Osservazioni
-        1) Torna true se si è usata il potere, false se non si è usato
-     Problemi:
-        -- necessario IslandBoard come parametro per effettuare la nuova restriction
-        -- necessario ControllerInput per richiedere il controller
-     BISOGNA NEL CASO MODIFICARE BUILD
+    /**
+     * This method build in buildSpace once, then it asks to player another space,
+     * if it exists, in which worker will build.
+     *
+     * @param worker      This is the worker that have to build
+     * @param buildSpace  This is the space in which worker will build once
+     * @param islandBoard This is the game field that contains the list of spaces
+     * @throws IOException
      */
+
     @Override
-    public boolean build(Worker worker, Space buildSpace, IslandBoard islandBoard) {
+    public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) throws IOException {
         List<Space>[] spaces;
         int indWorker;
-        Space newBuildingSpace
+        Space newBuildingSpace;
+
         build.build(worker, buildSpace, islandBoard);
 
-        if (controller.usePower()) {
+        communicate(worker.getWorkerPlayer().getSocket(), "Do you want to use your power? 1 if you want, 0 otherwise", 4);
+        if (getInt(worker.getWorkerPlayer().getSocket()) == 1) {
+            ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(), "", 5);
+
             worker.getWorkerPlayer().getRestriction().restrictionEffectBuilding(worker, islandBoard);
             spaces = islandBoard.checkAvailableBuilding(worker.getWorkerPlayer());
             indWorker = worker.getWorkerPlayer().getWorkers().indexOf(worker);
-
-            if (spaces[indWorker].size() > 0){
-                do {
-                    newBuildingSpace = controller.selectSpace();
-                }while (newBuildingSpace.equals(buildSpace) && newBuildingSpace.isAvailableBuilding().contains(worker));
-
+            spaces[indWorker].remove(buildSpace);
+            if (spaces[indWorker].size() > 0) {
+                newBuildingSpace = ControllerUtility.selectPos(spaces[indWorker], worker.getWorkerPlayer());
                 build.build(worker, newBuildingSpace, islandBoard);
-                return true;
             }
+            return;
         }
-        return false;
+        ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(), "", 5);
     }
 }

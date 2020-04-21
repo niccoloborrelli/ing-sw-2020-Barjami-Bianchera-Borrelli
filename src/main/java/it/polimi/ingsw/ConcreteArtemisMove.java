@@ -1,57 +1,79 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
 
 public class ConcreteArtemisMove extends  PowerMovementDecoratorAB {
-
+    /**
+     * this is a constructor for the decorator pattern
+     * @param movementAB is the decorated object
+     */
     public ConcreteArtemisMove(MovementAB movementAB){
-        this.movement=movementAB;
+        this.movement = movementAB;
     }
 
-    public  boolean move(Worker worker, Space finishSpace, IslandBoard islanBoard){
+
+    /**
+     * This method implements the Artemis's movement power
+     * @param worker is the Worker who is going to move
+     * @param finishSpace is the position in which worker is going to move
+     * @param islanBoard is the IslandBoard containing worker and finishSpace
+     * @throws IOException is an exception invoked by the usage of socket
+     */
+    public void move(Worker worker, Space finishSpace,IslandBoard islanBoard) throws IOException {
         Scanner sc = new Scanner(System.in);
         int startLevel = worker.getWorkerSpace().getLevel();
-        Space startSpace = worker.getWorkerSpace();
-        movement.move(worker, finishSpace, islanBoard);
+        Space startSpace=worker.getWorkerSpace();
+        movement.move(worker,finishSpace,islanBoard);
         worker.getWorkerPlayer().getWinCondition().checkHasWon(worker, startLevel, islanBoard);
 
         if(worker.getWorkerPlayer().getWinCondition().gethasWon()) //se ha vinto esco
-            return true;
+            return ;
 
-        System.out.println("Press 1 to use power or 0 to not use");
-        int scelta = sc.nextInt();
+        ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(),"inserire 1 se si vuole usare il potere di artemis 0 altrimenti",1);
+        int scelta = ControllerUtility.getInt(worker.getWorkerPlayer().getSocket());
 
-        if(scelta == 1){
-            worker.getWorkerPlayer().getRestriction().restrictionEffectMovement(worker.getWorkerPlayer(), islanBoard);
-            List<Space> possibleMovements = islanBoard.checkAvailableMovement(worker.getWorkerPlayer())[worker.getWorkerPlayer().getWorkers().indexOf(worker)];
+        if(scelta==1){
+            worker.getWorkerPlayer().getRestriction().restrictionEffectMovement(worker.getWorkerPlayer(),islanBoard);
+            List<Space> possibleMovements= islanBoard.checkAvailableMovement(worker.getWorkerPlayer())[worker.getWorkerPlayer().getWorkers().indexOf(worker)];
             possibleMovements.remove(startSpace);// tolgo dalla lista cosi' non puo' tornare dove si e' mossa col primo movimento
-            if (possibleMovements.size() > 0) {
-                Space selectedPos = selectPos(possibleMovements);
+            if (possibleMovements.size()>0) {
+                Space selectedPos = selectPos(possibleMovements,worker.getWorkerPlayer().getSocket());
                 startLevel = worker.getWorkerSpace().getLevel();
                 movement.move(worker, selectedPos, islanBoard);
                 worker.getWorkerPlayer().getWinCondition().checkHasWon(worker, startLevel, islanBoard);
             }
             else
-                System.out.println("You can't move");
+                ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(),"non puoi fare altri movimenti",0);
         }
-        return true;
     }
 
-    private Space selectPos(List <Space> possibleSpace){
+    /**
+     * this method permits the player to chose in which position to move the worker in the second movement permitted by Artemis's power
+     * @param possibleSpace is a List of spaces which contains all the possible movements that a worker can do
+     * @return is the Space in which the worker is going to do his second movement
+     */
+    private Space selectPos(List <Space> possibleSpace, Socket socket) throws IOException {
         int indexOfSelected;
-        int i = 0;
+        int i=0;
+        String s = new String();
         Scanner sc = new Scanner(System.in);
         for(Space pos: possibleSpace){
-            System.out.println("Insert number " + i + " to execute the operation in position: " + pos.getRow() + "-" + pos.getColumn());
+            s=s+"inserire il numero "+i+" per compiere l'azione nella posizione: "+pos.getRow()+"-"+pos.getColumn()+"\n";
             i++;
         }
-        indexOfSelected = sc.nextInt();
-        while(indexOfSelected < 0 || indexOfSelected > i){
-            System.out.println("The position is not valid, please insert a valid position");
-            indexOfSelected = sc.nextInt();
+        ControllerUtility.communicate(socket,s,1);
+        indexOfSelected=ControllerUtility.getInt(socket);
+
+        while(indexOfSelected<0||indexOfSelected>=i){
+            //comunica errore nella posizione
+            ControllerUtility.communicate(socket,"e' stata inserita una pos errata",4);
+            //richiede posizione
+            ControllerUtility.communicate(socket,s,1);
+            indexOfSelected=ControllerUtility.getInt(socket);
         }
         return possibleSpace.get(indexOfSelected);
     }
-    
 }

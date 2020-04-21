@@ -4,13 +4,23 @@ import java.util.List;
 
 public class ConcretePanWin extends PowerWinDecorator {
 
+    /*
+    You also win if your worker
+    moves down two or more levels
+     */
+
+    /**
+     * This is a classic decorator pattern constructor
+     * @param winConditionAB is the object to decorate
+     */
     public ConcretePanWin(WinConditionAB winConditionAB){
         this.winCondition = winConditionAB;
     }
 
-    /*
-    verifica se il giocatore ha vinto salendo al livello 3
-    altrimenti verifica se ha vinto con il potere di Pan
+    /**
+     * This method checks if the player has won by the base win condition or the Pan one
+     * @param worker is the worker moved by the player
+     * @param startLevel is the level at the beginning of the round
      */
     @Override
     public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) {
@@ -19,15 +29,21 @@ public class ConcretePanWin extends PowerWinDecorator {
             checkHasWonPan(worker, startLevel);
     }
 
+    /**
+     * This method checks if the player is the only remained
+     * @param players is the list of all the players in the game
+     */
     @Override
     public void checkHasWon(List<Player> players){
         winCondition.checkHasWon(players);
     }
 
-    /*
-    verifica se il worker è sceso di almeno 2 livelli
+    /**
+     * This method checks if the player has move down at least 2 levels
+     * @param worker is the worker moved by the player
+     * @param startLevel is the level at the beginning of the round
      */
-    public void checkHasWonPan(Worker worker, int startLevel){ //(VERIFICATA)
+    private void checkHasWonPan(Worker worker, int startLevel){ //(VERIFICATA)
         if(startLevel == 2 && worker.getWorkerSpace().getLevel() == 0)
             setHasWon(true);
         else if(startLevel == 3 && (worker.getWorkerSpace().getLevel() == 0 || worker.getWorkerSpace().getLevel() == 1))

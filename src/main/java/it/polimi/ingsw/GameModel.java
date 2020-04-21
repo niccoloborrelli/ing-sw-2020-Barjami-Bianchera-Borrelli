@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,14 +19,11 @@ public class GameModel {
     private boolean nobodyHasWon;
     private List<Player> players;
     private IslandBoard islandBoard;
-    private Challenger gameChallenger;
-    private static final int endboard = 4;
-    private static final int beginofAll = 0;
 
-    public GameModel(List<String> playersName) { //DA CAMBIARE
+    public GameModel() { //DA CAMBIARE
         players = new ArrayList<Player>();
         this.islandBoard = new IslandBoard();
-        nobodyHasWon=true;
+        nobodyHasWon = true;
     }
 
     public List<Player> getPlayers() {
@@ -40,34 +38,28 @@ public class GameModel {
         this.islandBoard = islandBoard;
     }
 
-    public Player getGameChallenger() {
-        return gameChallenger;
+
+    public void setupWorkers(Player player) throws IOException {
+        int row, column;
+        for (Worker w: player.getWorkers()) {
+            do {
+                ControllerUtility.communicate(player.getSocket(), "Choose a position for your worker",3);
+                row = ControllerUtility.getInt(player.getSocket());
+                column = ControllerUtility.getInt(player.getSocket());
+            } while (islandBoard.getSpace(row,column).getOccupator() != null);
+            ControllerUtility.communicate(player.getSocket(),"", 5);
+            w.setWorkerSpace(islandBoard.getSpace(row, column));
+            islandBoard.getSpace(row, column).setOccupator(w);
+            ControllerUtility.communicate(player.getSocket(), "Position set", 0);
+        }
+
     }
 
-    public void addPlayer(Player player){
-        players.add(player);
-    }
-
-    /*
-    Posiziona i worker nelle caselle scelti se libere
-     */
-    public boolean setupWorker(Worker worker, int row, int column) {
-                Space space = islandBoard.getSpace(row,column);
-                if(spaceFree(space)) {
-                    worker.setWorkerSpace(space);
-                    space.setOccupator(worker);
-                    return true;
-                }else
-                    return false;
-    }
-
-    public boolean spaceFree (Space space){
+    public boolean spaceFree(Space space){
         return space.getOccupator() == null;
     }
 
-    public boolean isNobodyHasWon() {
-        return nobodyHasWon;
-    }
+    public boolean isNobodyHasWon() { return nobodyHasWon; }
 
     public void setNobodyHasWon(boolean nobodyHasWon) {
         this.nobodyHasWon = nobodyHasWon;
@@ -82,7 +74,7 @@ public class GameModel {
         }
     }
 
-    public boolean canDoSomething(Player player){
+    public boolean canDoSomething(Player player) throws IOException {
         player.getRestriction().restrictionEffectMovement(player, islandBoard);
         List<Space>[] liste = islandBoard.checkAvailableMovement(player);
         boolean can1 = canWorkerDoSomething(player.getWorkers().get(0), liste[0], 0);
@@ -120,12 +112,12 @@ public class GameModel {
     /*
     setta le posizioni dei workers a null
      */
-    public void deletePlayer(Player player){
+    public void deletePlayer(Player player) throws IOException {
             player.setInGame(false);
             player.getWorkers().get(0).getWorkerSpace().setOccupator(null);
             player.getWorkers().get(1).getWorkerSpace().setOccupator(null);
             player.getWorkers().get(0).setWorkerSpace(null);
             player.getWorkers().get(1).setWorkerSpace(null);
-            System.out.println(player.getPlayerName() + ", you lost!");
+            ControllerUtility.communicate(player.getSocket(), player.getPlayerName() + ", you LOST!", 0);
     }
 }

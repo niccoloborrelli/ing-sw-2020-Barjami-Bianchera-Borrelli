@@ -9,10 +9,6 @@ public class Challenger extends  Player {
         super(playerName);
     }
 
-    public Player chooseFirstPlayer(List<Player> players){
-        return new Player(new String("ciro"));
-    }
-
     public List<God> drawGods(){
         List<God> gods = new ArrayList<>();
         return gods;

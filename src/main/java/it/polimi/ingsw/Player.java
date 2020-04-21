@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,21 +14,18 @@ public class Player {
     private RestrictionAB restriction;
     private BuildAB build;
     private MovementAB move;
+    private Socket socket;
 
-    public Player(String playerName){
-        this.playerName = playerName;
+    public Player(Socket sc){
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
         workers.add(new Worker());
         workers.add(new Worker());
+        this.socket = sc;
     }
 
     public void chooseYourGod(List <God> godList){
 
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
     }
 
     public void setPlayerColor(String playerColor) {
@@ -100,5 +98,9 @@ public class Player {
 
     public void setMove(MovementAB move) {
         this.move = move;
+    }
+
+    public Socket getSocket(){
+        return socket;
     }
 }

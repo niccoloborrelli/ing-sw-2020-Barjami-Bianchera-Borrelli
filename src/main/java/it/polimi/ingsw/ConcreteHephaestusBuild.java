@@ -1,32 +1,45 @@
 package it.polimi.ingsw;
 
-import java.util.Scanner;
+import java.io.IOException;
+import java.net.Socket;
 
 public class ConcreteHephaestusBuild extends PowerBuildingDecoratorAB {
 
+    /*
+    Your worker may build one additional block
+    (not dome) on top of your first block
+     */
+
+    /**
+     * This is a classic decorator pattern constructor
+     * @param buildAB is the object to decorate
+     */
     public ConcreteHephaestusBuild(BuildAB buildAB){
         this.build = buildAB;
     }
 
-    //upgradeLevelHephaestus effettua la doppia costruzione
-    //se il livello è minore di 3 (non può costruire
-    // una cupola) e se lo vuole il giocatore
-    //dopo aver effettuato la baseBuild
-
+    /**
+     * This method calls first the base build and then the Hephaestus one
+     * @param worker is the worker who builds
+     * @param buildSpace is the space where the worker builds
+     */
     @Override
-    public boolean build(Worker worker, Space buildSpace, IslandBoard islandBoard) {
+    public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) throws IOException {
         if(worker != null && buildSpace != null) {
             build.build(worker, buildSpace, islandBoard);
-            upgradeLevelHephaestus(buildSpace);
-            return true;
+            upgradeLevelHephaestus(buildSpace, worker.getWorkerPlayer().getSocket());
         }
-        return false;
     }
 
-    private void upgradeLevelHephaestus(Space buildSpace){
-
-        if(buildSpace.getLevel() < 3 && controller.usePower())
+    /**
+     * This method executes the second build if the player wants
+     * @param buildSpace is the same space of the first build
+     */
+    private void upgradeLevelHephaestus(Space buildSpace, Socket socket) throws IOException {
+        ControllerUtility.communicate(socket, "Do you want to use your power? 1 if you want, 0 otherwise", 4);
+        if(buildSpace.getLevel() < 3 && ControllerUtility.getInt(socket) == 1)
                 buildSpace.setLevel(buildSpace.getLevel() + 1);
+        ControllerUtility.communicate(socket,"", 5);
     }
 }
 

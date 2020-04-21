@@ -9,33 +9,43 @@ import java.util.Scanner;
 public class ControllerModel {
 
     private GameModel gameModel;
+    private ServerSocket serverSocket;
+
+    public ControllerModel(ServerSocket serverSocket){
+        this.serverSocket = serverSocket;
+    }
 
     public void game() throws IOException {
         gameSetting();
         ServerSocket sc = new ServerSocket(5050);
         Socket cl = sc.accept();
         Player activePlayer;
-        activePlayer = players.get(0);
-        while (nobodyHasWon) {
+        activePlayer = gameModel.getPlayers().get(0);
+        while (gameModel.isNobodyHasWon()) {
 
             if(activePlayer.isInGame()) {
-                activePlayer.getWinCondition().checkHasWon(players);
-                if (!activePlayer.getWinCondition().gethasWon() && canDoSomething(activePlayer)) {
+                activePlayer.getWinCondition().checkHasWon(gameModel.getPlayers());
+                if (!activePlayer.getWinCondition().gethasWon() && gameModel.canDoSomething(activePlayer)) {
                     round(activePlayer);
                 }
                 else if(activePlayer.getWinCondition().gethasWon())
-                    nobodyHasWon = false;
+                    gameModel.setNobodyHasWon(false);
             }
-            activePlayer = setNextPlayer(players.indexOf(activePlayer));
+            activePlayer = setNextPlayer(gameModel.getPlayers().indexOf(activePlayer));
 
+        }
+        for (Player p: gameModel.getPlayers()) {
+            ControllerUtility.communicate(p.getSocket(), "GAME OVER", 6);
         }
     }
 
-    private void gameSetting() {
+    private void gameSetting() throws IOException {
         createPlayers();
-        setupWorkers();//posizione iniziale workers
+        for (Player p: gameModel.getPlayers()) {
+            gameModel.setupWorkers(p);
+        }
+        gameModel.setupConditions();
         //scegli divinità
-        setupConditions();
     }
 
     private void createPlayers() {
@@ -45,41 +55,65 @@ public class ControllerModel {
         int numberPlayers = sc.nextInt();
         createChallenger(sc);
         for (int i = 1; i < numberPlayers; i++) {
-            System.out.println("Player number " + i + 1 + ", please insert your name and your color");
-            players.add(new Player(insertName(sc)));
-            players.get(i).setPlayerColor(insertColor(sc));
+            System.out.println("Player number " + i + 1);
+            gameModel.getPlayers().add(new Player(insertName()));
+            gameModel.getPlayers().get(i).setPlayerColor(insertColor(sc));
         }
     }
 
-    private String insertName (Scanner sc){
+    /**
+     * This method asks the client his name, if it's equals to someone else's
+     * then it repeats the question
+     * @return the name after the control
+     */
+    private String insertName(/*Player player*/){
         String name;
         do {
-            System.out.println("Please insert your name");
-            name = new String(sc.nextLine());
+            ControllerUtility.communicate(player.getSocket(), "Please insert your name", 2);
+            name = ControllerUtility.getString(player.getSocket());
         } while (nameEquals(name));
+        ControllerUtility(player.getSocket(), "", 5);
         return name;
 
     }
 
+    /**
+     * This method controls if the name send by the client is
+     * already occupied
+     * @param name is the name send by the client
+     * @return true if occupied, otherwise false
+     */
     private boolean nameEquals(String name) {
-        for (Player p : players) {
+        for (Player p : gameModel.getPlayers()) {
             if (p.getPlayerName().equals(name))
                 return true;
         }
         return false;
     }
 
-    private String insertColor(Scanner sc){
+    /**
+     * This method asks the client his color, if it's equals to someone else's
+     * then it repeats the question
+     * @return the name after the control
+     */
+    private String insertColor(/*Player player*/){
         String color;
         do {
-            System.out.println("Please insert your color");
-            color = new String(sc.nextLine());
+            ControllerUtility.communicate(player.getSocket(), "Please insert your color", 2);
+            color = ControllerUtility.getString(player.getSocket());
         } while (colorEquals(color));
+        ControllerUtility(player.getSocket(), "", 5);
         return color;
     }
 
+    /**
+     * This method controls if the color send by the client is
+     * already occupied
+     * @param color is the color send by the client
+     * @return true if occupied, otherwise false
+     */
     private boolean colorEquals(String color) {
-        for (Player p : players) {
+        for (Player p : gameModel.getPlayers()) {
             if (p.getPlayerColor().equals(color))
                 return true;
         }
@@ -88,84 +122,61 @@ public class ControllerModel {
 
     private void createChallenger(Scanner sc) {
         System.out.println("Challenger, please insert your name");
-        gameChallenger = new Challenger(new String(sc.nextLine()));
+        Challenger gameChallenger = new Challenger((sc.nextLine()));
         System.out.println("Challenger, please insert your color");
-        gameChallenger.setPlayerColor(new String(sc.nextLine()));
-        players.add(gameChallenger);
+        gameChallenger.setPlayerColor((sc.nextLine()));
+        gameModel.getPlayers().add(gameChallenger);
     }
 
 
-    /*
-    Controlla se la coordinata inserita è corretta
-     */
-    private int checkCorrectCoordinate(Scanner sc){
-        int coordinate;
-        do {
-            System.out.println("Select the coordinate for your worker");
-            coordinate = sc.nextInt();
-        } while (coordinate < beginofAll || coordinate > endboard);
-        return coordinate;
-
-    }
     private Player setNextPlayer(int index) {
-        if (players.size() - 1 != index)
-            return players.get(index + 1);
-        return players.get(beginofAll);
+        if (gameModel.getPlayers().size() - 1 != index)
+            return gameModel.getPlayers().get(index + 1);
+        return gameModel.getPlayers().get(0);
     }
 
-    private void round(Player player) {
+    //check e restriction prima di richiesta worker??
+    private void round(Player player) throws IOException {
         Worker worker;
-        int numWorker;
         Space selectedPos;
         int startingPosLevel;
-        Scanner sc = new Scanner(System.in);
+
         do {
-            System.out.println("scegli quale lavoratore vuoi muovere: (0 per il primo 1 per il secondo)");
-            worker = player.chooseWorker(sc.nextInt());
-        }while(!worker.isInGame());
+            ControllerUtility.communicate(player.getSocket(),
+                        "Choose which worker you're going to move: (0 for the first, 1 for the second)", 4);
+            worker = player.chooseWorker(ControllerUtility.getInt(player.getSocket()));
+        } while(!worker.isInGame());
+        ControllerUtility.communicate(player.getSocket(),"", 5);
 
-        startingPosLevel=worker.getWorkerSpace().getLevel();
-        // estrai la lista dei possibili movimenti del worker
-        List<Space> possibleMovements = islandBoard.checkAvailableMovement(player)[player.getWorkers().indexOf(worker)];
+        startingPosLevel = worker.getWorkerSpace().getLevel();
+        // estrai la lista dei possibili movimenti dei worker
+        player.getRestriction().restrictionEffectMovement(player, gameModel.getIslandBoard());
+        List<Space> possibleMovements = gameModel.getIslandBoard().checkAvailableMovement(player)[player.getWorkers().indexOf(worker)];
 
-        System.out.println("MOVIMENTO: ");
-        selectedPos = selectPos(possibleMovements);
-        player.getMove().move(worker,selectedPos); // A questo punto ho fatto i movimenti con tutti i controlli dovuti
-        player.getWinCondition().checkHasWon(worker,startingPosLevel); //setto il booleano della cond di vittoria
+        ControllerUtility.communicate(player.getSocket(), "MOVEMENT: ", 0);
+        selectedPos = ControllerUtility.selectPos(possibleMovements, player);
+        player.getMove().move(worker, selectedPos, gameModel.getIslandBoard());
+        player.getWinCondition().checkHasWon(worker, startingPosLevel, gameModel.getIslandBoard());
 
         if (player.getWinCondition().gethasWon()) {
-            nobodyHasWon = false;
-            System.out.println(player.getPlayerName() + ", you won!!");
+            gameModel.setNobodyHasWon(false);
+            ControllerUtility.communicate(player.getSocket(), player.getPlayerName() + ", you WON!!", 0);
         }
 
         else {
-            player.getRestriction().restrictionEffectBuilding(worker, islandBoard);
-            List<Space> possibleBuilding = islandBoard.checkAvailableBuilding(player)[player.getWorkers().indexOf(worker)];
+            player.getRestriction().restrictionEffectBuilding(worker, gameModel.getIslandBoard());
+            List<Space> possibleBuilding = gameModel.getIslandBoard().checkAvailableBuilding(player)[player.getWorkers().indexOf(worker)];
             if(possibleBuilding.size() == 0)
-                deletePlayer(player);
-            else{
-                System.out.println("COSTRUZIONE: ");
-                selectedPos = selectPos(possibleBuilding);
-                player.getBuild().build(worker,selectedPos);
+                gameModel.deletePlayer(player);
+            else {
+                ControllerUtility.communicate(player.getSocket(), "BUILDING: ", 0);
+                selectedPos = ControllerUtility.selectPos(possibleBuilding, player);
+                player.getBuild().build(worker, selectedPos, gameModel.getIslandBoard());
             }
         }
     }
 
-    //seleziona una posizione possibile tra quelle date
-    private Space selectPos(List <Space> possibleSpace){
-        int indexOfSelected;
-        int i = 0;
-        Scanner sc = new Scanner(System.in);
-        for(Space pos: possibleSpace){
-            System.out.println("inserire il numero "+ i +" per compiere l'azione nella posizione: " + pos.getRow() + "-" + pos.getColumn());
-            i++;
-        }
-        indexOfSelected = sc.nextInt();
-        while(indexOfSelected < 0 || indexOfSelected > i){
-            System.out.println("e' stata inserita una pos errata, inserire una posizione valida");
-            indexOfSelected = sc.nextInt();
-        }
-        return possibleSpace.get(indexOfSelected);
-    }
+
+
 
 }

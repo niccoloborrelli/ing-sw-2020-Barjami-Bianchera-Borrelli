@@ -35,7 +35,7 @@ public class GodFactory {
     }
 
     public void minoutaur(Player player){
-        RestrictionAB restriction = new ConcreteMinotaurResctriction(player.getRestriction());
+        RestrictionAB restriction = new ConcreteMinotaurRestriction(player.getRestriction());
         MovementAB movement = new ConcreteMinotaurMove(player.getMove());
         player.setRestriction(restriction);
         player.setMove(movement);

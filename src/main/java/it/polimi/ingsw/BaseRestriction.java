@@ -4,6 +4,11 @@ import java.util.List;
 
 public class BaseRestriction extends RestrictionAB{
 
+    /**
+     * This method verify for every worker of player which space can move in.
+     * @param player This is the worker's owner checked
+     * @param islandBoard This is the game field that contains the list of Space
+     */
 
     @Override // (VERIFICATA)
     public void restrictionEffectMovement(Player player, IslandBoard islandBoard) {
@@ -23,6 +28,12 @@ public class BaseRestriction extends RestrictionAB{
                         islandBoard.getSpace(i, j).addAvailableMovement(worker);
             }
     }
+
+    /**
+     * This method verify in which space worker can build on
+     * @param worker This is the worker who's going to build
+     * @param islandBoard This is the game field that contains the list of spaces
+     */
 
     @Override //(VERIFICATA)
     public void restrictionEffectBuilding(Worker worker, IslandBoard islandBoard) {

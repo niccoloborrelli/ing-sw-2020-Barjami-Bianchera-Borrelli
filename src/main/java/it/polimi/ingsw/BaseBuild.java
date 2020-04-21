@@ -5,27 +5,35 @@ public class BaseBuild extends BuildAB {
     /*
     booleano perchè restituisce true se ha effettivamente costruito
      */
-    @Override // (VERIFICATA)
-    public boolean build(Worker worker, Space buildSpace, IslandBoard islandBoard) {
-        if (worker != null && buildSpace != null)                         //controlla che worker e buildspace siano diverse da null
-            return upgradeLevel(buildSpace, worker);                      //e ritorna true se ha costruito false altrimenti
-                                                                          //se la costruzione non e' andata per via di worker o space
-        System.out.println("worker o space dati hanno vallore null");     //a null riporta tramite una system.out il fatto
-        return false;
 
+    /**
+     * This method implements the base build
+     * @param worker is the worker that builds
+     * @param buildSpace is the space where the worker builds
+     */
+    @Override // (VERIFICATA)
+    public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) {
+        if (worker != null && buildSpace != null)
+            upgradeLevel(buildSpace, worker);
     }
 
-    // restituisce true se la costruzione e' andata a buon fine false altrimenti
-    private boolean upgradeLevel(Space buildSpace,Worker worker){
+    /**
+     * This method change the level of a space
+     * @param buildSpace is the space where the level is going to change
+     */
+    private void upgradeLevel(Space buildSpace,Worker worker){
         if(buildSpace.isAvailableBuilding().contains(worker)) {
             buildSpace.setLevel(buildSpace.getLevel() + 1);
             domeBuilding(buildSpace);
-            return true;
         }
-        return false;
     }
 
-    private void domeBuilding(Space buildSpace){ //inserisce la cupola se il livello passato e' 4
+    /**
+     * This method set the boolean "HasDome" as true if
+     * the space level is 4
+     * @param buildSpace is the space to control
+     */
+    private void domeBuilding(Space buildSpace){
         if (buildSpace.getLevel() == 4)
             buildSpace.setHasDome(true);
     }
