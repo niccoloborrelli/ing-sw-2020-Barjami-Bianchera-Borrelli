@@ -110,7 +110,7 @@ public class GameModel {
 
     private void setPlayersNames(List <String> unavailableNames){
         for(int i=1;i<numberOfPlayers;i++){
-            String name=islandBoard.getController().requiredName(players.get(i).getSocket(),"Insert your name",unavailableNames):
+            String name=islandBoard.getController().requiredName(players.get(i).getSocket(),"Insert your name",unavailableNames);
             unavailableNames.add(name);
             players.get(i).setPlayerName(name);
         }
