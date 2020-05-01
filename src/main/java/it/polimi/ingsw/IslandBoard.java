@@ -1,16 +1,23 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Attenzione con areWorkersInGame perchè va settato a true ogni inizio turno
+ */
 public class IslandBoard {
     private Space[][] spaces;
-    boolean restrictionPower;
+    private boolean restrictionPower;
+    private List<Controller> observers;
 
     /**
      * IslandBoard constructor that initialize a 5x5 array of space
      */
     public IslandBoard(){
+        observers = new ArrayList<>();
         spaces = new Space[5][5];
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 5; j++)
@@ -120,5 +127,48 @@ public class IslandBoard {
     public void setRestrictionPower(boolean restrictionPower) {
         this.restrictionPower = restrictionPower;
     }
+
+
+    public List<Controller> getObservers() {
+        return observers;
+    }
+
+    public void removeObservers(Controller observer) {
+        observers.remove(observer);
+    }
+
+    public void addObservers(Controller observer) {
+       observers.add(observer);
+    }
+
+    public void notifyMovement(List<Socket> socketList, Space startPlace, Space finishPlace, String color) throws IOException {
+        for(Observer o: observers)
+            o.updateMovement(socketList,startPlace,finishPlace,color);
+    }
+
+    public void notifyBuilding(List<Socket> socketList, Space buildSpace) throws IOException {
+        for(Controller o: observers)
+            o.updateBuilding(socketList, buildSpace);
+    }
+
+    public void notifyWin(List<Socket> socketList, Socket sc) throws IOException {
+        for(Controller o:observers)
+            o.updateWin(socketList,sc);
+    }
+
+    public void notifySomeoneLose(List<Socket> socketList, Socket sc, Space spaceWorker1, Space spaceWorker2) throws IOException{
+        for(Controller o: observers)
+            o.updateLose(socketList,sc,spaceWorker1,spaceWorker2);
+    }
+
+    public int requiredInt(Socket sc, String message, List<Integer> available) throws IOException {
+        int i = observers.get(0).requiredInt(sc,message,available);
+        return i;
+    }
+
+    public Space requiredSpace(Socket sc, String message, int matrix[][]){ //DA CAMBIARE
+        return  new Space(1,1);
+    }
+
 }
 

@@ -5,13 +5,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
-public class ControllerUtility {
+public class VirtualView{
 
-    public static Socket getSocket(ServerSocket ss) throws IOException {
+    public VirtualView() {
+    }
+
+    public Socket getSocket(ServerSocket ss) throws IOException {
         return ss.accept();
     }
 
-    public static void communicate(Socket sc, String message, int typeMessage) throws IOException {
+    public void communicate(Socket sc, String message, int typeMessage) throws IOException {
         OutputStream outputStream = sc.getOutputStream();
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
         dataOutputStream.writeUTF(message);
@@ -22,16 +25,20 @@ public class ControllerUtility {
         outputStream.close();
     }
     /*
-    0: stampa a schermo e basta
+    0: stampa a schermo
     1: inviami un intero
     2: inviami una stringa
     3: inviami due interi
-    4. scegli worker o utilizzo potere
+    4. partita finita
     5: conferma valore valido
-    6: partita finita
+    6: invio posizioni usabili
+    7: aggiornamento posizione
+    8: aggiornamento build
+    9: rimozione worker
+    10: inserimetnp worker in board (setup)
      */
 
-    public static String getString(Socket sc) throws IOException {
+    public String getString(Socket sc) throws IOException {
         InputStream inputStream = sc.getInputStream();
         DataInputStream dataInputStream = new DataInputStream(inputStream);
         String message = dataInputStream.readUTF();
@@ -39,7 +46,7 @@ public class ControllerUtility {
         return message;
     }
 
-    public static int getInt(Socket sc) throws IOException {
+    public int getInt(Socket sc) throws IOException {
         InputStream inputStream = sc.getInputStream();
         int number = inputStream.read();
         inputStream.close();
@@ -52,7 +59,7 @@ public class ControllerUtility {
      * @param player is the player that chooses
      * @return the selected space
      */
-    public static Space selectPos(List<Space> possibleSpace, Player player) throws IOException {
+    public Space selectPos(List<Space> possibleSpace, Player player) throws IOException {
         String message = "Choose the space to execute the action:\n";
         int row, column, index, selected;
 
@@ -63,11 +70,12 @@ public class ControllerUtility {
             message = message.concat("[" + row + "][" + column + "] = " + index + ";\n");
         }
         do {
-            ControllerUtility.communicate(player.getSocket(), message, 1);
-            selected = ControllerUtility.getInt(player.getSocket());
+            communicate(player.getSocket(), message, 1);
+            selected = getInt(player.getSocket());
         } while(selected > possibleSpace.size());
-        ControllerUtility.communicate(player.getSocket(), "", 5);
+        communicate(player.getSocket(), "", 5);
 
         return possibleSpace.get(selected);
     }
+
 }

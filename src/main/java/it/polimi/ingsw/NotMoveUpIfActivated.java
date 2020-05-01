@@ -1,13 +1,13 @@
 package it.polimi.ingsw;
 
-public class ConcreteAthenaRestriction extends PowerRestrictionAB {
+public class NotMoveUpIfActivated extends PowerRestrictionAB {
 
     /*
     If one of your workers moved up on your last turn,
     opponent workers cannot move up this turn
      */
 
-    public ConcreteAthenaRestriction(RestrictionAB restrictionAB){
+    public NotMoveUpIfActivated(RestrictionAB restrictionAB){
         this.restrictionAB = restrictionAB;
     }
 

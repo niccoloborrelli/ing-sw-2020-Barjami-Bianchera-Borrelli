@@ -2,6 +2,9 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.net.Socket;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConcreteApolloRestrictionTest {
@@ -12,11 +15,11 @@ public class ConcreteApolloRestrictionTest {
     ci siano caselle adiacenti con worker alleati
      */
     @Test
-    void ApolloRestrictionTest(){
+    void ApolloRestrictionTest() throws IOException {
         ConcreteApolloRestriction apollo = new ConcreteApolloRestriction(new BaseRestriction());
         IslandBoard islandBoard = new IslandBoard();
 
-        Player player = new Player("Ciro");
+        Player player = new Player(new Socket("localhost",60010));
         Worker worker1 = player.getWorkers().get(0);
         Worker worker2 = player.getWorkers().get(1);
         worker1.setWorkerPlayer(player);
@@ -27,7 +30,7 @@ public class ConcreteApolloRestrictionTest {
         islandBoard.getSpace(0,1).setOccupator(worker2);
 
         Worker worker3 = new Worker();
-        worker3.setWorkerPlayer(new Player("François"));
+        worker3.setWorkerPlayer(new Player(new Socket("localhost",50010)));
         worker3.setWorkerSpace(new Space(1,1));
         islandBoard.getSpace(1,1).setOccupator(worker3);
 

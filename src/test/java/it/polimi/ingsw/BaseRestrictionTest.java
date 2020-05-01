@@ -13,7 +13,7 @@ class BaseRestrictionTest {
     void restrictionEffectMovementTest1() {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
-        Player player1 = new Player(playerName);
+        Player player1 = new Player( null);
         Worker worker1 = new Worker();
         BaseRestriction br = new BaseRestriction();
 
@@ -40,7 +40,7 @@ class BaseRestrictionTest {
     void restrictionEffectMovementTest2() {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
-        Player player1 = new Player(playerName);
+        Player player1 = new Player(null);
         Worker worker1 = new Worker();
         BaseRestriction br = new BaseRestriction();
 
@@ -72,7 +72,7 @@ class BaseRestrictionTest {
     void restrictionEffectMovementTest3() {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
-        Player player1 = new Player(playerName);
+        Player player1 = new Player(null);
         Worker worker1 = new Worker();
         Worker worker2 = new Worker();
         BaseRestriction br = new BaseRestriction();
@@ -105,7 +105,7 @@ class BaseRestrictionTest {
     void restrictionEffectBuildingTest1() {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
-        Player player1 = new Player(playerName);
+        Player player1 = new Player(null);
         Worker worker1 = new Worker();
         BaseRestriction br = new BaseRestriction();
 
@@ -133,7 +133,7 @@ class BaseRestrictionTest {
     void restrictionEffectBuildingTest2() {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
-        Player player1 = new Player(playerName);
+        Player player1 = new Player(null);
         Worker worker1 = new Worker();
         Worker worker2 = new Worker();
         BaseRestriction br = new BaseRestriction();

@@ -30,7 +30,7 @@ public class ConcretePersephoneRestriction extends PowerRestrictionAB {
             for (Space s: possibleMovements) {
                 if(s.getLevel() <= worker.getWorkerSpace().getLevel()) {
                     possibleMovements.remove(s);
-                    s.removeAvailableMovement(worker); //METTODO DA AGGIUNGERE IN SPACE
+                    //s.removeAvailableMovement(worker); //METTODO DA AGGIUNGERE IN SPACE
                 }
             }
         }

@@ -7,14 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BaseMovementTest {
 
-    /*moveTest1 controlla se accade qualcosa se
-    entrambi i parametri passati sono null
+    /*moveTest1 controlla se accade qualcosa se il worker non esiste
     */
     @Test
     void moveTest1() {
         BaseMovement bm = new BaseMovement();
         IslandBoard islandBoard = new IslandBoard();
-        assertFalse(bm.move(null, null, islandBoard));
+        Space space = new Space(1,1);
+        bm.move(null, space, islandBoard);
+        assertFalse(space.getOccupator()!=null);
     }
 
     /*moveTest2 controlla sia se startPlace diventa vuoto
@@ -32,9 +33,9 @@ class BaseMovementTest {
         worker1.setWorkerSpace(startPlace);
         startPlace.setOccupator(worker1);
         finishPlace.addAvailableMovement(worker1);
-        moved = bm.move(worker1,finishPlace, islandBoard);
+        bm.move(worker1,finishPlace, islandBoard);
 
-        if(startPlace.getOccupator() == null && moved)
+        if(startPlace.getOccupator() == null)
             System.out.println("Il worker si è mosso");
         else
             System.out.println("L'occupator di startPlace non è null");
@@ -50,9 +51,12 @@ class BaseMovementTest {
         Worker worker1 = new Worker();
         Worker worker2 = new Worker();
         IslandBoard islandBoard = new IslandBoard();
-        Space finishSpace = new Space(0, 0);
+
+        worker1.setWorkerSpace(islandBoard.getSpace(1,1));
+        Space finishSpace = islandBoard.getSpace(0,0);
         finishSpace.addAvailableMovement(worker2);
-        assertFalse(bm.move(worker1,finishSpace, islandBoard));
+        bm.move(worker1,finishSpace, islandBoard);
+        assertTrue(worker1.getWorkerSpace().equals(islandBoard.getSpace(1,1)) && islandBoard.getSpace(0,0).getOccupator() == null);
 
     }
 }

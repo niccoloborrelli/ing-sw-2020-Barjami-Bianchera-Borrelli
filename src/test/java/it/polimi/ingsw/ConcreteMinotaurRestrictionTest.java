@@ -2,6 +2,8 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,12 +15,12 @@ class ConcreteMinotaurRestrictionTest {
     se può spingere un worker avversario ai limiti del campo da gioco
      */
     @Test
-    public void restrictionEffectMovementTest1(){
+    public void restrictionEffectMovementTest1() throws IOException {
         RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
         IslandBoard islandBoard = new IslandBoard();
-        Player player1 = new Player("1");
-        Player player2 = new Player("2");
+        Player player1 = new Player(new Socket("localhost",60010));
+        Player player2 = new Player(new Socket("localhost",50010));
 
         player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(1,3));
         islandBoard.getSpace(1,3).setOccupator(player1.getWorkers().get(0));
@@ -40,12 +42,12 @@ class ConcreteMinotaurRestrictionTest {
      */
 
     @Test
-    public void restrictionEffectMovementTest2(){
+    public void restrictionEffectMovementTest2() throws IOException {
         RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
             IslandBoard islandBoard = new IslandBoard();
-            Player player1 = new Player("1");
-            Player player2 = new Player("2");
+            Player player1 = new Player(new Socket("localhost",60010));
+            Player player2 = new Player(new Socket("localhost",50010));
 
             player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
             islandBoard.getSpace(0,0).setOccupator(player1.getWorkers().get(0));
@@ -69,12 +71,12 @@ class ConcreteMinotaurRestrictionTest {
      */
 
     @Test
-    public void restrictionEffectMovementTest3(){
+    public void restrictionEffectMovementTest3() throws IOException {
             RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
             IslandBoard islandBoard = new IslandBoard();
-            Player player1 = new Player("1");
-            Player player2 = new Player("2");
+            Player player1 = new Player(new Socket("localhost",60010));
+            Player player2 = new Player(new Socket("localhost",50010));
 
             player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
             islandBoard.getSpace(0,0).setOccupator(player1.getWorkers().get(0));

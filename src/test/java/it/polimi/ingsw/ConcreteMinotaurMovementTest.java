@@ -2,18 +2,21 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.net.Socket;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConcreteMinotaurMovementTest {
 
     @Test
-    public void moveTest1() {
+    public void moveTest1() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
         ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
-        Player player1 = new Player("yes");
-        Player player2 = new Player("no");
+        Player player1 = new Player(new Socket("localhost",50010));
+        Player player2 = new Player(new Socket("localhost",60010));
 
         player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(player1.getWorkers().get(0));
@@ -34,13 +37,13 @@ class ConcreteMinotaurMovementTest {
     }
 
     @Test
-    public void moveTest2() {
+    public void moveTest2() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
         ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
-        Player player1 = new Player("yes");
-        Player player2 = new Player("no");
+        Player player1 = new Player(new Socket("localhost",50010));
+        Player player2 = new Player(new Socket("localhost",60010));
 
         player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(player1.getWorkers().get(0));
@@ -61,13 +64,13 @@ class ConcreteMinotaurMovementTest {
     }
 
     @Test
-    public void moveTest3() {
+    public void moveTest3() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
         ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
 
-        Player player1 = new Player("yes");
-        Player player2 = new Player("no");
+        Player player1 = new Player(new Socket("localhost",50010));
+        Player player2 = new Player(new Socket("localhost",60010));
 
         player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(player1.getWorkers().get(0));

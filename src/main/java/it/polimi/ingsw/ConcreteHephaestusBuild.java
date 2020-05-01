@@ -2,6 +2,9 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 import java.net.Socket;
+/*
+Se non c'è la possibilità di costruire non deve chiedere al giocatore se vuole usare il potere
+ */
 
 public class ConcreteHephaestusBuild extends PowerBuildingDecoratorAB {
 
@@ -27,7 +30,8 @@ public class ConcreteHephaestusBuild extends PowerBuildingDecoratorAB {
     public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) throws IOException {
         if(worker != null && buildSpace != null) {
             build.build(worker, buildSpace, islandBoard);
-            upgradeLevelHephaestus(buildSpace, worker.getWorkerPlayer().getSocket());
+            if(buildSpace.getLevel()<3)
+                upgradeLevelHephaestus(buildSpace, worker.getWorkerPlayer().getSocket());
         }
     }
 
@@ -37,7 +41,7 @@ public class ConcreteHephaestusBuild extends PowerBuildingDecoratorAB {
      */
     private void upgradeLevelHephaestus(Space buildSpace, Socket socket) throws IOException {
         ControllerUtility.communicate(socket, "Do you want to use your power? 1 if you want, 0 otherwise", 4);
-        if(buildSpace.getLevel() < 3 && ControllerUtility.getInt(socket) == 1)
+        if(ControllerUtility.getInt(socket) == 1)
                 buildSpace.setLevel(buildSpace.getLevel() + 1);
         ControllerUtility.communicate(socket,"", 5);
     }

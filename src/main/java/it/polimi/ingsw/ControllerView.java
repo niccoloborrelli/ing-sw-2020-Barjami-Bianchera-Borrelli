@@ -12,6 +12,10 @@ public class ControllerView {
     private int port;
 
     /*
+    Come si gestisce l'attesa di nextline?
+     */
+
+    /*
     0: stampa a schermo e basta
     1: inviami un intero per scelta space
     2: inviami una stringa per nome e colore
@@ -19,6 +23,9 @@ public class ControllerView {
     4. scegli worker o utilizzo potere
     5: conferma valore valido
     6: partita finita
+    7: aggiornamento posizione
+    8: aggiornamento costruzione
+    9: giocatore eliminato, ma partita non finita
      */
 
     public ControllerView(String string, int port){
@@ -40,15 +47,22 @@ public class ControllerView {
                 int typeMessage  = socketIn.nextInt();
 
                 if(typeMessage == 0){
-                    System.out.println(message);
+                   printmessage(message);
                 }
                 else if(typeMessage == 1){
                     int number;
+                    int numbersofchoice = 0;
+                    char a;
+                    for(int i=0; i<message.length();i++) {
+                        a = message.charAt(i);
+                        if (a == ';')
+                            numbersofchoice++;
+                    }
                     do {
                         do {
                             System.out.println(message);
                             number = stdin.nextInt();
-                        } while (number < 0 || number > 8);
+                        } while (number < 0 || number > numbersofchoice);
                         socketOut.println(number);
                         socketOut.flush();
                         message = socketIn.nextLine();
@@ -126,6 +140,10 @@ public class ControllerView {
             } while (coordinate < 0 || coordinate > 4);
         }
         return coordinate;
+    }
+
+    private void printmessage(String message) {
+        System.out.println(message);
     }
 
 }

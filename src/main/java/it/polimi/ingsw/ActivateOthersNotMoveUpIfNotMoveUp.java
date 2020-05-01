@@ -2,14 +2,14 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
-public class ConcreteAthenaMove extends PowerMovementDecoratorAB {
+public class ActivateOthersNotMoveUpIfNotMoveUp extends PowerMovementDecoratorAB {
 
     /*
     If one of your workers moved up on your last turn,
     opponent workers cannot move up this turn
      */
 
-    public ConcreteAthenaMove(MovementAB movementAB) {
+    public ActivateOthersNotMoveUpIfNotMoveUp(MovementAB movementAB) {
         this.movement = movementAB;
     }
 

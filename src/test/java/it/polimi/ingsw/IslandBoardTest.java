@@ -6,14 +6,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+Manca da testare la parte di areWorkersInGame
+ */
 class IslandBoardTest {
 
+    /*
+    Questo test controlla se lo spazio in cui può muoversi un worker viene effettivamente aggiunto solo alla sua lista
+     */
     @Test
     void checkAvailableMovementW1() {
              int i = 3;
              int j = 3;
              Worker workerA;
-             Player player = new Player("nome");
+             Player player = new Player(null);
              workerA=player.getWorkers().get(0);
              IslandBoard board = new IslandBoard();
              board.getSpace(i,j).addAvailableMovement(workerA);
@@ -23,12 +29,15 @@ class IslandBoardTest {
 
     }
 
+    /*
+    Questo test controlla se lo spazio viene aggiunto alla lista del secondo worker
+     */
     @Test
     void checkAvailableMovementW2() {
         int i = 3;
         int j = 3;
         Worker workerA;
-        Player player = new Player("nome");
+        Player player = new Player(null);
         workerA = player.getWorkers().get(1);
         IslandBoard board = new IslandBoard();
         board.getSpace(i,j).addAvailableMovement(workerA);
@@ -43,7 +52,7 @@ class IslandBoardTest {
             int i = 3;
             int j = 3;
             Worker workerA;
-            Player player = new Player("nome");
+            Player player = new Player(null);
             workerA = player.getWorkers().get(0);
             IslandBoard board = new IslandBoard();
             board.getSpace(i,j).addAvailableBuilding(workerA);
@@ -57,7 +66,7 @@ class IslandBoardTest {
         int i = 3;
         int j = 3;
         Worker workerA;
-        Player player = new Player("nome");
+        Player player = new Player(null);
         workerA = player.getWorkers().get(1);
         IslandBoard board = new IslandBoard();
         board.getSpace(i,j).addAvailableBuilding(workerA);
