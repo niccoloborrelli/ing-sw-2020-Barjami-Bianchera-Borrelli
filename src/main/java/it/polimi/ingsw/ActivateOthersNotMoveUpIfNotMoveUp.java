@@ -5,6 +5,10 @@ import java.io.IOException;
 public class ActivateOthersNotMoveUpIfNotMoveUp extends PowerMovementDecoratorAB {
 
     /*
+    Activation power of Athena
+     */
+
+    /*
     If one of your workers moved up on your last turn,
     opponent workers cannot move up this turn
      */

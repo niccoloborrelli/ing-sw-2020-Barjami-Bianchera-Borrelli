@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.List;
 
 public class BaseWinCondition extends WinConditionAB {
@@ -11,10 +12,12 @@ public class BaseWinCondition extends WinConditionAB {
      * @param startLevel is the level of the worker's starting position
      */
     @Override //VERIFICATO
-    public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) {
+    public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException {
         if(worker != null)
-            if(startLevel == 2 && worker.getWorkerSpace().getLevel() == 3)
+            if(startLevel == 2 && worker.getWorkerSpace().getLevel() == 3){
                 setHasWon(true);
+                islandBoard.notifyWin(worker.getWorkerPlayer().getSocket());
+            }
     }
 
     /**
@@ -23,13 +26,14 @@ public class BaseWinCondition extends WinConditionAB {
      */
     @Override
     public void checkHasWon(List<Player> players){
-        int i=0;
+        int i = 0;
         for(Player p: players){
             if(p.isInGame())
                 i++;
         }
-        if(i==1)
+        if(i == 1) {
             setHasWon(true);
+        }
     }
 
 

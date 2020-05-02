@@ -1,22 +1,29 @@
 package it.polimi.ingsw;
 
-public class ConcreteMinotaurResctriction extends PowerRestrictionAB{
+public class PushWorkerRestriction extends PowerRestrictionAB{
+
+    /*
+    Minotaur's power
+     */
+    /*
+    Your Worker may move into an opponent Worker’s space, if their Worker can be
+    forced one space straight backwards to an unoccupied space at any level.
+     */
 
     /**
      * this is a decorator pattern constructor
      * @param restrictionAB is the decorated object
      */
-    public ConcreteMinotaurResctriction(RestrictionAB restrictionAB){
+    public PushWorkerRestriction(RestrictionAB restrictionAB){
         this.restrictionAB=restrictionAB;
     }
-
 
     /**
      * this method sets the spaces in the islandBoard in which player's workers can move and build
      * @param player is the player who's workers possible movement and building spaces are to be set
      * @param islandBoard is the board in which player is playing
      */
-    @Override
+    @Override // (VERIFICATA)
     public void restrictionEffectMovement(Player player, IslandBoard islandBoard) {
         this.restrictionAB.restrictionEffectMovement(player,islandBoard); //setto i movimenti base
 
@@ -32,16 +39,12 @@ public class ConcreteMinotaurResctriction extends PowerRestrictionAB{
     private void setMinotaurMovement(Worker worker, IslandBoard islandBoard){
         for (int i = worker.getWorkerSpace().getRow() - 1; i <= worker.getWorkerSpace().getRow() + 1; i++)
             for (int j = worker.getWorkerSpace().getColumn() - 1; j <= worker.getWorkerSpace().getColumn() + 1; j++){
-                if ((0 <= i && i < 5) && (0 <= j && j < 5)&&(i!=worker.getWorkerSpace().getRow()||j!=worker.getWorkerSpace().getColumn()))
-                    if (islandBoard.getSpace(i, j).getLevel() - worker.getWorkerSpace().getLevel() < 2 && !islandBoard.getSpace(i, j).HasDome()&&islandBoard.getSpace(i,j).getOccupator().getWorkerPlayer()!=worker.getWorkerPlayer())
-                         if(spaceBehind(worker.getWorkerSpace(),islandBoard.getSpace(i,j),islandBoard)!=null)
+                if ((0 <= i && i < 5) && (0 <= j && j < 5) && (i!=worker.getWorkerSpace().getRow() || j != worker.getWorkerSpace().getColumn()))
+                    if (islandBoard.getSpace(i, j).getLevel() - worker.getWorkerSpace().getLevel() < 2 && !islandBoard.getSpace(i, j).HasDome() && islandBoard.getSpace(i,j).getOccupator().getWorkerPlayer() != worker.getWorkerPlayer())
+                         if(spaceBehind(worker.getWorkerSpace(),islandBoard.getSpace(i, j), islandBoard) != null)
                              islandBoard.getSpace(i,j).addAvailableMovement(worker);
             }
     }
-
-
-    //ritorna lo spazio dietro a finishspace rispetto a start space, es se start space e' 0/0 e finish e' 1/1 questo ritorna 2/2
-    //ritorna null se questo è fuori dalla mappa oppure e' gia' occupato
 
     /**
      * this method is used for the implementation of minotaur move, it returns the space
@@ -52,35 +55,34 @@ public class ConcreteMinotaurResctriction extends PowerRestrictionAB{
      * @return the Space behind finishSpace from startSpace prospective
      */
     private Space spaceBehind(Space startSpcace,Space finishSpace,IslandBoard islandBoard){
-        int startColumn=startSpcace.getColumn();
-        int startRow=startSpcace.getRow();
-        int finishRow=finishSpace.getRow();
-        int finishColumn=finishSpace.getColumn();
+        int startColumn = startSpcace.getColumn();
+        int startRow = startSpcace.getRow();
+        int finishRow = finishSpace.getRow();
+        int finishColumn = finishSpace.getColumn();
         int behindColumn;
         int behindRow;
 
-        if(finishColumn==startColumn+1)
-            behindColumn=finishColumn+1;
-        else if(finishColumn==startColumn-1)
-            behindColumn=finishColumn-1;
+        if(finishColumn == startColumn+1)
+            behindColumn = finishColumn+1;
+        else if(finishColumn == startColumn-1)
+            behindColumn = finishColumn-1;
         else
-            behindColumn=finishColumn;
+            behindColumn = finishColumn;
 
-        if(finishRow==startRow+1)
-            behindRow=finishRow+1;
-        else if(finishRow==startRow-1)
-            behindRow=finishRow-1;
+        if(finishRow == startRow+1)
+            behindRow = finishRow+1;
+        else if(finishRow == startRow-1)
+            behindRow = finishRow-1;
         else
-            behindRow=finishRow;
+            behindRow = finishRow;
 
-        if(behindColumn<0||behindColumn>=5||behindRow<0||behindRow>=5)
+        if(behindColumn < 0 || behindColumn > 4 || behindRow < 0 || behindRow > 4)
             return null;
-        else if(islandBoard.getSpace(behindRow,behindColumn).getOccupator()!=null)
+        else if(islandBoard.getSpace(behindRow, behindColumn).getOccupator() != null)
             return null;
 
-        return islandBoard.getSpace(behindRow,behindColumn);
+        return islandBoard.getSpace(behindRow, behindColumn);
     }
-
 
     /**
      * this method sets the spaces in the islandBoard in which the worker can build

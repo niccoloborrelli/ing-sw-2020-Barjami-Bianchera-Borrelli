@@ -3,6 +3,9 @@ package it.polimi.ingsw;
 public class NotMoveUpIfActivated extends PowerRestrictionAB {
 
     /*
+    Power of Athena
+     */
+    /*
     If one of your workers moved up on your last turn,
     opponent workers cannot move up this turn
      */
