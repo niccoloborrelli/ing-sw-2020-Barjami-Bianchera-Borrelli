@@ -11,13 +11,13 @@ Attenzione con areWorkersInGame perchè va settato a true ogni inizio turno
 public class IslandBoard {
     private Space[][] spaces;
     private boolean restrictionPower;
-    private List<Controller> observers;
+    private Controller observer;
 
     /**
      * IslandBoard constructor that initialize a 5x5 array of space
      */
-    public IslandBoard(){
-        observers = new ArrayList<>();
+    public IslandBoard() throws IOException {
+        observer = new Controller();
         spaces = new Space[5][5];
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 5; j++)
@@ -129,46 +129,62 @@ public class IslandBoard {
     }
 
 
-    public List<Controller> getObservers() {
-        return observers;
+    public Controller getObserver() {
+        return observer;
     }
 
-    public void removeObservers(Controller observer) {
-        observers.remove(observer);
+    public void notifyMovement(Space startPlace, Space finishPlace, String color) throws IOException {
+            observer.updateMovement(startPlace,finishPlace,color);
     }
 
-    public void addObservers(Controller observer) {
-       observers.add(observer);
+    public void notifyBuilding( Space buildSpace) throws IOException {
+            observer.updateBuilding(buildSpace);
     }
 
-    public void notifyMovement(List<Socket> socketList, Space startPlace, Space finishPlace, String color) throws IOException {
-        for(Observer o: observers)
-            o.updateMovement(socketList,startPlace,finishPlace,color);
+    public void notifyWin(Socket sc) throws IOException {
+            observer.updateWin(sc);
     }
 
-    public void notifyBuilding(List<Socket> socketList, Space buildSpace) throws IOException {
-        for(Controller o: observers)
-            o.updateBuilding(socketList, buildSpace);
-    }
-
-    public void notifyWin(List<Socket> socketList, Socket sc) throws IOException {
-        for(Controller o:observers)
-            o.updateWin(socketList,sc);
-    }
-
-    public void notifySomeoneLose(List<Socket> socketList, Socket sc, Space spaceWorker1, Space spaceWorker2) throws IOException{
-        for(Controller o: observers)
-            o.updateLose(socketList,sc,spaceWorker1,spaceWorker2);
+    public void notifySomeoneLose(Socket sc, Space spaceWorker1, Space spaceWorker2) throws IOException{
+            observer.updateLose(sc,spaceWorker1,spaceWorker2);
     }
 
     public int requiredInt(Socket sc, String message, List<Integer> available) throws IOException {
-        int i = observers.get(0).requiredInt(sc,message,available);
+        int i = observer.requiredInt(sc,message,available);
         return i;
     }
 
-    public Space requiredSpace(Socket sc, String message, int matrix[][]){ //DA CAMBIARE
+    public Space requiredSpace(Socket sc, String message, List<Space> spaceList){ //DA CAMBIARE
         return  new Space(1,1);
     }
 
+    public void sendMessage(Socket sc, String message) throws IOException {
+            observer.printMessage(sc, message);
+    }
+
+    public Socket requiredChallengerSocket() throws IOException {
+        Socket socket = observer.requiredChallengerSocket();
+        return socket;
+    }
+
+    public String requiredName(Socket sc, String message, List<String> notAvailable) throws IOException {
+        return observer.requiredName(sc,message, notAvailable);
+    }
+
+    public List<Socket> requiredSockets(int numberOfPlayers) throws IOException {
+        return observer.requiredSockets(numberOfPlayers);
+    }
+
+    public String requiredString(Socket sc, String message, List<String> available) throws IOException {
+        return observer.requiredString(sc, message, available);
+    }
+
+    public int[] requiredPosition(Socket sc, String message, int[][] matrix) throws IOException {
+        return observer.requiredPosition(sc,message,matrix);
+    }
+
+    public void notifySetUp(Space workerSpace, String color) throws IOException {
+        observer.updateSetUp(workerSpace,color);
+    }
 }
 

@@ -26,16 +26,23 @@ public class SwapWorkers extends PowerMovementDecoratorAB{
      */
     @Override
     public void move(Worker worker, Space finalSpace, IslandBoard board) throws IOException {
+        Space startSpace = worker.getWorkerSpace();
         if(finalSpace.getOccupator() != null){
-            ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(), "Swap workers power activated", 0);
+            Player opponent = finalSpace.getOccupator().getWorkerPlayer();
+            board.sendMessage(worker.getWorkerPlayer().getSocket(), "<message>Swap workers power activated</message>");
             Worker temp = finalSpace.getOccupator();
             worker.getWorkerSpace().setOccupator(temp);
             temp.setWorkerSpace(worker.getWorkerSpace());
             finalSpace.setOccupator(worker);
             worker.setWorkerSpace(finalSpace);
+            board.notifyMovement(finalSpace, startSpace, opponent.getPlayerColor());
+            board.notifySetUp(finalSpace, worker.getWorkerPlayer().getPlayerColor());
+
         }
-        else
-            movement.move(worker,finalSpace, board);
+        else {
+            movement.move(worker, finalSpace, board);
+            board.notifyMovement(startSpace, finalSpace, worker.getWorkerPlayer().getPlayerColor());
+        }
     }
 
 

@@ -91,10 +91,12 @@ public class CLIView {
                 }
                 else if(typeMessage == 7){
                     //move
-                    int oldRow = parseStringInt(message, "<oldRow>", "</oldRow>");
-                    int oldColumn = parseStringInt(message, "<oldColumn>", "</oldColumn>");
-                    int newRow = parseStringInt(message, "<newRow>", "</newRow>");
-                    int newColumn = parseStringInt(message, "<newColumn>", "</newColumn>");
+                    String startSpace = parseString(message, "<startSpace>", "</startSpace>");
+                    int oldRow = parseStringInt(startSpace, "<row>", "</row>");
+                    int oldColumn = parseStringInt(startSpace, "<column>", "</column>");
+                    String finishSpace = parseString(message, "<finishSpace>", "</finishSpace>");
+                    int newRow = parseStringInt(finishSpace, "<newRow>", "</newRow>");
+                    int newColumn = parseStringInt(finishSpace, "<newColumn>", "</newColumn>");
                     String color = parseString(message, "<color>", "</color>");
 
                     field.viewMove(oldRow, oldColumn, newRow, newColumn, color);

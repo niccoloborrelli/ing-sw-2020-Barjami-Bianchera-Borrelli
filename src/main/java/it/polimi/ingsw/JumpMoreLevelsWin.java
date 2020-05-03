@@ -1,19 +1,23 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.List;
 
-public class ConcretePanWin extends PowerWinDecorator {
+public class JumpMoreLevelsWin extends PowerWinDecorator {
+
+    private final int numberLevels = 2;
 
     /*
     You also win if your worker
     moves down two or more levels
      */
+    //PAN
 
     /**
      * This is a classic decorator pattern constructor
      * @param winConditionAB is the object to decorate
      */
-    public ConcretePanWin(WinConditionAB winConditionAB){
+    public JumpMoreLevelsWin(WinConditionAB winConditionAB){
         this.winCondition = winConditionAB;
     }
 
@@ -23,10 +27,10 @@ public class ConcretePanWin extends PowerWinDecorator {
      * @param startLevel is the level at the beginning of the round
      */
     @Override
-    public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) {
+    public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException {
         winCondition.checkHasWon(worker, startLevel, islandBoard);
         if(!gethasWon())
-            checkHasWonPan(worker, startLevel);
+            checkHasWonJump(worker, startLevel, islandBoard);
     }
 
     /**
@@ -43,11 +47,11 @@ public class ConcretePanWin extends PowerWinDecorator {
      * @param worker is the worker moved by the player
      * @param startLevel is the level at the beginning of the round
      */
-    private void checkHasWonPan(Worker worker, int startLevel){ //(VERIFICATA)
-        if(startLevel == 2 && worker.getWorkerSpace().getLevel() == 0)
+    private void checkHasWonJump(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException { //(VERIFICATA)
+        if(startLevel - worker.getWorkerSpace().getLevel() >= numberLevels) {
             setHasWon(true);
-        else if(startLevel == 3 && (worker.getWorkerSpace().getLevel() == 0 || worker.getWorkerSpace().getLevel() == 1))
-            setHasWon((true));
+            islandBoard.notifyWin(worker.getWorkerPlayer().getSocket());
+        }
     }
 
 }

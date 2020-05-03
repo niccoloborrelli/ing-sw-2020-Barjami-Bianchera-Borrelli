@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract class WinConditionAB {
@@ -13,7 +14,7 @@ public abstract class WinConditionAB {
         this.hasWon = hasWon;
     }
 
-    public abstract void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard);
+    public abstract void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException;
 
     public abstract void checkHasWon(List<Player> players);
 }

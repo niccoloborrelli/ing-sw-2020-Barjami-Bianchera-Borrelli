@@ -28,9 +28,9 @@ public class GameModel {
     private static final int columns = 5;
     private int numberPlayingPlayers; //quanti giocatori stanno ancora giocando = giocatori totali - giocatori eliminati
 
-    public GameModel(List<String> playersName,Controller controller) {
+    public GameModel(List<String> playersName,Controller controller) throws IOException {
         players = new ArrayList<Player>();
-        this.islandBoard = new IslandBoard(controller);
+        this.islandBoard = new IslandBoard();
         nobodyHasWon=true;
     }
 
@@ -73,21 +73,22 @@ public class GameModel {
                     p.getWinCondition().setHasWon(true);
         }
 
-        for (Player player:players) { //notifico vincitori e perdenti alla fine 
-            if(player.getWinCondition().gethasWon()==true)
-                islandBoard.getController().notifyWin(player.getSocket());
-            else
-                islandBoard.getController().notifyLost(player.getSocket());
+        Socket winnerSocket = null;
+
+        for (Player player:players) {  //notifico vincitori e perdenti alla fine
+            if (player.getWinCondition().gethasWon())
+                winnerSocket = player.getSocket();
+        }
+        if(winnerSocket!=null){
+            islandBoard.notifyWin(winnerSocket);
         }
     }
 
-
-
-    public void createPlayers(){
+    public void createPlayers() throws IOException {
         List <String> unavailableNames=new ArrayList<String>();
         List <String> availableColors;
-        Socket challengerSocket = islandBoard.getController().requiredChallengerSocket();
-        String challengerName= islandBoard.getController().requiredName(challengerSocket,"Challenger, insert your name",new ArrayList<String>());
+        Socket challengerSocket = islandBoard.requiredChallengerSocket();
+        String challengerName= islandBoard.requiredName(challengerSocket,"<message>Challenger, insert your name</message>",new ArrayList<String>());
         gameChallenger=new Challenger(challengerSocket);
         gameChallenger.setPlayerName(challengerName);
         unavailableNames.add(challengerName);
@@ -98,9 +99,9 @@ public class GameModel {
         possibleNumOfPlayers.add(2);
         possibleNumOfPlayers.add(3);
         possibleNumOfPlayers.add(4);
-        numberOfPlayers=islandBoard.getController().requiredInt(challengerSocket,"Insert the number of players",possibleNumOfPlayers);
+        numberOfPlayers=islandBoard.requiredInt(challengerSocket,"<message>Insert the number of players</message>",possibleNumOfPlayers);
         // a questo punto ho creato il socket del challenger col suo nome e ho selezionato il numero di giocatori per la partita
-        List <Socket> sockets=islandBoard.getController().requiredSocket(numberOfPlayers);
+        List <Socket> sockets=islandBoard.requiredSockets(numberOfPlayers);
         for(Socket s:sockets){
             players.add(new Player(s));
         }
@@ -108,15 +109,15 @@ public class GameModel {
         setPlayersColors();
     }
 
-    private void setPlayersNames(List <String> unavailableNames){
+    private void setPlayersNames(List <String> unavailableNames) throws IOException {
         for(int i=1;i<numberOfPlayers;i++){
-            String name=islandBoard.getController().requiredName(players.get(i).getSocket(),"Insert your name",unavailableNames);
+            String name=islandBoard.requiredName(players.get(i).getSocket(),"<message>Insert your name</message>",unavailableNames);
             unavailableNames.add(name);
             players.get(i).setPlayerName(name);
         }
     }
 
-    private void setPlayersColors(){
+    private void setPlayersColors() throws IOException {
         List <String> colors=new ArrayList<String>();
         colors.add("color1");
         colors.add("color2");
@@ -124,19 +125,20 @@ public class GameModel {
         colors.add("color4");
         int i;
         for (Player p: players) {
-            String message=new String("Chose one of these still available colors: ");
+            String message=new String("<message>Chose one of these still available colors: ");
             i=0;
             for (String s: colors) {
                 message.concat(s+" - ");
             }
-            String chosenColor=islandBoard.getController().requiredString(p.getSocket(),message,colors);
+            message.concat("</message>");
+            String chosenColor=islandBoard.requiredString(p.getSocket(),message,colors);
             colors.remove(chosenColor);
             p.setPlayerColor(chosenColor);
         }
     }
 
 
-    public void godSetting(){
+    public void godSetting() throws IOException {
         boolean existsAthena=false;
         List <String> availableGods=godSetBuild();
         if(availableGods.contains("athena"))
@@ -148,23 +150,24 @@ public class GameModel {
 
     // CREO IL GOD SET, VA FINITO, NON RICORDO COME AVEVAMO SCELTO DI GESTIRLO
     private List <String> godSetBuild(){
-
+            return new ArrayList<String>();
     }
 
-    private void godAssignation(List <String> availableGods){
+    private void godAssignation(List <String> availableGods) throws IOException {
         for(int i=1;i<numberOfPlayers;i++){
-            String message=new String("Choose one of these gods:");
+            String message=new String("<message>Choose one of these gods:");
             for (String s:availableGods) {
                 message.concat(" "+s+" -");
             }
-            String god=islandBoard.getController().requiredString(players.get(i).getSocket(),message,availableGods);
+            message.concat("</message>");
+            String god=islandBoard.requiredString(players.get(i).getSocket(),message,availableGods);
             players.get(i).setPlayerGod(god);
             availableGods.remove(god);
         }
         //DO A CHALLENGER IL GOD RIMASTO
         gameChallenger.setPlayerGod(availableGods.get(0));
         //Notifica al challenger quale god gli e' stato assegnato
-        islandBoard.getController().notifyRemainedGod(gameChallenger,"You have been assigned "+availableGods.get(0));
+        islandBoard.sendMessage(gameChallenger.getSocket(),"<message>You have been assigned "+availableGods.get(0) + "</message>");
     }
 
     private void decoratePlayers(boolean existsAthena){
@@ -172,7 +175,7 @@ public class GameModel {
         if(existsAthena==true){
             for (Player p:players)
                 if(!p.getPlayerGod().equals("athena"))
-                    p.setRestriction(new ConcreteAthenaRestriction(p.getRestriction()));
+                    p.setRestriction(new NotMoveUpIfActivated(p.getRestriction()));
         }
 
         for (Player p: players) {
@@ -189,7 +192,7 @@ public class GameModel {
 
 
 
-    public void boardSetting() {
+    public void boardSetting() throws IOException {
         for (Player activePlayer: players) {
             setupWorkers(activePlayer);
         }
@@ -198,9 +201,10 @@ public class GameModel {
     /*
     Posiziona i worker inizialmente
      */
-    private void setupWorkers(Player activePlayer) {
+    private void setupWorkers(Player activePlayer) throws IOException {
         for (Worker worker:activePlayer.getWorkers()) {
-            int pos[]=islandBoard.getController().requiredPosition(activePlayer.getSocket(),"Choose the setting position for the worker number "+activePlayer.getWorkers().indexOf(worker)+1,getBoardRepresentetion());
+            int pos[]=islandBoard.requiredPosition(activePlayer.getSocket(),"<message>Choose the setting position for the worker number "+activePlayer.getWorkers().indexOf(worker)+1 +
+                    "</message>",getBoardRepresentetion());
             islandBoard.getSpace(pos[0],pos[1]).setOccupator(worker);  //inserisco nella posizione ricevuta worker
             worker.setWorkerSpace(islandBoard.getSpace(pos[0],pos[1]));  //attribuisco a worker il spazio in posizione ricevuta
         }
@@ -250,31 +254,31 @@ public class GameModel {
         Space finishPosition=getMovementPosition(movingWorker,possibleMovements[indexOfWorker]);
         Space startPosition=movingWorker.getWorkerSpace();
         activePlayer.getMove().move(movingWorker,finishPosition,islandBoard); //eseguo effettiva move
-        islandBoard.getController().notifyMovement(startPosition,finishPosition); //notifico l'avvenuto movimento, non so se serve
-        activePlayer.getWinCondition().checkHasWon(movingWorker,startPosition.getLevel());
+        islandBoard.notifyMovement(startPosition,finishPosition, activePlayer.getPlayerColor()); //notifico l'avvenuto movimento, non so se serve
+        activePlayer.getWinCondition().checkHasWon(movingWorker,startPosition.getLevel(),islandBoard);
         if(activePlayer.getWinCondition().gethasWon())
             nobodyHasWon=false;
         return movingWorker;
     }
 
-    public int workerToMove(Player activePlayer,List <Space> []possibleMovements){ //ritorna l'indice del worker che si vuole muovere
+    public int workerToMove(Player activePlayer,List <Space> []possibleMovements) throws IOException { //ritorna l'indice del worker che si vuole muovere
         if(possibleMovements[0].size()==0) { //se entro qui posso usare solo il worker 2
-            islandBoard.getController().notifyString(activePlayer.getSocket(), "the only movable worker is the 2, you have to use it");
+            islandBoard.sendMessage(activePlayer.getSocket(), "<message>the only movable worker is the 2, you have to use it</message>");
             return 0;
         }
         else if (possibleMovements[1].size() == 0) {//se entro qui posso usare solo il worker 1
-            islandBoard.getController().notifyString(activePlayer.getSocket(), "the only movable worker is the 1, you have to use it");
+            islandBoard.sendMessage(activePlayer.getSocket(), "<message>the only movable worker is the 1, you have to use it</message>");
             return 1;
         }
         else{ //se entro qui posso usare entrambi i worker
             List <Integer> possibleWorkers=new ArrayList<Integer>();
             possibleWorkers.add(1);
             possibleWorkers.add(2);
-            return islandBoard.getController().requiredInt(activePlayer.getSocket(),"Both you workers are movable, choose wich one you want to move",possibleWorkers);
+            return islandBoard.requiredInt(activePlayer.getSocket(),"<message>Both you workers are movable, choose wich one you want to move</message>",possibleWorkers);
         }
     }
 
-    public Space getMovementPosition(Worker movingWorker,List <Space> possibleMovements){
+    public Space getMovementPosition(Worker movingWorker,List <Space> possibleMovements) throws IOException {
         String messaggio=new String("Write: \n");
         int i=0;
         List <Integer> possibleInt=new ArrayList<Integer>();
@@ -283,12 +287,12 @@ public class GameModel {
             possibleInt.add(i);
             i++;
         }
-        int choosenIndex=islandBoard.getController().requiredInt(movingWorker.getWorkerPlayer().getSocket(),messaggio,possibleInt);
+        int choosenIndex=islandBoard.requiredInt(movingWorker.getWorkerPlayer().getSocket(),messaggio,possibleInt);
         return possibleMovements.get(choosenIndex);
     }
 
 
-    public void buildingPhase(Worker movedWorker){ //ritorna lo spazio in cui si ha costruito, null altrimenti
+    public void buildingPhase(Worker movedWorker) throws IOException { //ritorna lo spazio in cui si ha costruito, null altrimenti
         movedWorker.getWorkerPlayer().getRestriction().restrictionEffectBuilding(movedWorker,islandBoard);
         //ho la lista delle possibili costruzioni del worker mosso in precedenza
         List <Space> possibleBuilding=islandBoard.checkAvailableBuilding(movedWorker.getWorkerPlayer())[movedWorker.getWorkerPlayer().getWorkers().indexOf(movedWorker)];
@@ -297,12 +301,12 @@ public class GameModel {
             return ;
         }
         Space spaceToBuild=getBuildingPosition(movedWorker,possibleBuilding);
-        movedWorker.getWorkerPlayer().getBuild().build(movedWorker,spaceToBuild);
-        islandBoard.getController().notifyBuilding(spaceToBuild); //notifico l'avvenuta costruzione, non so se serve
+        movedWorker.getWorkerPlayer().getBuild().build(movedWorker,spaceToBuild, islandBoard);
+        islandBoard.notifyBuilding(spaceToBuild); //notifico l'avvenuta costruzione, non so se serve
         return ;
     }
 
-    public Space getBuildingPosition(Worker movedWorker,List <Space> possibleBuilding){
+    public Space getBuildingPosition(Worker movedWorker,List <Space> possibleBuilding) throws IOException {
         String messaggio=new String("Write: \n");
         int i=0;
         List <Integer> possibleInt=new ArrayList<Integer>();
@@ -311,20 +315,22 @@ public class GameModel {
             possibleInt.add(i);
             i++;
         }
-        int choosenIndex=islandBoard.getController().requiredInt(movedWorker.getWorkerPlayer().getSocket(),messaggio,possibleInt);
+        int choosenIndex=islandBoard.requiredInt(movedWorker.getWorkerPlayer().getSocket(),messaggio,possibleInt);
         return possibleBuilding.get(choosenIndex);
     }
 
     /*
     setta le posizioni dei workers a null
      */
-    private void deletePlayer(Player player){
+    private void deletePlayer(Player player) throws IOException {
             player.setInGame(false);
             numberPlayingPlayers--;
+            Space spaceWorker1 = player.getWorkers().get(0).getWorkerSpace();
             player.getWorkers().get(0).getWorkerSpace().setOccupator(null);
+            Space spaceWorker2 = player.getWorkers().get(0).getWorkerSpace();
             player.getWorkers().get(1).getWorkerSpace().setOccupator(null);
             player.getWorkers().get(0).setWorkerSpace(null);
             player.getWorkers().get(1).setWorkerSpace(null);
-            islandBoard.getController().notifyLost(player.getSocket());
+            islandBoard.notifySomeoneLose(player.getSocket(), spaceWorker1, spaceWorker2);
     }
 }

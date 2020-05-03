@@ -1,8 +1,13 @@
 package it.polimi.ingsw;
 
-public class ConcreteZeusRestriction extends PowerRestrictionAB {
+public class BuildUnderYouRestriction extends PowerRestrictionAB {
 
-    public ConcreteZeusRestriction(RestrictionAB restrictionAB){
+    /*
+    Your Worker may build a block under itself.
+     */
+    //ZEUS
+
+    public BuildUnderYouRestriction(RestrictionAB restrictionAB){
         this.restrictionAB = restrictionAB;
     }
 

@@ -3,10 +3,15 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConcretePersephoneRestriction extends PowerRestrictionAB {
+public class MustMoveUpRestriction extends PowerRestrictionAB {
+
+    /*
+    If possible, at least one Worker must move up this turn
+     */
+    //PERSEPHONE
     private boolean someoneCanGoUp;
 
-    public ConcretePersephoneRestriction(RestrictionAB restrictionAB){
+    public MustMoveUpRestriction(RestrictionAB restrictionAB){
         someoneCanGoUp = false;
         this.restrictionAB=restrictionAB;
     }

@@ -1,7 +1,10 @@
 package it.polimi.ingsw;
 
-public class ConcreteMinotaurRestriction extends PowerRestrictionAB{
+public class PushWorkerRestriction extends PowerRestrictionAB{
 
+    /*
+    Minotaur's power
+     */
     /*
     Your Worker may move into an opponent Worker’s space, if their Worker can be
     forced one space straight backwards to an unoccupied space at any level.
@@ -11,7 +14,7 @@ public class ConcreteMinotaurRestriction extends PowerRestrictionAB{
      * this is a decorator pattern constructor
      * @param restrictionAB is the decorated object
      */
-    public ConcreteMinotaurRestriction(RestrictionAB restrictionAB){
+    public PushWorkerRestriction(RestrictionAB restrictionAB){
         this.restrictionAB=restrictionAB;
     }
 

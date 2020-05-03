@@ -1,12 +1,13 @@
 package it.polimi.ingsw;
 
-public class ConcreteHypnusRestriction extends PowerRestrictionAB {
+public class IfHigherNoMoveRestriction extends PowerRestrictionAB {
 
     /*
     If one of your opponent's workers is higher than all of theirs, it cannot move
      */
+    //HYPNUS
 
-    public ConcreteHypnusRestriction(RestrictionAB restrictionAB){ this.restrictionAB = restrictionAB; }
+    public IfHigherNoMoveRestriction(RestrictionAB restrictionAB){ this.restrictionAB = restrictionAB; }
 
     /**
      * This methods controls if there's one worker's player in the highest level and

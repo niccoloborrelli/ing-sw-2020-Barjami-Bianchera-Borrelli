@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+
 public class BaseMovement extends MovementAB{
 
     /**
@@ -8,10 +10,14 @@ public class BaseMovement extends MovementAB{
      * @param finishSpace is the final space of the worker
      */
     @Override //(VERIFICATA)
-    public void move(Worker worker, Space finishSpace, IslandBoard islandBoard) {
-        if (worker != null && finishSpace != null)
+    public void move(Worker worker, Space finishSpace, IslandBoard islandBoard) throws IOException {
+
+        if (worker != null && finishSpace != null) {
+            Space startSpace = worker.getWorkerSpace();
             changeSpace(worker, finishSpace);
-        System.out.println("Worker or space is null");
+            islandBoard.notifyMovement(startSpace, finishSpace, worker.getWorkerPlayer().getPlayerColor());
+        }
+
     }
 
     /**

@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+
 public class BaseBuild extends BuildAB {
 
     /*
@@ -12,9 +14,10 @@ public class BaseBuild extends BuildAB {
      * @param buildSpace is the space where the worker builds
      */
     @Override // (VERIFICATA)
-    public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) {
+    public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) throws IOException {
         if (worker != null && buildSpace != null)
             upgradeLevel(buildSpace, worker);
+        islandBoard.notifyBuilding(buildSpace);
     }
 
     /**
