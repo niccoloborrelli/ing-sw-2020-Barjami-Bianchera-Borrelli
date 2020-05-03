@@ -35,8 +35,12 @@ public class ConcreteHestiaBuild extends PowerBuildingDecoratorAB {
             worker.getWorkerPlayer().getRestriction().restrictionEffectBuilding(worker, islandBoard);
             List<Space> spaces = islandBoard.checkAvailableBuilding(worker.getWorkerPlayer())[worker.getWorkerPlayer().getWorkers().indexOf(worker)];
             cancelPerimeter(spaces);
-            Space selectedSpace = ControllerUtility.selectPos(spaces, worker.getWorkerPlayer());
-            build.build(worker, selectedSpace, islandBoard);
+            if(spaces.size() > 0) {
+                Space selectedSpace = ControllerUtility.selectPos(spaces, worker.getWorkerPlayer());
+                build.build(worker, selectedSpace, islandBoard);
+            }
+            else
+                ControllerUtility.communicate(worker.getWorkerPlayer().getSocket(), "You can build nowhere else", 0);
         }
     }
 

@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import java.util.List;
-
 public class BaseRestriction extends RestrictionAB{
 
     /**

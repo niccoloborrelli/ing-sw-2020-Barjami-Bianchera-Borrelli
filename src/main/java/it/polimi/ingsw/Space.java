@@ -80,4 +80,6 @@ public class Space {
         this.availableBuilding.add(worker);
     } //(VERIFICATA)
 
+    public void removeAvailableMovement(Worker worker) { availableMovement.remove(worker); }
+
 }

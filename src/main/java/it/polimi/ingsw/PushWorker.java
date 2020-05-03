@@ -2,13 +2,18 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
-public class ConcreteMinotaurMove extends PowerMovementDecoratorAB {
+public class PushWorker extends PowerMovementDecoratorAB {
+
+    /*
+    Your Worker may move into an opponent Worker’s space, if their Worker can be
+    forced one space straight backwards to an unoccupied space at any level.
+     */
 
     /**
      * this is a decorator pattern constructor
      * @param movementAB is the decorated object
      */
-    public ConcreteMinotaurMove(MovementAB movementAB){
+    public PushWorker(MovementAB movementAB){
         this.movement=movementAB;
     }
 
@@ -36,26 +41,26 @@ public class ConcreteMinotaurMove extends PowerMovementDecoratorAB {
      */
 
     public void moveBehind(Space workerSpace,Space finishSpace,IslandBoard islandBoard){
-        int startColumn=workerSpace.getColumn();
-        int startRow=workerSpace.getRow();
-        int finishRow=finishSpace.getRow();
-        int finishColumn=finishSpace.getColumn();
+        int startColumn = workerSpace.getColumn();
+        int startRow = workerSpace.getRow();
+        int finishRow = finishSpace.getRow();
+        int finishColumn = finishSpace.getColumn();
         int behindColumn;
         int behindRow;
 
-        if(finishColumn==startColumn+1)
-            behindColumn=finishColumn+1;
-        else if(finishColumn==startColumn-1)
-            behindColumn=finishColumn-1;
+        if(finishColumn == startColumn+1)
+            behindColumn = finishColumn+1;
+        else if(finishColumn == startColumn-1)
+            behindColumn = finishColumn-1;
         else
-            behindColumn=finishColumn;
+            behindColumn = finishColumn;
 
-        if(finishRow==startRow+1)
-            behindRow=finishRow+1;
-        else if(finishRow==startRow-1)
-            behindRow=finishRow-1;
+        if(finishRow == startRow+1)
+            behindRow = finishRow+1;
+        else if(finishRow == startRow-1)
+            behindRow = finishRow-1;
         else
-            behindRow=finishRow;
+            behindRow = finishRow;
 
         islandBoard.getSpace(behindRow,behindColumn).setOccupator(finishSpace.getOccupator());
         finishSpace.getOccupator().setWorkerSpace(islandBoard.getSpace(behindRow,behindColumn));
