@@ -1,9 +1,11 @@
 package it.polimi.ingsw;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Controller implements Observer {
@@ -167,6 +169,14 @@ public class Controller implements Observer {
                     "<Row>" + space.getRow() + "</Row>" + "<Column>" + space.getColumn() + "</Column></Space>" +
                     "<color>" + color + "</color>", 0);
         }
+    }
+
+    public List<God> createGodset(){
+        //ricorda cambiare path del file
+        Parser parser=new Parser(new File("C:\\Users\\Rei\\Desktop\\Gods.txt"));
+        HashMap<String,List<String>> godMap=parser.createHashRepresentation();
+        GodFactory godFactory=new GodFactory();
+        return godFactory.godList(godMap);
     }
 }
 

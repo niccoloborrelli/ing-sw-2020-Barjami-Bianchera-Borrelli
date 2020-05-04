@@ -18,6 +18,7 @@ Metodi da specificare in Javadoc:
  */
 
 public class GameModel {
+    private List<God> godList;
     private boolean nobodyHasWon;
     private List<Player> players;
     private IslandBoard islandBoard;
@@ -141,11 +142,16 @@ public class GameModel {
     public void godSetting() throws IOException {
         boolean existsAthena=false;
         List <String> availableGods=godSetBuild();
-        if(availableGods.contains("athena"))
+        if(availableGods.contains("Athena"))
             existsAthena=true;
         //playerGod in player e' una stringa
         godAssignation(availableGods); //assegno i god(stringhe) a ogni giocatore
-        decoratePlayers(existsAthena); //qui creo effettivamente i decorator
+        try {
+            decoratePlayers(); //qui creo effettivamente i decorator
+        }
+        catch (Exception e){
+            System.out.println("error");
+        }
     }
 
     // CREO IL GOD SET, VA FINITO, NON RICORDO COME AVEVAMO SCELTO DI GESTIRLO
@@ -170,22 +176,37 @@ public class GameModel {
         islandBoard.sendMessage(gameChallenger.getSocket(),"<message>You have been assigned "+availableGods.get(0) + "</message>");
     }
 
-    private void decoratePlayers(boolean existsAthena){
+    private void decoratePlayers() throws Exception {
+        God tempGod;
         //Se c'e' athena decoro la restriction piu' internamente con essa
-        if(existsAthena==true){
-            for (Player p:players)
-                if(!p.getPlayerGod().equals("athena"))
-                    p.setRestriction(new NotMoveUpIfActivated(p.getRestriction()));
-        }
 
         for (Player p: players) {
-            try {
-                Method metodo = GodFactory.class.getMethod(p.getPlayerGod(), Player.class);
-                //richiamo il metodo di GodFactory con il nome della divinita' di p
-                metodo.invoke(new GodFactory(),p);
+            tempGod=null;
+            for (God god : godList) {
+                if (p.getPlayerGod().equals(god.getGodName()))
+                    tempGod = god;
+
             }
-            catch (Exception e) {
-                System.out.println("error");
+            if(tempGod==null){
+                System.out.println("ERROR");
+                throw new Exception();
+            }
+
+            for (PowerMovementDecoratorAB powerMove:tempGod.getMoveEffects()) {
+                powerMove.setMovement(p.getMove());
+                p.setMove(powerMove);
+            }
+            for (PowerBuildingDecoratorAB powerBuild:tempGod.getBuildEffects()) {
+                powerBuild.setBuild(p.getBuild());
+                p.setBuild(powerBuild);
+            }
+            for(PowerWinDecorator powerWinDecorator:tempGod.getWinConditionEffects()){
+                powerWinDecorator.setWinCondition(p.getWinCondition());
+                p.setWinCondition(powerWinDecorator);
+            }
+            for(PowerRestrictionAB powerRestriction:tempGod.getOwnRestrictionEffects()){
+                powerRestriction.setRestrictionAB(p.getRestriction());
+                p.setRestriction(powerRestriction);
             }
         }
     }

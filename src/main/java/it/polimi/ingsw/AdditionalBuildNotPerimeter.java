@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CanBuildTwiceNotPerimeter extends PowerBuildingDecoratorAB {
+public class AdditionalBuildNotPerimeter extends PowerBuildingDecoratorAB {
 
     /*
     Your worker may build one additional time,
@@ -24,7 +24,7 @@ public class CanBuildTwiceNotPerimeter extends PowerBuildingDecoratorAB {
      * This is a classic decorator pattern constructor
      * @param buildAB is the object to decorate
      */
-    public CanBuildTwiceNotPerimeter(BuildAB buildAB){
+    public AdditionalBuildNotPerimeter(BuildAB buildAB){
         this.build = buildAB;
     }
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
+public class AdditionalMove extends  PowerMovementDecoratorAB {
 
     /*
     Artemis' power
@@ -25,7 +25,7 @@ public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
     private final int FIRSTINDEX = 0;
 
 
-    public CanMoveTwiceNotInitial(MovementAB movementAB){
+    public AdditionalMove(MovementAB movementAB){
         this.movement = movementAB;
     }
     /**
