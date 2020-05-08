@@ -14,7 +14,7 @@ public class ConcreteApolloMoveTest {
      */
     @Test
     void changeSpaceApolloTest() throws IOException {
-        ConcreteApolloMove apollo = new ConcreteApolloMove(new BaseMovement());
+        SwapWorkers apollo = new SwapWorkers(new BaseMovement());
         IslandBoard islandBoard = new IslandBoard();
 
         Worker worker1 = new Worker();

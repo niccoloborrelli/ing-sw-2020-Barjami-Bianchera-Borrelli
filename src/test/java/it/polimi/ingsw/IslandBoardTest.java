@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ class IslandBoardTest {
     Questo test controlla se lo spazio in cui può muoversi un worker viene effettivamente aggiunto solo alla sua lista
      */
     @Test
-    void checkAvailableMovementW1() {
+    void checkAvailableMovementW1() throws IOException {
              int i = 3;
              int j = 3;
              Worker workerA;
@@ -33,7 +34,7 @@ class IslandBoardTest {
     Questo test controlla se lo spazio viene aggiunto alla lista del secondo worker
      */
     @Test
-    void checkAvailableMovementW2() {
+    void checkAvailableMovementW2() throws IOException {
         int i = 3;
         int j = 3;
         Worker workerA;
@@ -48,7 +49,7 @@ class IslandBoardTest {
     }
 
     @Test
-    void checkAvailableBuildingW1() {
+    void checkAvailableBuildingW1() throws IOException {
             int i = 3;
             int j = 3;
             Worker workerA;
@@ -62,7 +63,7 @@ class IslandBoardTest {
 
     }
     @Test
-    void checkAvailableBuildingW2() {
+    void checkAvailableBuildingW2() throws IOException {
         int i = 3;
         int j = 3;
         Worker workerA;
@@ -76,7 +77,7 @@ class IslandBoardTest {
     }
 
     @Test
-    void resetBoard() {
+    void resetBoard() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         islandBoard.resetBoard();
         for(int i = 0; i < 5; i++)

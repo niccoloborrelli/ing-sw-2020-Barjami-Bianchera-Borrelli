@@ -12,8 +12,8 @@ class ConcreteMinotaurMovementTest {
     @Test
     public void moveTest1() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
-        ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
-        ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+        PushWorker concreteMinotaurMove = new PushWorker(new BaseMovement());
+        PushWorkerRestriction concreteMinotaurRestriction = new PushWorkerRestriction(new BaseRestriction());
 
         Player player1 = new Player(new Socket("localhost",50010));
         Player player2 = new Player(new Socket("localhost",60010));
@@ -39,8 +39,8 @@ class ConcreteMinotaurMovementTest {
     @Test
     public void moveTest2() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
-        ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
-        ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+        PushWorker concreteMinotaurMove = new PushWorker(new BaseMovement());
+        PushWorkerRestriction concreteMinotaurRestriction = new PushWorkerRestriction(new BaseRestriction());
 
         Player player1 = new Player(new Socket("localhost",50010));
         Player player2 = new Player(new Socket("localhost",60010));
@@ -66,8 +66,8 @@ class ConcreteMinotaurMovementTest {
     @Test
     public void moveTest3() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
-        ConcreteMinotaurMove concreteMinotaurMove = new ConcreteMinotaurMove(new BaseMovement());
-        ConcreteMinotaurRestriction concreteMinotaurRestriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+        PushWorker concreteMinotaurMove = new PushWorker(new BaseMovement());
+        PushWorkerRestriction concreteMinotaurRestriction = new PushWorkerRestriction(new BaseRestriction());
 
         Player player1 = new Player(new Socket("localhost",50010));
         Player player2 = new Player(new Socket("localhost",60010));

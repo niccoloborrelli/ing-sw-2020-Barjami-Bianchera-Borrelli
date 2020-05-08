@@ -154,8 +154,8 @@ public class IslandBoard {
         return i;
     }
 
-    public Space requiredSpace(Socket sc, String message, List<Space> spaceList){ //DA CAMBIARE
-        return  new Space(1,1);
+    public Space requiredSpace(Socket sc, String message, List<Space> spaceList) throws IOException { //DA CAMBIARE
+        return  observer.requiredSpace(sc,message,spaceList);
     }
 
     public void sendMessage(Socket sc, String message) throws IOException {
@@ -171,7 +171,7 @@ public class IslandBoard {
         return observer.requiredName(sc,message, notAvailable);
     }
 
-    public List<Socket> requiredSockets(int numberOfPlayers) throws IOException {
+    public List<Socket> requiredSockets(int numberOfPlayers) throws IOException, InterruptedException {
         return observer.requiredSockets(numberOfPlayers);
     }
 

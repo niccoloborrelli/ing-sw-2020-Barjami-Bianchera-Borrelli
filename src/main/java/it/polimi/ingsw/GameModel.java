@@ -54,7 +54,7 @@ public class GameModel {
     /*
     MAIN
      */
-    public void game() throws IOException {
+    public void game() throws IOException, InterruptedException {
         createPlayers(); //creo giocatori: sockets,nomi e colori
         godSetting(); // assegno le divinita ai giocatori con i rispettivi decorator
         boardSetting(); //inizializzo posizione iniziale degli worker (partendo dal challenger)
@@ -85,7 +85,7 @@ public class GameModel {
         }
     }
 
-    public void createPlayers() throws IOException {
+    public void createPlayers() throws IOException, InterruptedException {
         List <String> unavailableNames=new ArrayList<String>();
         List <String> availableColors;
         Socket challengerSocket = islandBoard.requiredChallengerSocket();

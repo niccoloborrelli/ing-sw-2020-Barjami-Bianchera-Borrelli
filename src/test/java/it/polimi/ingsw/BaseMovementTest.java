@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BaseMovementTest {
@@ -10,7 +12,7 @@ class BaseMovementTest {
     /*moveTest1 controlla se accade qualcosa se il worker non esiste
     */
     @Test
-    void moveTest1() {
+    void moveTest1() throws IOException {
         BaseMovement bm = new BaseMovement();
         IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
@@ -22,7 +24,7 @@ class BaseMovementTest {
     sia se worker si sposta effettivamente in un posto libero
     */
     @Test
-    void moveTest2(){
+    void moveTest2() throws IOException {
         BaseMovement bm = new BaseMovement();
         Worker worker1 = new Worker();
         IslandBoard islandBoard = new IslandBoard();
@@ -46,7 +48,7 @@ class BaseMovementTest {
     in cui non può muoversi
     */
     @Test
-    void moveTest3() {
+    void moveTest3() throws IOException {
         BaseMovement bm = new BaseMovement();
         Worker worker1 = new Worker();
         Worker worker2 = new Worker();

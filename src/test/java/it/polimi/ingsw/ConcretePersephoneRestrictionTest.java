@@ -15,6 +15,7 @@ class ConcretePersephoneRestrictionTest {
      */
     @Test
     void restrictionEffectMovementPersephoneTest1() {
+        /*
         IslandBoard islandBoard = new IslandBoard();
         Player player = new Player(new Socket());
         player.setRestriction(new ConcretePersephoneRestriction(new BaseRestriction()));
@@ -35,6 +36,7 @@ class ConcretePersephoneRestrictionTest {
     worker non possono salire, allora possono
     muoversi incondizonatamente
      */
+        /*
     @Test
     void restrictionEffectMovementPersephoneTest2() {
         IslandBoard islandBoard = new IslandBoard();
@@ -49,5 +51,8 @@ class ConcretePersephoneRestrictionTest {
         player.getRestriction().restrictionEffectMovement(player, islandBoard);
         assertTrue(islandBoard.checkAvailableMovement(player)[0].size() != 0 &&
                             islandBoard.checkAvailableMovement(player)[1].size() != 0);
+    }
+
+         */
     }
 }

@@ -42,8 +42,10 @@ public class AdditionalMove extends  PowerMovementDecoratorAB {
         movement.move(worker, finishSpace, islandBoard);
         worker.getWorkerPlayer().getWinCondition().checkHasWon(worker, startLevel, islandBoard);
 
-        if (worker.getWorkerPlayer().getWinCondition().gethasWon()) //se ha vinto esco
-            return;
+        if (worker.getWorkerPlayer().getWinCondition().gethasWon()){
+            return; //se ha vinto esco
+        }
+
 
         List<Integer> list = new ArrayList<>();
         list.add(FIRSTPOSSIBLEVALUE);
@@ -69,7 +71,7 @@ public class AdditionalMove extends  PowerMovementDecoratorAB {
         int indexOfWorker = worker.getWorkerPlayer().getWorkers().indexOf(worker);
 
         worker.getWorkerPlayer().getRestriction().restrictionEffectMovement(worker.getWorkerPlayer(), islandBoard);
-        spaces = islandBoard.checkAvailableBuilding(worker.getWorkerPlayer());
+        spaces = islandBoard.checkAvailableMovement(worker.getWorkerPlayer());
         spaces[indexOfWorker].remove(startSpace);
 
         return spaces[indexOfWorker];

@@ -16,7 +16,7 @@ public class ConcreteApolloRestrictionTest {
      */
     @Test
     void ApolloRestrictionTest() throws IOException {
-        ConcreteApolloRestriction apollo = new ConcreteApolloRestriction(new BaseRestriction());
+        SwapWorkersRestriction apollo = new SwapWorkersRestriction(new BaseRestriction());
         IslandBoard islandBoard = new IslandBoard();
 
         Player player = new Player(new Socket("localhost",60010));

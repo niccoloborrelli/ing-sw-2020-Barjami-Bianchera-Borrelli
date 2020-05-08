@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,10 +14,10 @@ class ConcreteHypnusRestrictionTest {
     più in alto di tutti, allora non può muoversi
      */
     @Test
-    void restrictionEffectMovementHypnusTest1() {
+    void restrictionEffectMovementHypnusTest1() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         Player player = new Player(new Socket());
-        player.setRestriction(new ConcreteHypnusRestriction(new BaseRestriction()));
+        player.setRestriction(new IfHigherNoMoveRestriction(new BaseRestriction()));
 
         Space space = islandBoard.getSpace(3,3);
         space.setLevel(1);
@@ -34,10 +35,10 @@ class ConcreteHypnusRestrictionTest {
     sono al livello massimo possono comunque muoversi
      */
     @Test
-    void restrictionEffectMovementHypnusTest2() {
+    void restrictionEffectMovementHypnusTest2() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         Player player = new Player(new Socket());
-        player.setRestriction(new ConcreteHypnusRestriction(new BaseRestriction()));
+        player.setRestriction(new IfHigherNoMoveRestriction(new BaseRestriction()));
 
         Space space1 = islandBoard.getSpace(3,3);
         space1.setLevel(1);
