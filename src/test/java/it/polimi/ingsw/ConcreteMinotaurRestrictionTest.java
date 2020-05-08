@@ -16,7 +16,7 @@ class ConcreteMinotaurRestrictionTest {
      */
     @Test
     public void restrictionEffectMovementTest1() throws IOException {
-        RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+        RestrictionAB restriction = new PushWorkerRestriction(new BaseRestriction());
 
         IslandBoard islandBoard = new IslandBoard();
         Player player1 = new Player(new Socket("localhost",60010));
@@ -43,7 +43,7 @@ class ConcreteMinotaurRestrictionTest {
 
     @Test
     public void restrictionEffectMovementTest2() throws IOException {
-        RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+        RestrictionAB restriction = new PushWorkerRestriction(new BaseRestriction());
 
             IslandBoard islandBoard = new IslandBoard();
             Player player1 = new Player(new Socket("localhost",60010));
@@ -72,7 +72,7 @@ class ConcreteMinotaurRestrictionTest {
 
     @Test
     public void restrictionEffectMovementTest3() throws IOException {
-            RestrictionAB restriction = new ConcreteMinotaurRestriction(new BaseRestriction());
+            RestrictionAB restriction = new PushWorkerRestriction(new BaseRestriction());
 
             IslandBoard islandBoard = new IslandBoard();
             Player player1 = new Player(new Socket("localhost",60010));

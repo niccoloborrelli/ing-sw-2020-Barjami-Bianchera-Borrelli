@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BaseWinConditionTest {
@@ -11,7 +13,7 @@ class BaseWinConditionTest {
     controlla se si vince senza worker
      */
     @Test
-    void checkHasWonTest1() {
+    void checkHasWonTest1() throws IOException {
         BaseWinCondition bwc = new BaseWinCondition();
         IslandBoard islandBoard = new IslandBoard();
         bwc.checkHasWon(null, 2, islandBoard);
@@ -22,7 +24,7 @@ class BaseWinConditionTest {
     controlla se si vince salendo da livello 2 a 3
     */
     @Test
-    void checkHasWonTest2() {
+    void checkHasWonTest2() throws IOException {
         Worker worker = new Worker();
         IslandBoard islandBoard = new IslandBoard();
         BaseWinCondition bwc = new BaseWinCondition();
@@ -37,7 +39,7 @@ class BaseWinConditionTest {
     controlla se il worker non ha vinto
      */
     @Test
-    void checkHasWonTest3(){
+    void checkHasWonTest3() throws IOException {
         Worker worker = new Worker();
         IslandBoard islandBoard = new IslandBoard();
         BaseWinCondition bwc = new BaseWinCondition();

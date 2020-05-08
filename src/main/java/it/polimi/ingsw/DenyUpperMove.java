@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-public class NotMoveUpIfActivated extends PowerRestrictionAB {
+public class DenyUpperMove extends PowerRestrictionAB {
 
     /*
     Power of Athena
@@ -10,7 +10,7 @@ public class NotMoveUpIfActivated extends PowerRestrictionAB {
     opponent workers cannot move up this turn
      */
 
-    public NotMoveUpIfActivated(RestrictionAB restrictionAB){
+    public DenyUpperMove(RestrictionAB restrictionAB){
         this.restrictionAB = restrictionAB;
     }
 

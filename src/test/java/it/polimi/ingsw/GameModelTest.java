@@ -12,6 +12,7 @@ class GameModelTest {
     /*
     The worker can't move
      */
+    /*
     @Test
     void canWorkerDoSomethingTest1() {
         List<String> names = new ArrayList<>();
@@ -44,6 +45,7 @@ class GameModelTest {
     /*
     The worker can move and build
      */
+    /*
     @Test
     void canWorkerDoSomethingTest2(){
         List<String> names = new ArrayList<>();
@@ -82,6 +84,7 @@ class GameModelTest {
     L'escamotage per far calcolare correttamente che non ci sia nessuna mossa disponibile è mettere una cupola nella casella di partenza
     Da ricordare quando si implementaranno poteri di alcune divinità
      */
+    /*
     @Test
     void canWorkerDoSomethingTest3(){
         List<String> names = new ArrayList<>();
@@ -112,5 +115,8 @@ class GameModelTest {
         List<Space>[] space = gamemodel.getIslandBoard().checkAvailableMovement(player);
         assertFalse(gamemodel.canWorkerDoSomething(player.getWorkers().get(0), space[0], 0));
     }
+
+}
+*/
 
 }

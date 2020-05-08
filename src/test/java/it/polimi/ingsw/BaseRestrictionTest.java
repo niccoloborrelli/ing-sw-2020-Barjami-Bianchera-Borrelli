@@ -2,6 +2,8 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BaseRestrictionTest {
@@ -10,7 +12,7 @@ class BaseRestrictionTest {
     le liste correttamente
      */
     @Test
-    void restrictionEffectMovementTest1() {
+    void restrictionEffectMovementTest1() throws IOException {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
         Player player1 = new Player( null);
@@ -37,7 +39,7 @@ class BaseRestrictionTest {
      dislivello troppo grande non viene aggiunto il worker in quella lista
      */
     @Test
-    void restrictionEffectMovementTest2() {
+    void restrictionEffectMovementTest2() throws IOException {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
         Player player1 = new Player(null);
@@ -69,7 +71,7 @@ class BaseRestrictionTest {
      altro worker non viene aggiunto il worker in quella lista
      */
     @Test
-    void restrictionEffectMovementTest3() {
+    void restrictionEffectMovementTest3() throws IOException {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
         Player player1 = new Player(null);
@@ -102,7 +104,7 @@ class BaseRestrictionTest {
     le liste correttamente
      */
     @Test
-    void restrictionEffectBuildingTest1() {
+    void restrictionEffectBuildingTest1() throws IOException {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
         Player player1 = new Player(null);
@@ -130,7 +132,7 @@ class BaseRestrictionTest {
     cupola o un altro worker non viene aggiunto il worker in quella lista
      */
     @Test
-    void restrictionEffectBuildingTest2() {
+    void restrictionEffectBuildingTest2() throws IOException {
         IslandBoard island = new IslandBoard();
         String playerName = "ciro";
         Player player1 = new Player(null);

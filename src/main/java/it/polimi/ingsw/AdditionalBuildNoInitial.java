@@ -7,14 +7,14 @@ import java.util.List;
 /*
 Demeter power: "Your worker may build one additional time, but not in the same space"
  */
-public class CanBuildTwiceNotInitial extends PowerBuildingDecoratorAB {
+public class AdditionalBuildNoInitial extends PowerBuildingDecoratorAB {
 
     private final int MINIMUMSIZE = 0;
     private final int FIRSTPOSSIBLEVALUE = 0;
     private final int SECONDPOSSIBLEVALUE = 1;
     private final int FIRSTINDEX = 0;
 
-    public CanBuildTwiceNotInitial(BuildAB buildAB) {
+    public AdditionalBuildNoInitial(BuildAB buildAB) {
         this.build = buildAB;
     }
 

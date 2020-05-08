@@ -15,7 +15,7 @@ public class BaseMovement extends MovementAB{
         if (worker != null && finishSpace != null) {
             Space startSpace = worker.getWorkerSpace();
             changeSpace(worker, finishSpace);
-            islandBoard.notifyMovement(startSpace, finishSpace, worker.getWorkerPlayer().getPlayerColor());
+            //islandBoard.notifyMovement(startSpace, finishSpace, worker.getWorkerPlayer().getPlayerColor());
         }
 
     }

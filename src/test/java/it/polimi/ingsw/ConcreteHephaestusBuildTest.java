@@ -31,7 +31,7 @@ class ConcreteHephaestusBuildTest {
         Player player = new Player(sc);
         IslandBoard islandBoard = new IslandBoard();
         Worker worker = player.getWorkers().get(0);
-        ConcreteHephaestusBuild concreteHephaestusBuild = new ConcreteHephaestusBuild(new BaseBuild());
+        CanBuildTwiceNotDome concreteHephaestusBuild = new CanBuildTwiceNotDome(new BaseBuild());
         Space space = islandBoard.getSpace(0,0);
         space.isAvailableBuilding().add(worker);
 
@@ -57,7 +57,7 @@ class ConcreteHephaestusBuildTest {
         Player player = new Player(sc);
         IslandBoard islandBoard = new IslandBoard();
         Worker worker = player.getWorkers().get(0);
-        ConcreteHephaestusBuild concreteHephaestusBuild = new ConcreteHephaestusBuild(new BaseBuild());
+        CanBuildTwiceNotDome concreteHephaestusBuild = new CanBuildTwiceNotDome(new BaseBuild());
         Space space = islandBoard.getSpace(0,0);
         space.isAvailableBuilding().add(worker);
 
@@ -84,7 +84,7 @@ class ConcreteHephaestusBuildTest {
         Player player = new Player(sc);
         IslandBoard islandBoard = new IslandBoard();
         Worker worker = player.getWorkers().get(0);
-        ConcreteHephaestusBuild concreteHephaestusBuild = new ConcreteHephaestusBuild(new BaseBuild());
+        CanBuildTwiceNotDome concreteHephaestusBuild = new CanBuildTwiceNotDome(new BaseBuild());
         Space space = islandBoard.getSpace(0,0);
         space.setLevel(2);
         space.isAvailableBuilding().add(worker);

@@ -1,79 +1,58 @@
 package it.polimi.ingsw;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 public class GodFactory {
-    public void apollo(Player player){
-        RestrictionAB restriction = new ConcreteApolloRestriction(player.getRestriction());
-        MovementAB movement = new ConcreteApolloMove(player.getMove());
-        player.setRestriction(restriction);
-        player.setMove(movement);
-    }
 
-    public void artemis(Player player){
-        MovementAB movement = new ConcreteArtemisMove(player.getMove());
-        player.setMove(movement);
-    }
+    public List<God> godList(HashMap<String, List<String>> mappa){
+        List<God> godList=new ArrayList<God>();
+        Set<String> keys=mappa.keySet();
+        for (String tempS:keys) {
+            God tempGod=new God(tempS);
+            List<String> effects=mappa.get(tempS);
+            //GROSSO if; if; if.....if;
+            //il decorato verra' sostituito mettendo quello del player
+            if(effects.contains("SwapWorkers")){
+                tempGod.addMoveEffect(new SwapWorkers(new BaseMovement()));
+                tempGod.addOwnRestrictionEffect(new SwapWorkersRestriction(new BaseRestriction()));
+            }
+            if(effects.contains("AdditionalMove"))
+                tempGod.addMoveEffect(new AdditionalMove(new BaseMovement()));
+            if(effects.contains("DenyUpperMove")) {
+                tempGod.addEnemyRestrictionEffect(new DenyUpperMove(new BaseRestriction()));
+                tempGod.addMoveEffect(new ActivateOthersNotMoveUpIfNotMoveUp(new BaseMovement()));
+            }
+            if(effects.contains("DomeEverywhere"))
+                tempGod.addBuildEffect(new CanBuildADomeAtAnyLevel(new BaseBuild()));
+            if(effects.contains("AdditionalBuildNoInitial"))
+                tempGod.addBuildEffect(new AdditionalBuildNoInitial(new BaseBuild()));
+            if(effects.contains("CanBuildTwiceNotDome"))
+                tempGod.addBuildEffect(new CanBuildTwiceNotDome(new BaseBuild()));
+            if(effects.contains("PushBack")){
+                tempGod.addMoveEffect(new PushWorker(new BaseMovement()));
+                tempGod.addOwnRestrictionEffect(new PushWorkerRestriction(new BaseRestriction()));
+            }
+            if(effects.contains("JumpMoreLevelsWin"))
+                tempGod.addWinConditionEffect(new JumpMoreLevelsWin(new BaseWinCondition()));
+            if(effects.contains("BuildAlsoBeforeIfNotMoveUp"))
+                tempGod.addMoveEffect(new BuildAlsoBeforeIfNotMoveUp(new BaseMovement()));
+            if(effects.contains("CompleteTowerWin"))
+                tempGod.addWinConditionEffect(new CompleteTowerWin(new BaseWinCondition()));
+            if(effects.contains("AdditionalBuildNotPerimeter"))
+                tempGod.addBuildEffect(new AdditionalBuildNotPerimeter(new BaseBuild()));
+            if(effects.contains("IfHigherNoMove"))
+                tempGod.addEnemyRestrictionEffect(new IfHigherNoMoveRestriction(new BaseRestriction()));
+            if(effects.contains("MustMoveUp"))
+                tempGod.addEnemyRestrictionEffect(new MustMoveUpRestriction(new BaseRestriction()));
+            if(effects.contains("BuildUnderYou"))
+                tempGod.addOwnRestrictionEffect(new BuildUnderYouRestriction(new BaseRestriction()));
 
-    public void athena(Player player){
-        MovementAB movement= new ConcreteAthenaMove(player.getMove());
-        player.setMove(movement);
-    }
 
-
-    public void atlas(Player player){
-        BuildAB build = new ConcreteAtlasBuild(player.getBuild());
-        player.setBuild(build);
-    }
-
-    public void demeter(Player player){
-        BuildAB build = new ConcreteDemeterBuild(player.getBuild());
-        player.setBuild(build);
-    }
-
-    public void hephaestus(Player player){
-        BuildAB build = new ConcreteHephaestusBuild(player.getBuild());
-        player.setBuild(build);
-    }
-
-    public void minoutaur(Player player){
-        RestrictionAB restriction = new ConcreteMinotaurRestriction(player.getRestriction());
-        MovementAB movement = new ConcreteMinotaurMove(player.getMove());
-        player.setRestriction(restriction);
-        player.setMove(movement);
-    }
-
-    public void pan(Player player){
-        WinConditionAB wincond = new ConcretePanWin(player.getWinCondition());
-        player.setWinCondition(wincond);
-    }
-
-    public void prometheus(Player player){
-        MovementAB movement = new ConcretePrometheusMove(player.getMove());
-        player.setMove(movement);
-    }
-
-    //dei avanzati
-    public void chronus(Player player){
-        WinConditionAB wincond = new ConcreteChronusWin(player.getWinCondition());
-        player.setWinCondition(wincond);
-    }
-
-    public void hestia(Player player){
-        BuildAB build = new ConcreteHestiaBuild(player.getBuild());
-        player.setBuild(build);
-    }
-
-    public void hypnus(Player player){
-        RestrictionAB restriction = new ConcreteHypnusRestriction(player.getRestriction());
-        player.setRestriction(restriction);
-    }
-
-    public void persephone(Player player){
-        RestrictionAB restriction = new ConcretePersephoneRestriction(player.getRestriction());
-        player.setRestriction(restriction);
-    }
-
-    public void zeus(Player player){
-        RestrictionAB restriction = new ConcreteZeusRestriction(player.getRestriction());
-        player.setRestriction(restriction);
+            godList.add(tempGod);
+        }
+        return godList;
     }
 }

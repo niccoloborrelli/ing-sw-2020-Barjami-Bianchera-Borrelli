@@ -1,6 +1,8 @@
 package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +11,7 @@ class BaseBuildTest {
 
     //Se worker o space è null non deve fare niente
     @Test
-    void buildTest1() {
+    void buildTest1() throws IOException {
         IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
         BaseBuild myBuild = new BaseBuild();
@@ -19,7 +21,7 @@ class BaseBuildTest {
 
     //costruendo su un space di livello 2 il suo livello dopo la costruzione deve andare a 3
     @Test
-    void buildTest2() {
+    void buildTest2() throws IOException {
         Worker worker = new Worker();
         IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);
@@ -32,7 +34,7 @@ class BaseBuildTest {
 
     //costruendo su un space di livello 3 il booleano has dome deve essere true
     @Test
-    void buildTest3() {
+    void buildTest3() throws IOException {
         Worker worker = new Worker();
         IslandBoard islandBoard = new IslandBoard();
         Space space = new Space(1,1);

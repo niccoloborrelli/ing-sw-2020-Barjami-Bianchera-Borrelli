@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
+public class AdditionalMove extends  PowerMovementDecoratorAB {
 
     /*
     Artemis' power
@@ -25,7 +25,7 @@ public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
     private final int FIRSTINDEX = 0;
 
 
-    public CanMoveTwiceNotInitial(MovementAB movementAB){
+    public AdditionalMove(MovementAB movementAB){
         this.movement = movementAB;
     }
     /**
@@ -42,8 +42,10 @@ public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
         movement.move(worker, finishSpace, islandBoard);
         worker.getWorkerPlayer().getWinCondition().checkHasWon(worker, startLevel, islandBoard);
 
-        if (worker.getWorkerPlayer().getWinCondition().gethasWon()) //se ha vinto esco
-            return;
+        if (worker.getWorkerPlayer().getWinCondition().gethasWon()){
+            return; //se ha vinto esco
+        }
+
 
         List<Integer> list = new ArrayList<>();
         list.add(FIRSTPOSSIBLEVALUE);
@@ -69,7 +71,7 @@ public class CanMoveTwiceNotInitial extends  PowerMovementDecoratorAB {
         int indexOfWorker = worker.getWorkerPlayer().getWorkers().indexOf(worker);
 
         worker.getWorkerPlayer().getRestriction().restrictionEffectMovement(worker.getWorkerPlayer(), islandBoard);
-        spaces = islandBoard.checkAvailableBuilding(worker.getWorkerPlayer());
+        spaces = islandBoard.checkAvailableMovement(worker.getWorkerPlayer());
         spaces[indexOfWorker].remove(startSpace);
 
         return spaces[indexOfWorker];

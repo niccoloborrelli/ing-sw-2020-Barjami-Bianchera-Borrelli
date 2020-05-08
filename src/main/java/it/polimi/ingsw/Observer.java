@@ -7,7 +7,7 @@ import java.util.List;
 public interface Observer {
 
     Socket requiredChallengerSocket() throws IOException;
-    List<Socket> requiredSockets(int numberOfPlayers) throws IOException;
+    List<Socket> requiredSockets(int numberOfPlayers) throws IOException, InterruptedException;
     String requiredString(Socket sc, String message, List<String> available) throws IOException;
 
     void printMessage(Socket sc, String message) throws IOException;
