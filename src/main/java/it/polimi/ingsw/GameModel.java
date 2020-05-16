@@ -88,7 +88,8 @@ public class GameModel {
     public void createPlayers() throws IOException, InterruptedException {
         List <String> unavailableNames=new ArrayList<String>();
         List <String> availableColors;
-        Socket challengerSocket = islandBoard.requiredChallengerSocket();
+        //Socket challengerSocket = islandBoard.requiredChallengerSocket();
+        Socket challengerSocket=new Socket();
         String challengerName= islandBoard.requiredName(challengerSocket,"<message>Challenger, insert your name</message>",new ArrayList<String>());
         gameChallenger=new Challenger(challengerSocket);
         gameChallenger.setPlayerName(challengerName);
@@ -102,7 +103,7 @@ public class GameModel {
         possibleNumOfPlayers.add(4);
         numberOfPlayers=islandBoard.requiredInt(challengerSocket,"<message>Insert the number of players</message>",possibleNumOfPlayers);
         // a questo punto ho creato il socket del challenger col suo nome e ho selezionato il numero di giocatori per la partita
-        List <Socket> sockets=islandBoard.requiredSockets(numberOfPlayers);
+        List <Socket> sockets=new ArrayList<>();//islandBoard.requiredSockets(numberOfPlayers);
         for(Socket s:sockets){
             players.add(new Player(s));
         }
@@ -141,6 +142,7 @@ public class GameModel {
 
     public void godSetting() throws IOException {
         boolean existsAthena=false;
+        godList=islandBoard.getObserver().createGodset();
         List <String> availableGods=godSetBuild();
         if(availableGods.contains("Athena"))
             existsAthena=true;
@@ -154,9 +156,22 @@ public class GameModel {
         }
     }
 
-    // CREO IL GOD SET, VA FINITO, NON RICORDO COME AVEVAMO SCELTO DI GESTIRLO
-    private List <String> godSetBuild(){
-            return new ArrayList<String>();
+    // CREO IL GOD SET, Riguardalo un attimo che non ricordo bene se era testato
+    private List <String> godSetBuild() throws IOException {
+            List<String>allGodNames=new ArrayList<String>();
+            List<String>godset=new ArrayList<String>();
+            String message="choose wich god we are going to use between: ";
+        for (God god:godList) {
+            allGodNames.add(god.getGodName());
+            message=message.concat(god.getGodName()+" - ");
+        }
+        islandBoard.sendMessage(gameChallenger.getSocket(),"<message>"+message+"</message>");
+        for(int i=0;i<players.size()-1;i++){
+            int j=i+1;
+            godset.add(islandBoard.requiredString(gameChallenger.getSocket(),"god number "+j+" :",allGodNames));
+            allGodNames.remove(godset.get(i));
+        }
+        return godset;
     }
 
     private void godAssignation(List <String> availableGods) throws IOException {
@@ -185,8 +200,8 @@ public class GameModel {
             for (God god : godList) {
                 if (p.getPlayerGod().equals(god.getGodName()))
                     tempGod = god;
-
             }
+
             if(tempGod==null){
                 System.out.println("ERROR");
                 throw new Exception();
@@ -207,6 +222,26 @@ public class GameModel {
             for(PowerRestrictionAB powerRestriction:tempGod.getOwnRestrictionEffects()){
                 powerRestriction.setRestrictionAB(p.getRestriction());
                 p.setRestriction(powerRestriction);
+            }
+        }
+        //gli enemyRestriction vanno messe dopo ogni restriction
+        for(Player p:players){
+            tempGod=null;
+            for (God god : godList) {
+                if (p.getPlayerGod().equals(god.getGodName()))
+                    tempGod = god;
+            }
+            if(tempGod==null){
+                System.out.println("ERROR");
+                throw new Exception();
+            }
+            for (PowerRestrictionAB enemyRestr:tempGod.getEnemyRestrictionEffects()) {
+                for(Player player:players){
+                    if(player!=p){
+                        enemyRestr.setRestrictionAB(player.getRestriction());
+                        player.setRestriction(enemyRestr);
+                    }
+                }
             }
         }
     }

@@ -11,13 +11,13 @@ public class BaseMovement extends MovementAB{
      */
     @Override //(VERIFICATA)
     public void move(Worker worker, Space finishSpace, IslandBoard islandBoard) throws IOException {
-
+        worker.setCantBuild(false);
         if (worker != null && finishSpace != null) {
             Space startSpace = worker.getWorkerSpace();
             changeSpace(worker, finishSpace);
             //islandBoard.notifyMovement(startSpace, finishSpace, worker.getWorkerPlayer().getPlayerColor());
         }
-
+        setOtherWorkers(worker);
     }
 
     /**
@@ -33,4 +33,13 @@ public class BaseMovement extends MovementAB{
         }
     }
 
+    private void setOtherWorkers(Worker activeWorker){
+        Player player=activeWorker.getWorkerPlayer();
+        for (Worker w:player.getWorkers()) {
+            if(w!=activeWorker){
+                w.setCantBuild(true);
+                w.setCantMove(true);
+            }
+        }
+    }
 }

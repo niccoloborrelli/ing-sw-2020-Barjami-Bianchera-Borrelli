@@ -12,40 +12,64 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.StandardSocketOptions;
 
 public class ClientHandler extends Thread {
 
-    private final DataInputStream dataInputStreamClient;
-    private final DataOutputStream dataOutputStreamClient;
+    private DataInputStream dataInputStreamClient;  //non posso settarle FINAL perchè non è gestibile nella creazione multiThread
+    private DataOutputStream dataOutputStreamClient;
+    private Socket sc;
     private final DataOutputStream dataOutputStreamServer;
     private final DataInputStream dataInputStreamServer;
-    private final Socket sc;
     private final Socket ss;
     boolean canSpeak;
     boolean endGame;
 
 
-    public ClientHandler(Socket sc) throws IOException {
+    public ClientHandler() throws IOException {
         ss = new Socket("localhost", 60100);   //da capire come farlo collegare al server dopo la accept del client
-        dataInputStreamClient = new DataInputStream(sc.getInputStream());
-        dataOutputStreamClient = new DataOutputStream(sc.getOutputStream());
         dataOutputStreamServer = new DataOutputStream(ss.getOutputStream());
         dataInputStreamServer = new DataInputStream(ss.getInputStream());
-        this.sc = sc;
         canSpeak = false;
         endGame = false;
     }
 
+    public void setClientHandler(Socket sc) throws IOException {
+        this.sc = sc;
+        dataInputStreamClient = new DataInputStream(sc.getInputStream());
+        dataOutputStreamClient = new DataOutputStream(sc.getOutputStream());
+    }
+
+
+    public Socket getSs() {
+        return ss;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void ping() throws IOException, InterruptedException {
+        InetAddress inetAddress = sc.getInetAddress();
+        while(!endGame) {
+            while (inetAddress.isReachable(2000))
+                sleep(200);
+        }
+    }
 
     public void setCanSpeak(boolean canSpeak) {
         this.canSpeak = canSpeak;
     }
 
     public void run() {
+
         String received;
         String message;
+
+        while(sc==null){}
 
         while (!endGame) {
 
@@ -54,6 +78,7 @@ public class ClientHandler extends Thread {
                     if(dataInputStreamClient.available()>0) {
                         if(!canSpeak) {
                             received = dataInputStreamClient.readUTF();
+                            System.out.println("Non doveva scrivere: " + received);
                             communicate(dataOutputStreamClient,"<message>It isn't your turn</message>",0); //l'ho copiato sotto, vedere se utilizzare proprio la virtual view
                             sleep(10);
                         }else
@@ -65,17 +90,19 @@ public class ClientHandler extends Thread {
                     // in modo da controllare se quello in ricezione è corretto
 
                     received = dataInputStreamClient.readUTF();
+                    System.out.println("L'handler ha ricevuto: " + received);
+                    canSpeak = false;
                     message = formatMessage(received);
                     if (message != null) {
                         dataOutputStreamServer.writeUTF(message);
                         dataOutputStreamServer.flush();
                     } else {
                         communicate(dataOutputStreamClient,"<message>Wrong message</message>",0);
-
+                        dataOutputStreamClient.writeUTF("");
+                        dataOutputStreamServer.flush();
                     }
                 }
-            } catch (IOException | ParserConfigurationException | SAXException | InterruptedException e) {
-                e.printStackTrace();
+            } catch (IOException | ParserConfigurationException | SAXException | InterruptedException ignored) {
 
             }
 
@@ -85,7 +112,6 @@ public class ClientHandler extends Thread {
     }
 
     public String formatMessage(String received) throws ParserConfigurationException, IOException, SAXException {   //Gestire qui eccezione
-
         String message = null;
         int result;
 
@@ -105,11 +131,11 @@ public class ClientHandler extends Thread {
         }catch (NumberFormatException e){
             e.printStackTrace();
         }
-
         if (code == 1) {
             nodes = doc.getElementsByTagName("int");
             element = (Element) nodes.item(0);
             message = getCharacterDataFromElement(element);
+            System.out.println("C'è scritto: " + message);
             try {
                 result = Integer.parseInt(message);
             } catch (NumberFormatException e) {
@@ -119,6 +145,7 @@ public class ClientHandler extends Thread {
             nodes = doc.getElementsByTagName("string");
             element = (Element) nodes.item(0);
             message = getCharacterDataFromElement(element);
+            System.out.println("C'è scritto: " + message);
         } else if (code == 3) {
             nodes = doc.getElementsByTagName("row");
             element = (Element) nodes.item(0);

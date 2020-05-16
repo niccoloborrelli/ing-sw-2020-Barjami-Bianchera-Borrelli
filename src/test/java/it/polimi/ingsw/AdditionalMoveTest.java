@@ -21,7 +21,6 @@ class AdditionalMoveTest {
     }
 
     private void createThreadsTest1(IslandBoard islandBoard) throws InterruptedException {
-
         Thread t5 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -58,11 +57,12 @@ class AdditionalMoveTest {
                 Socket sc;
                 try {
                     sc = islandBoard.requiredChallengerSocket();
-                    islandBoard.getObserver().createClientHandler(sc);
+                    islandBoard.getObserver().createClientHandler();
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                     return;
                 }
+
                 Thread t3 = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -83,8 +83,7 @@ class AdditionalMoveTest {
 
                         Worker worker1 = player.getWorkers().get(0);
                         Worker worker2 = player.getWorkers().get(1);
-                        worker1.setWorkerPlayer(player);
-                        worker2.setWorkerPlayer(player);
+
                         Space finishSpace = islandBoard.getSpace(1, 1);
 
                         worker1.setWorkerSpace(islandBoard.getSpace(0, 0));
@@ -115,42 +114,24 @@ class AdditionalMoveTest {
         server.join();
     }
 
+
+
     public void startClientTest1(IslandBoard islandBoard) throws InterruptedException {
         Thread client = new Thread(new Runnable() {
             @Override
             public void run() {
                 Socket sc;
-                try {
-                    sc = new Socket("localhost",60100);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
+                DataInputStream dataInputStream;
                 DataOutputStream dataOutputStream;
                 try {
+                    sc = new Socket("localhost",60100);
                     dataOutputStream = new DataOutputStream(sc.getOutputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                DataInputStream dataInputStream;
-                try{
                     dataInputStream = new DataInputStream(sc.getInputStream());
-                }catch (IOException e){
-                    e.printStackTrace();
-                    return;
-                }
-
-                try{
                     String message = dataInputStream.readUTF();
                     System.out.println(message);
-                }catch (IOException e){
-                    e.printStackTrace();
-                    return;
-                }
-                try {
                     dataOutputStream.writeUTF("<data>" + "<code>" + "1" + "</code>" + "<int>" + "0" + "</int>" + "</data>");
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     e.printStackTrace();
                     return;
                 }
@@ -159,6 +140,7 @@ class AdditionalMoveTest {
         client.start();
         client.join();
     }
+
 
     /*
     Questo test verifica che se il worker scelto non può muoversi, non viene fatta la richiesta
@@ -209,7 +191,7 @@ class AdditionalMoveTest {
                 Socket sc;
                 try {
                     sc = islandBoard.requiredChallengerSocket();
-                    islandBoard.getObserver().createClientHandler(sc);
+                    islandBoard.getObserver().createClientHandler();
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                     return;
@@ -363,7 +345,7 @@ class AdditionalMoveTest {
                 Socket sc;
                 try {
                     sc = islandBoard.requiredChallengerSocket();
-                    islandBoard.getObserver().createClientHandler(sc);
+                    islandBoard.getObserver().createClientHandler();
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                     return;
@@ -496,6 +478,5 @@ class AdditionalMoveTest {
         client.start();
         client.join();
     }
-
 
 }
