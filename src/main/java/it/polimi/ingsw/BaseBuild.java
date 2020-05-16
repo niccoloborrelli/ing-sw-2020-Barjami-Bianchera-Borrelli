@@ -17,7 +17,7 @@ public class BaseBuild extends BuildAB {
     public void build(Worker worker, Space buildSpace, IslandBoard islandBoard) throws IOException {
         if (worker != null && buildSpace != null)
             upgradeLevel(buildSpace, worker);
-        islandBoard.notifyBuilding(buildSpace);
+        setOtherWorkers(worker);
     }
 
     /**
@@ -40,5 +40,13 @@ public class BaseBuild extends BuildAB {
         if (buildSpace.getLevel() == 4)
             buildSpace.setHasDome(true);
     }
-
+    private void setOtherWorkers(Worker activeWorker){
+        Player player=activeWorker.getWorkerPlayer();
+        for (Worker w:player.getWorkers()) {
+            if(w!=activeWorker){
+            w.setCanBuild(false);
+            w.setCantMove(true);
+            }
+        }
+    }
 }

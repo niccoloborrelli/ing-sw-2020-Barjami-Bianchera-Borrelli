@@ -9,8 +9,6 @@ public class Space {
     private int column;
     private boolean hasDome;
     private int level;
-    private List<Worker> availableMovement;
-    private List<Worker> availableBuilding;
 
     public Space(int row, int column){
         this.occupator = null;
@@ -18,8 +16,6 @@ public class Space {
         this.column = column;
         this.hasDome = false;
         this.level = 0;
-        this.availableBuilding = new ArrayList<Worker>();
-        this.availableMovement = new ArrayList<Worker>();
     }
 
     public Worker getOccupator() {
@@ -61,23 +57,5 @@ public class Space {
     public void setLevel(int level) {
         this.level = level;
     }
-
-    public List<Worker> isAvailableMovement() {
-        return availableMovement;
-    }
-
-    public void resetAvailableMovement() { this.availableMovement = new ArrayList<Worker>(); } //(VERIFICATA)
-
-    public void addAvailableMovement(Worker worker){ this.availableMovement.add(worker); } //(VERIFICATA)
-
-    public List<Worker> isAvailableBuilding() {
-        return availableBuilding;
-    }
-
-    public void resetAvailableBuilding() { this.availableBuilding = new ArrayList<Worker>(); } //(VERIFICATA)
-
-    public void addAvailableBuilding(Worker worker){
-        this.availableBuilding.add(worker);
-    } //(VERIFICATA)
 
 }
