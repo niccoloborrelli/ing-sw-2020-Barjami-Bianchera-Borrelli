@@ -19,12 +19,14 @@ public class Player {
     private StateManager stateManager;
     private String lastReceivedInput;
     private IslandBoard islandBoard;
+    private boolean empty=actionsToPerform.isEmpty();
 
     public Player(Socket sc){
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
         this.socket = sc;
         actionsToPerform=new LinkedList<String>();
+
     }
 
     /**
@@ -155,5 +157,9 @@ public class Player {
 
     public void setIslandBoard(IslandBoard islandBoard) {
         this.islandBoard = islandBoard;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

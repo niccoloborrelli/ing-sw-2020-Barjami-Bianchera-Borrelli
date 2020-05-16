@@ -22,28 +22,12 @@ public class RestrictionState extends State {
      */
     @Override
     public void onStateTransiction() {
-        Boolean hasLost = false;
+        boolean hasLost = false;
         List<Space> []possibleAction=new ArrayList[player.getWorkers().size()];
         String action = player.getActionsToPerform().get(0);
-        if (action.equals(actionType1)) {
-            Restriction.checkAvailableMovement(player);
-            int i=0;
-            for(Worker w:player.getWorkers()) {
-                possibleAction[i].addAll(w.getPossibleMovements());
-                i++;
-            }
-            hasLost = checkForLosing(possibleAction);
-        }
-
-        else if (action.equals(actionType2)) {
-            Restriction.checkAvailableBuilding(player);
-            int i=0;
-            for(Worker w:player.getWorkers()) {
-                possibleAction[i].addAll(w.getPossibleBuilding());
-                i++;
-            }
-            hasLost = checkForLosing(possibleAction);
-        }
+        CheckingUtility.restriction(player,action);
+        possibleAction=CheckingUtility.getLists(player,action);
+        hasLost = checkForLosing(possibleAction);
 
         if(hasLost)
             player.setInGame(false);

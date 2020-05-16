@@ -8,6 +8,7 @@ public class ActionState extends State {
     private static final int workerInInput = 1;
     private static final int rowInInput = 2;
     private static final int columnInInput = 3;
+    private static final int firstIndex=0;
 
     ActionState(Player player) {
         super(player);
@@ -21,11 +22,12 @@ public class ActionState extends State {
     @Override
     public void onStateTransiction() {
         String input=player.getLastReceivedInput();
-        String action=player.getActionsToPerform().get(0);
+        String action=player.getActionsToPerform().get(firstIndex);
         Worker actingWorker=player.getWorkers().get(parseInput(input,workerInInput));
         int row=parseInput(input,rowInInput);
         int column=parseInput(input,columnInInput);
         Space spaceToAct=player.getIslandBoard().getSpace(row,column);
+
         if(action.equals(actionType1)){
             move(actingWorker,spaceToAct);
         }
@@ -41,12 +43,12 @@ public class ActionState extends State {
         int end=0;
         boolean out;
         String tempString=input;
-        for (int i = 0; i < occurrence; i++) {
+        for (int i = firstIndex; i < occurrence; i++) {
             start = tempString.indexOf("-");
             tempString = tempString.substring(start+1);
             end = tempString.indexOf("-");
         }
-        return Integer.parseInt(tempString.substring(0,end));
+        return Integer.parseInt(tempString.substring(firstIndex,end));
     }
 
     /**

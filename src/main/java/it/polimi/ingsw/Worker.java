@@ -16,6 +16,11 @@ public class Worker {
     private Space lastSpaceBuilt;
     private List<Space> possibleMovements;
     private List<Space> possibleBuilding;
+    private boolean cantMoveFirstSpace;
+    private boolean cantBuildFirstSpace;
+    private boolean cantBuildPerimeter;
+    private boolean cantBuildDome;
+    private boolean cantBuildUnder;
 
     public Worker() {
         cantMoveUp=false;
@@ -25,6 +30,9 @@ public class Worker {
         cantBuild=true;
         inGame=true;
         movedThisTurn=false;
+        cantBuildUnder=true;
+        cantBuildDome=false;
+        cantBuildPerimeter=false;
     }
 
     //metodo da richiamare alla fine di ogni turno su worker
@@ -36,6 +44,10 @@ public class Worker {
         cantBuild=true;
         inGame=true;
         movedThisTurn=false;
+        cantBuildDome=false;
+        cantBuildPerimeter=false;
+        cantBuildFirstSpace=false;
+        cantMoveFirstSpace=false;
     }
 
     public Player getWorkerPlayer() {
@@ -140,6 +152,46 @@ public class Worker {
 
     public void setPossibleBuilding(List<Space> possibleBuilding) {
         this.possibleBuilding = possibleBuilding;
+    }
+
+    public boolean isCantMoveFirstSpace() {
+        return cantMoveFirstSpace;
+    }
+
+    public void setCantMoveFirstSpace(boolean cantMoveFirstSpace) {
+        this.cantMoveFirstSpace = cantMoveFirstSpace;
+    }
+
+    public boolean isCantBuildFirstSpace() {
+        return cantBuildFirstSpace;
+    }
+
+    public void setCantBuildFirstSpace(boolean cantBuildFirstSpace) {
+        this.cantBuildFirstSpace = cantBuildFirstSpace;
+    }
+
+    public boolean isCantBuildPerimeter() {
+        return cantBuildPerimeter;
+    }
+
+    public void setCantBuildPerimeter(boolean cantBuildPerimeter) {
+        this.cantBuildPerimeter = cantBuildPerimeter;
+    }
+
+    public boolean isCantBuildDome() {
+        return cantBuildDome;
+    }
+
+    public void setCantBuildDome(boolean cantBuildDome) {
+        this.cantBuildDome = cantBuildDome;
+    }
+
+    public boolean isCantBuildUnder() {
+        return cantBuildUnder;
+    }
+
+    public void setCantBuildUnder(boolean cantBuildUnder) {
+        this.cantBuildUnder = cantBuildUnder;
     }
 }
 

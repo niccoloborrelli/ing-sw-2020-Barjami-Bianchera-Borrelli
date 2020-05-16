@@ -14,7 +14,6 @@ public class ReadyForActionState extends State {
         super(player);
     }
 
-
     /**
      * This state permits to perform a change in the state of the game when the player hits it with an input
      * @param input the input wich produce a change in the state of the fsm
@@ -30,19 +29,7 @@ public class ReadyForActionState extends State {
     public void onStateTransiction() {
         List <Space>[] possibleAction=new ArrayList[player.getWorkers().size()];
         String action = player.getActionsToPerform().get(0);
-        int i=0;
-        if (action.equals(actionType1)) {
-            for(Worker w:player.getWorkers()) {
-                possibleAction[i].addAll(w.getPossibleMovements());
-                i++;
-            }
-        }
-        else if (action.equals(actionType2)) {
-            for(Worker w:player.getWorkers()) {
-                possibleAction[i].addAll(w.getPossibleBuilding());
-                i++;
-            }
-        }
+        possibleAction=CheckingUtility.getLists(player,action);
         setAllowedInputs(possibleAction);
     }
 
