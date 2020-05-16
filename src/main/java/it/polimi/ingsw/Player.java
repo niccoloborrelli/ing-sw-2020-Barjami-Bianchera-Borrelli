@@ -13,7 +13,6 @@ public class Player {
     private List<Worker> workers;
     private boolean inGame;
     private WinConditionAB winCondition;
-    private Socket socket;
     private State state;
     private List<String> actionsToPerform;
     private StateManager stateManager;
@@ -21,10 +20,9 @@ public class Player {
     private IslandBoard islandBoard;
     private boolean empty=actionsToPerform.isEmpty();
 
-    public Player(Socket sc){
+    public Player(){
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
-        this.socket = sc;
         actionsToPerform=new LinkedList<String>();
 
     }
@@ -145,10 +143,6 @@ public class Player {
 
     public void setWinCondition(WinConditionAB winCondition) {
         this.winCondition = winCondition;
-    }
-
-    public Socket getSocket(){
-        return socket;
     }
 
     public IslandBoard getIslandBoard() {

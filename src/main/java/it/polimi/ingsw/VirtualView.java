@@ -33,7 +33,9 @@ public class VirtualView{
      */
 
     public String getString(DataInputStream dataInputStream) throws IOException {
+        System.out.println("Attendo il messaggio");
         String message = dataInputStream.readUTF();
+        System.out.println("Ho ricevuto il messaggio");
         return message;
     }
 

@@ -27,8 +27,10 @@ public class PushWorkerRestriction extends PowerRestrictionAB{
     public void restrictionEffectMovement(Player player, IslandBoard islandBoard) {
         this.restrictionAB.restrictionEffectMovement(player,islandBoard); //setto i movimenti base
 
-        for (Worker worker : player.getWorkers())
+        for (Worker worker : player.getWorkers()){
             setMinotaurMovement(worker, islandBoard);
+        }
+
     }
 
     /**
@@ -40,9 +42,16 @@ public class PushWorkerRestriction extends PowerRestrictionAB{
         for (int i = worker.getWorkerSpace().getRow() - 1; i <= worker.getWorkerSpace().getRow() + 1; i++)
             for (int j = worker.getWorkerSpace().getColumn() - 1; j <= worker.getWorkerSpace().getColumn() + 1; j++){
                 if ((0 <= i && i < 5) && (0 <= j && j < 5) && (i!=worker.getWorkerSpace().getRow() || j != worker.getWorkerSpace().getColumn()))
-                    if (islandBoard.getSpace(i, j).getLevel() - worker.getWorkerSpace().getLevel() < 2 && !islandBoard.getSpace(i, j).HasDome() && islandBoard.getSpace(i,j).getOccupator().getWorkerPlayer() != worker.getWorkerPlayer())
-                         if(spaceBehind(worker.getWorkerSpace(),islandBoard.getSpace(i, j), islandBoard) != null)
-                             islandBoard.getSpace(i,j).addAvailableMovement(worker);
+                    if (islandBoard.getSpace(i, j).getLevel() - worker.getWorkerSpace().getLevel() < 2 && !islandBoard.getSpace(i, j).HasDome()) {
+                        if (islandBoard.getSpace(i, j).getOccupator() == null) {
+                            islandBoard.getSpace(i, j).addAvailableMovement(worker);
+                        } else if (!worker.getWorkerPlayer().equals(islandBoard.getSpace(i, j).getOccupator().getWorkerPlayer())) {
+                            if (spaceBehind(worker.getWorkerSpace(), islandBoard.getSpace(i, j), islandBoard) != null) {
+                                islandBoard.getSpace(i, j).addAvailableMovement(worker);
+                            }
+                        }
+
+                    }
             }
     }
 
@@ -78,7 +87,7 @@ public class PushWorkerRestriction extends PowerRestrictionAB{
 
         if(behindColumn < 0 || behindColumn > 4 || behindRow < 0 || behindRow > 4)
             return null;
-        else if(islandBoard.getSpace(behindRow, behindColumn).getOccupator() != null)
+        else if(islandBoard.getSpace(behindRow, behindColumn).getOccupator() != null || islandBoard.getSpace(behindRow,behindColumn).HasDome())
             return null;
 
         return islandBoard.getSpace(behindRow, behindColumn);

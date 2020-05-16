@@ -25,7 +25,7 @@ public class RestrictionState extends State {
         boolean hasLost = false;
         List<Space> []possibleAction=new ArrayList[player.getWorkers().size()];
         String action = player.getActionsToPerform().get(0);
-        CheckingUtility.restriction(player,action);
+        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
         possibleAction=CheckingUtility.getLists(player,action);
         hasLost = checkForLosing(possibleAction);
 

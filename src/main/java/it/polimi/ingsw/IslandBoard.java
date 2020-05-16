@@ -14,7 +14,7 @@ public  class  IslandBoard {
     /**
      * IslandBoard constructor that initialize a 5x5 array of space
      */
-    public IslandBoard() throws IOException {
+    public IslandBoard() {
         spaces = new Space[dim][dim];
         for(int i = 0; i < dim; i++)
             for(int j = 0; j < dim; j++)
