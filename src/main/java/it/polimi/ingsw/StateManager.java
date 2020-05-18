@@ -25,6 +25,7 @@ public class StateManager {
     private State current_state;
     private HashMap<String, State> stateHashMap;
     private HashMap<State, List<Line>> table;
+    private TurnManager turnManager;
 
     /*
     NON è POSSIBILE AVERE LO STESSO STATO DI PARTENZA PER STATI DI ARRIVO CON UGUALE PRIORITà
@@ -317,8 +318,15 @@ public class StateManager {
                 removeSpecifiedCondition(current_state,line.getFinishState(),line.getConditions());
             }
         }
-        current_state.onStateTransiction();
+        current_state.onStateTransition();
     }
 
+    public TurnManager getTurnManager() {
+        return turnManager;
+    }
+
+    public void setTurnManager(TurnManager turnManager) {
+        this.turnManager = turnManager;
+    }
 }
 

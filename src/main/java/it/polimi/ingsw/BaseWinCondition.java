@@ -16,7 +16,6 @@ public class BaseWinCondition extends WinConditionAB {
         if(worker != null)
             if(startLevel == 2 && worker.getWorkerSpace().getLevel() == 3){
                 setHasWon(true);
-                islandBoard.notifyWin(worker.getWorkerPlayer().getSocket());
             }
     }
 

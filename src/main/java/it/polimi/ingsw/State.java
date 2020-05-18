@@ -29,12 +29,14 @@ public abstract class State {
      * @param input the input wich produce a change in the state of the fsm
      * @throws IOException
      */
-    public abstract void onInput(String input) throws IOException;
+    public void onInput(String input){
+        //inserisco on input base
+    }
 
     /**
      * a method to be invoked everytime the player enters this state
      */
-    public abstract void onStateTransiction();
+    public abstract void onStateTransition();
 
     /**
      * @return a list of the inputs that may modify the state of the FSM

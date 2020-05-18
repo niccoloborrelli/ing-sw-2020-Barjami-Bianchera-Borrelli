@@ -2,39 +2,43 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
-public class ActionState extends State {
+public class ActionState extends AbstractActionState {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
     private static final int workerInInput = 1;
     private static final int rowInInput = 2;
     private static final int columnInInput = 3;
     private static final int firstIndex=0;
+    private Worker actingWorker;
+    private Space spaceToAct;
+    private Space startingSpace;
 
     ActionState(Player player) {
         super(player);
     }
 
     @Override
-    public void onInput(String input) throws IOException {
-
-    }
-
-    @Override
-    public void onStateTransiction() {
+    public void onStateTransition() {
         String input=player.getLastReceivedInput();
         String action=player.getActionsToPerform().get(firstIndex);
         Worker actingWorker=player.getWorkers().get(parseInput(input,workerInInput));
         int row=parseInput(input,rowInInput);
         int column=parseInput(input,columnInInput);
         Space spaceToAct=player.getIslandBoard().getSpace(row,column);
+        this.actingWorker=actingWorker;
+        this.spaceToAct=spaceToAct;
+        this.startingSpace=actingWorker.getWorkerSpace();
 
-        if(action.equals(actionType1)){
-            move(actingWorker,spaceToAct);
+        if(spaceToAct.getOccupator()==null) {
+            if (action.equals(actionType1)) {
+                move(actingWorker, spaceToAct);
+            } else if (action.equals((actionType2))) {
+                build(actingWorker, spaceToAct);
+            }
+
+            game.checkForWin(); //LA CHECK FOR WIN LA FACCIO QUI
+            player.getStateManager().setNextState(this);
         }
-        else if(action.equals((actionType2))){
-            build(actingWorker,spaceToAct);
-        }
-        player.getStateManager().setNextState();
     }
 
     private int parseInput(String input,int occurrence){
@@ -57,11 +61,14 @@ public class ActionState extends State {
      * @param finishSpace is the final space of the worker
      */
     private void move(Worker movingWorker,Space finishSpace){
-        movingWorker.setCantBuild(false);
-        Space startSpace = movingWorker.getWorkerSpace();
-        movingWorker.setLastSpaceOccupied(movingWorker.getWorkerSpace());
-        changeSpace(movingWorker, finishSpace);
-        setOtherWorkers(movingWorker);
+        if(finishSpace.getOccupator()==null){
+            player.removeAction();
+            movingWorker.setMovedThisTurn(true);
+            movingWorker.setCantBuild(false);
+            movingWorker.setLastSpaceOccupied(movingWorker.getWorkerSpace());
+            changeSpace(movingWorker, finishSpace);
+            setOtherWorkers(movingWorker);
+        }
     }
 
     /**
@@ -76,6 +83,7 @@ public class ActionState extends State {
     }
 
     private void build(Worker buildingWorker,Space finishSpace){
+        player.removeAction();
         buildingWorker.setCantMove(false);
         upgradeLevel(finishSpace, buildingWorker);
         setOtherWorkers(buildingWorker);
@@ -111,4 +119,15 @@ public class ActionState extends State {
         }
     }
 
+    public Worker getActingWorker() {
+        return actingWorker;
+    }
+
+    public Space getSpaceToAct() {
+        return spaceToAct;
+    }
+
+    public Space getStartingSpace(){
+        return startingSpace;
+    }
 }

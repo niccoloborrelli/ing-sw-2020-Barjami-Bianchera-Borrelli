@@ -21,14 +21,18 @@ public class ReadyForActionState extends State {
      * @throws IOException
      */
     @Override
-    public void onInput(String input) throws IOException {
+    public void onInput(String input){
+        if(allowedInputs.contains(input)) {
             player.setLastReceivedInput(input);
-            player.getStateManager().setNextState();
+            player.getStateManager().setNextState(this);
+        }
+        else
+            player.getStateManager().notifyError();
     }
 
     @Override
-    public void onStateTransiction() {
-        List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>;
+    public void onStateTransition() {
+        List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
         String action = player.getActionsToPerform().get(0);
         possibleAction = CheckingUtility.getLists(player,action);
         setAllowed(possibleAction);

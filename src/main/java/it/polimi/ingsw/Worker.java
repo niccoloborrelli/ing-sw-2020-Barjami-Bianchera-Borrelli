@@ -22,6 +22,8 @@ public class Worker {
     private boolean cantBuildDome;
     private boolean cantBuildUnder;
 
+
+
     public Worker() {
         cantMoveUp=false;
         cantMove=false;
@@ -193,5 +195,7 @@ public class Worker {
     public void setCantBuildUnder(boolean cantBuildUnder) {
         this.cantBuildUnder = cantBuildUnder;
     }
+
+
 }
 

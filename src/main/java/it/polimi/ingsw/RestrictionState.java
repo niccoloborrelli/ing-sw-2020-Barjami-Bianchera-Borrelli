@@ -12,18 +12,13 @@ public class RestrictionState extends State {
         super(player);
     }
 
-    @Override
-    public void onInput(String input) throws IOException {
-
-    }
-
     /**
      * in this method i set the lists of available building or movement of worker and if these empty i set player.haslost at true
      */
     @Override
-    public void onStateTransiction() {
+    public void onStateTransition() {
         boolean hasLost = false;
-        List<Space> []possibleAction=new ArrayList[player.getWorkers().size()];
+        List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
         String action = player.getActionsToPerform().get(0);
         CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
         possibleAction=CheckingUtility.getLists(player,action);
@@ -32,7 +27,7 @@ public class RestrictionState extends State {
         if(hasLost)
             player.setInGame(false);
 
-        player.getStateManager().setNextState(); //se ho perso richiamo il stateManager perche' cambi lo stato
+        player.getStateManager().setNextState(this); //se ho perso richiamo il stateManager perche' cambi lo stato
     }
 
     /**
@@ -40,9 +35,9 @@ public class RestrictionState extends State {
      * @param possibleActions are the possible actions a player can make, if this is 0 the method actually return true
      * @return true: if the player has lost, false: if the player hasn't lost (has at least one possible action to perform)
      */
-    private boolean checkForLosing(List[] possibleActions) {
-        for (int i = 0; i < possibleActions.length; i++) {
-            if (possibleActions[i].size() != 0)
+    private boolean checkForLosing(List<ArrayList<Space>> possibleActions) {
+        for (ArrayList<Space> spaceList : possibleActions) {
+            if (spaceList.size()>0)
                 return false;
         }
         player.setInGame(false);

@@ -50,7 +50,6 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
     private void checkHasWonJump(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException { //(VERIFICATA)
         if(startLevel - worker.getWorkerSpace().getLevel() >= numberLevels) {
             setHasWon(true);
-            islandBoard.notifyWin(worker.getWorkerPlayer().getSocket());
         }
     }
 
