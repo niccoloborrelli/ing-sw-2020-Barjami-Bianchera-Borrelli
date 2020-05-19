@@ -18,7 +18,7 @@ public class Player {
     private StateManager stateManager;
     private String lastReceivedInput;
     private IslandBoard islandBoard;
-    private boolean empty=actionsToPerform.isEmpty();
+    private boolean empty;
 
     public Player(){
         this.workers = new ArrayList<Worker>();
@@ -154,6 +154,6 @@ public class Player {
     }
 
     public boolean isEmpty() {
-        return empty;
+        return actionsToPerform.isEmpty();
     }
 }

@@ -274,20 +274,52 @@ public class StateManager {
     AREA METODI --CHANGE--
      */
 
+    /**
+     * Change priority in one specific line.
+     * @param startState is start state.
+     * @param finishState is arrival state.
+     * @param conditions is conditions in which change priority
+     * @param newPriority is the new value of priority.
+     */
+
     public void changePriority(State startState, State finishState, HashMap<Method,Boolean> conditions, int newPriority){
 
         searchUnique(startState,finishState,conditions).setPriority(newPriority);
     }
+
+    /**
+     * Change conditions in one specific line.
+     * @param startState is start state.
+     * @param finishState is arrival state.
+     * @param oldConditions is conditions to change.
+     * @param newConditions is new conditions.
+     */
 
     public void changeConditions(State startState, State finishState, HashMap<Method,Boolean> oldConditions , HashMap<Method,Boolean> newConditions){
 
         searchUnique(startState,finishState,oldConditions).setConditions(newConditions);
     }
 
+    /**
+     * Change arrival state in one specific line.
+     * @param startState is start state.
+     * @param oldFinishState is old arrival state.
+     * @param conditions is conditions of line.
+     * @param newFinishState is new arrival state.
+     */
+
     public void changeFinishState(State startState, State oldFinishState, HashMap<Method,Boolean> conditions, State newFinishState){
 
         searchUnique(startState,oldFinishState,conditions).setFinishState(newFinishState);
     }
+
+    /**
+     * Permits to find only one specific line determined by: start state, arrival state and conditions.
+     * @param startState is start state.
+     * @param finishState is arrival state.
+     * @param conditions is condition of state change.
+     * @return line searched.
+     */
 
     private Line searchUnique(State startState, State finishState, HashMap<Method,Boolean> conditions){
         List<Line> lineList = table.get(startState);
@@ -321,6 +353,44 @@ public class StateManager {
         current_state.onStateTransition();
     }
 
+
+    /*
+    AREA METODO -- SORT FOR PRIORITY
+     */
+
+    /**
+     * Sorts for priority this given list.
+     * @param listToOrder is list to order.
+     */
+    public void sortForPriority(List<Line> listToOrder){
+        Comparator<Line> comparator = comparatorLine();
+
+        listToOrder.sort(comparator);
+    }
+
+    /**
+     * Creates a priority comparator between Line
+     * @return a priority comparator of lines.
+     */
+    private Comparator<Line> comparatorLine(){
+        Comparator<Line> comparator = new Comparator<Line>() {
+            @Override
+            public int compare(Line o1, Line o2) {
+                int firstPriority = o1.getPriority();
+                int secondPriority = o2.getPriority();
+
+                if(firstPriority>secondPriority)
+                    return 1;
+                else if(firstPriority==secondPriority)
+                    return 0;
+                else
+                    return -1;
+            }
+        };
+
+        return comparator;
+    }
+
     public TurnManager getTurnManager() {
         return turnManager;
     }
@@ -329,4 +399,5 @@ public class StateManager {
         this.turnManager = turnManager;
     }
 }
+
 
