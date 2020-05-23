@@ -27,7 +27,10 @@ public  class  IslandBoard {
      * @return the space with coordinates row and column
      */
     public Space getSpace(int row, int column){
-        return spaces[row][column];
+        if(row>=0 && row<5 && column>=0 && column<5)
+            return spaces[row][column];
+        else
+            return null;
     }
 }
 

@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.*;
+
 public class AdditionalBuildFlow extends FlowChanger {
 
     /*
@@ -22,12 +24,7 @@ public class AdditionalBuildFlow extends FlowChanger {
     private boolean noPerimeter;
     private boolean beforeMove;
     private boolean noDome;
-    private static final String actionType = "build";
-    private final int MINROW = 0;
-    private final int MAXROW = 4;
-    private final int MINCOLUMN = 0;
-    private final int MAXCOLUMN = 4;
-    private static final int MAXIMUMLEVEL = 3;
+
 
     /**
      * @param typeBuild indicates which power is activated
@@ -48,26 +45,27 @@ public class AdditionalBuildFlow extends FlowChanger {
         }
     }
 
+
     /**
      * This method change the flow of the action to perform by a player
      */
     @Override
     public void changeFlow(Player player) {
         if(beforeMove){
-            player.getActionsToPerform().add(0, actionType);
+            player.getActionsToPerform().add(0, actionTypeB);
             for (Worker w: player.getWorkers()) {
                 w.setCantMoveUp(true);
             }
             return;
         }
 
-        player.getActionsToPerform().add(actionType);
+        player.getActionsToPerform().add(actionTypeB);
         if(noInitialSpace){
             if(player.getWorkers().get(0).isChosen())
                 player.getWorkers().get(0).setCantBuildFirstSpace(true);
             else
                 player.getWorkers().get(1).setCantBuildFirstSpace(true);
-        } else if (noPerimeter) {
+        } else if (noPerimeter){
             if(player.getWorkers().get(0).isChosen())
                 player.getWorkers().get(0).setCantBuildPerimeter(true);
             else
@@ -87,7 +85,7 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public boolean isUsable(Player player) {
         if(beforeMove){
-            CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType);
+            CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionTypeB);
 
             return (player.getWorkers().get(0).getPossibleBuilding().size() > 0 ||
                     player.getWorkers().get(1).getPossibleBuilding().size() > 0);
@@ -99,7 +97,7 @@ public class AdditionalBuildFlow extends FlowChanger {
         else
             workerChosen = player.getWorkers().get(1);
 
-        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType);
+        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionTypeB);
         List<Space> building = new ArrayList<>(workerChosen.getPossibleBuilding());
 
         if(noInitialSpace){

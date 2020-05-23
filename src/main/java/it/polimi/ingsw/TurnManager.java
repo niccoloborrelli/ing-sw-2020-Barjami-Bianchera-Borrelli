@@ -1,6 +1,5 @@
 package it.polimi.ingsw;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ public class TurnManager {
     private List<Player> players;
     private List<String> notAllowedNames;
     private List<String> allowedColors;
-    private List<String> availableGods;
 
     public TurnManager(){
         allowedColors = new ArrayList<>();
@@ -24,7 +22,6 @@ public class TurnManager {
         allowedColors.add("cyan");
         notAllowedNames = new ArrayList<>();
         players = new ArrayList<>();
-        availableGods=new ArrayList<String>();
     }
 
     public List<Player> getPlayers() {
@@ -109,25 +106,5 @@ public class TurnManager {
             return true;
         }
         return false;
-    }
-
-    public void addGod(String s){
-        availableGods.add(s);
-    }
-
-    public void setNotAllowedNames(List<String> notAllowedNames) {
-        this.notAllowedNames = notAllowedNames;
-    }
-
-    public void setAllowedColors(List<String> allowedColors) {
-        this.allowedColors = allowedColors;
-    }
-
-    public List<String> getAvailableGods() {
-        return availableGods;
-    }
-
-    public void setAvailableGods(List<String> availableGods) {
-        this.availableGods = availableGods;
     }
 }
