@@ -196,6 +196,11 @@ public class Worker {
         this.cantBuildUnder = cantBuildUnder;
     }
 
-
+    public boolean isCantPush(){
+        return workerPlayer.isCantPush();
+    }
+    public boolean isCantSwap(){
+        return workerPlayer.isCantSwap();
+    }
 }
 

@@ -1,12 +1,14 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+
 public class NameSettingState extends State {
     NameSettingState(Player player) {
         super(player);
     }
 
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         boolean nameSetted=false;
         String input=visitor.visit(this);
         TurnManager turnManager=player.getStateManager().getTurnManager();
@@ -19,11 +21,15 @@ public class NameSettingState extends State {
             }
         }
         if(nameSetted==false)
-            notifyString();
+            player.notify(1);
     }
 
     @Override
     public void onStateTransition() {
         // player.getStateManager().notifyState();
+    }
+
+    public String toString(){
+        return "NameSettingState";
     }
 }

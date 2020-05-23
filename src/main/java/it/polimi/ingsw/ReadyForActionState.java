@@ -23,18 +23,18 @@ public class ReadyForActionState extends State {
      * @throws IOException
      */
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         SpaceInput input=visitor.visit(this);
         if(inputAcceptable(input)){
             player.setLastReceivedInput(input);
             player.getStateManager().setNextState(player);
         }
         else
-            player.getStateManager().notifyErorr();
+            player.notify(1);
     }
 
     @Override
-    public void onStateTransition() {
+    public void onStateTransition() throws IOException {
         boolean hasLost = false;
         List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
         String action = player.getActionsToPerform().get(0);
@@ -43,7 +43,7 @@ public class ReadyForActionState extends State {
         hasLost = checkForLosing(possibleAction);
         if(hasLost) {
             player.setInGame(false);
-            player.getStateManager().setNextState(this); //se ho perso richiamo il stateManager perche' cambi lo stato
+            player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
         }//fine della parte della fu-RestrictionState
         else
             setAllowedSpaces();
@@ -65,7 +65,6 @@ public class ReadyForActionState extends State {
                     allowed.add(new SpaceInput(tempWorker,sp));
             }
         }
-
         allowedSpaces=allowed;
     }
 

@@ -150,10 +150,10 @@ public class CheckingUtility {
      */
 
     private static void addSpecifiedMove(Space space, List<Space> spaceList, Worker worker, IslandBoard islandBoard){
-        if(!worker.isCantPush){
+        if(!worker.isCantPush()){
             canMovePushing(space, spaceList, worker.getWorkerSpace(), islandBoard);
         }
-        if(!worker.isCantSwap){
+        if(!worker.isCantSwap()){
             canMoveSwapping(space, spaceList, worker);
         }
     }

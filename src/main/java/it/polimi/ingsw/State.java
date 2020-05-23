@@ -29,7 +29,7 @@ public abstract class State {
      * @param input the input wich produce a change in the state of the fsm
      * @throws IOException
      */
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         //inserisco on input base
     }
 

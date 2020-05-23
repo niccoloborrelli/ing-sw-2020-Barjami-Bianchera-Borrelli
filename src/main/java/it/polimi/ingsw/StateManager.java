@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -343,7 +344,7 @@ public class StateManager {
      * @param obRef is class in which are invoked method to control conditions
      */
 
-    public void setNextState(Object obRef){
+    public void setNextState(Object obRef) throws IOException {
         List<Line> stateLines = table.get(current_state);
 
         for(Line line: stateLines){
@@ -402,6 +403,11 @@ public class StateManager {
     public void setTurnManager(TurnManager turnManager) {
         this.turnManager = turnManager;
     }
+
+    public State getState(String state){
+        return stateHashMap.get(state);
+    }
+
 }
 
 

@@ -1,11 +1,13 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
+
 public class ColorSettingState extends State {
     ColorSettingState(Player player) {
         super(player);
     }
 
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         boolean colorSetted=false;
         String input=visitor.visit(this);
         TurnManager turnManager=player.getStateManager().getTurnManager();
@@ -17,12 +19,16 @@ public class ColorSettingState extends State {
             }
         }
         if(colorSetted==false)
-            notifyString();
+            player.notify(1);
     }
 
 
     @Override
     public void onStateTransition() {
        // player.getStateManager().notifyState();
+    }
+
+    public String toString(){
+        return "ColorSettingState";
     }
 }

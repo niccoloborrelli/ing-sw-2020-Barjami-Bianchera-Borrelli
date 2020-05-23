@@ -12,6 +12,7 @@ public class TurnManager {
     private List<Player> players;
     private List<String> notAllowedNames;
     private List<String> allowedColors;
+    private List<String> availableGods;
 
     public TurnManager(){
         allowedColors = new ArrayList<>();
@@ -106,5 +107,31 @@ public class TurnManager {
             return true;
         }
         return false;
+    }
+
+    public void setNotAllowedNames(List<String> notAllowedNames) {
+        this.notAllowedNames = notAllowedNames;
+    }
+
+    public void setAllowedColors(List<String> allowedColors) {
+        this.allowedColors = allowedColors;
+    }
+
+    public List<String> getAvailableGods() {
+        return availableGods;
+    }
+
+    public void setAvailableGods(List<String> availableGods) {
+        this.availableGods = availableGods;
+    }
+
+    public void addGod(String godName){
+        availableGods.add(godName);
+    }
+
+    public void removeGod(String godName){
+        if(availableGods.contains(godName)){
+            availableGods.remove(godName);
+        }
     }
 }

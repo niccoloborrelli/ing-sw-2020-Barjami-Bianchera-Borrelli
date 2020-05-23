@@ -18,4 +18,8 @@ public class Visitor {
     public String visit(ColorSettingState colorSettingState){
         return this.stringInput;
     }
+    public String visit(GodChoice godChoice){
+        return this.stringInput;
+    }
 }
+

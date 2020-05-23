@@ -6,34 +6,45 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Player {
+public class Player implements Observed{
     private String playerName;
     private String playerColor;
     private String playerGod;
     private List<Worker> workers;
-    private boolean inGame;
     private WinConditionAB winCondition;
     private State state;
     private List<String> actionsToPerform;
     private StateManager stateManager;
     private SpaceInput lastReceivedInput;
     private IslandBoard islandBoard;
+
+    private boolean powerActivated;
+    private boolean powerNotUsable;
     private boolean empty;
+    private boolean inGame;
+    private boolean cantSwap;
+    private boolean cantPush;
+    private boolean powerUsed;
+    private boolean domeEveryWhere;
+    private Controller controller;
 
     public Player(){
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
         actionsToPerform=new LinkedList<String>();
-
+        cantSwap=true;
+        cantPush=true;
+        powerUsed=false;
+        domeEveryWhere=false;
     }
 
     /**
      * calls the onInput of the state in wich the player is set
-     * @param input the input wich will make the state of player change
+     * @param visitor the input wich will make the state of player change
      * @throws IOException
      */
-    public void onInput(String input) throws IOException {
-            state.onInput(input);
+    public void onInput(Visitor visitor) throws IOException {
+            state.onInput(visitor);
     }
 
     public void setActionsToPerform(List<String> actions){
@@ -97,6 +108,12 @@ public class Player {
         return state;
     }
 
+    public boolean hasActionsToPerform(){
+        if(actionsToPerform.size()==0)
+            return false;
+        return true;
+    }
+
     public void setState(State state) {
         this.state = state;
     }
@@ -155,5 +172,90 @@ public class Player {
 
     public boolean isEmpty() {
         return actionsToPerform.isEmpty();
+    }
+
+    public void setWorkers(List<Worker> workers) {
+        this.workers = workers;
+    }
+
+    public void setEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public boolean isCantSwap() {
+        return cantSwap;
+    }
+
+    public void setCantSwap(boolean cantSwap) {
+        this.cantSwap = cantSwap;
+    }
+
+    public boolean isCantPush() {
+        return cantPush;
+    }
+
+    public void setCantPush(boolean cantPush) {
+        this.cantPush = cantPush;
+    }
+
+    public boolean isPowerUsed() {
+        return powerUsed;
+    }
+
+    public void setPowerUsed(boolean powerUsed) {
+        this.powerUsed = powerUsed;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    @Override
+    public void notify(SpaceInput spaceInput, String action) {
+        controller.update(spaceInput,action);
+    }
+
+    @Override
+    public void notify(int code) {
+        controller.update(code);
+    }
+
+    public boolean isDomeEveryWhere() {
+        return domeEveryWhere;
+    }
+
+    public void setDomeEveryWhere(boolean domeEveryWhere) {
+        this.domeEveryWhere = domeEveryWhere;
+    }
+
+    public boolean isPowerNotUsable() {
+        return powerNotUsable;
+    }
+
+    public void setPowerNotUsable(boolean powerNotUsable) {
+        this.powerNotUsable = powerNotUsable;
+    }
+
+    public boolean isPowerActivated() {
+        return powerActivated;
+    }
+
+    public void setPowerActivated(boolean powerActivated) {
+        this.powerActivated = powerActivated;
+    }
+
+    public boolean hasMovesToDo(){
+        if(actionsToPerform.contains("move"))
+            return false;
+        return  true;
+    }
+    public boolean hasBuildsToDo(){
+        if(actionsToPerform.contains("build"))
+            return false;
+        return  true;
     }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import static it.polimi.ingsw.DefinedValues.*;
 
 public class OnMoveUpDecorator extends ActionStateDecorator {
+    private final static String DENYUPPERMOVE="denyUpperMove";
+    private static final String ACTIONTYPE1="move";
     private AbstractActionState decorated;
 
     OnMoveUpDecorator(AbstractActionState decorated,String effect) {
@@ -11,7 +13,7 @@ public class OnMoveUpDecorator extends ActionStateDecorator {
     }
 
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         decorated.onInput(visitor);
     }
 

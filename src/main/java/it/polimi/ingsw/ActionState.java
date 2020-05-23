@@ -22,15 +22,17 @@ public class ActionState extends AbstractActionState {
         this.spaceToAct=input.getSpace();
         this.startingSpace=actingWorker.getWorkerSpace();
 
-        if(spaceToAct.getOccupator()==null) {
-            if (action.equals(actionType1)) {
-                move(actingWorker, spaceToAct);
-            } else if (action.equals((actionType2))) {
-                build(actingWorker, spaceToAct);
-            }
-
+        if(spaceToAct.getOccupator()==null&&action.equals(actionType1)) {
+            move(actingWorker, spaceToAct);
+            player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();
-            player.getStateManager().setNextState(this);
+            player.getStateManager().setNextState(player);
+        }
+        else if(actionType2.equals(actionType2)){
+            build(actingWorker, spaceToAct);
+            player.notify(input,action);
+            player.getStateManager().getTurnManager().checkWin();
+            player.getStateManager().setNextState(player);
         }
     }
 
@@ -40,14 +42,12 @@ public class ActionState extends AbstractActionState {
      * @param finishSpace is the final space of the worker
      */
     private void move(Worker movingWorker,Space finishSpace){
-        if(finishSpace.getOccupator()==null){
             player.removeAction();
             movingWorker.setMovedThisTurn(true);
             movingWorker.setCantBuild(false);
             movingWorker.setLastSpaceOccupied(movingWorker.getWorkerSpace());
             changeSpace(movingWorker, finishSpace);
             setOtherWorkers(movingWorker);
-        }
     }
 
     /**
@@ -108,5 +108,9 @@ public class ActionState extends AbstractActionState {
 
     public Space getStartingSpace(){
         return startingSpace;
+    }
+
+    public String toString(){
+        return "ActionState";
     }
 }

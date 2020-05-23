@@ -25,20 +25,24 @@ public class PowerActivationState extends State {
      * @throws IOException
      **/
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         String input=visitor.visit(this);
         if(allowedInputs.contains(input)){
+            player.setPowerUsed(true);
+
             if (input.equals(activatePower)) {
+                player.setPowerActivated(true);
                 flowPower.changeFlow(player);
             }
-            player.getStateManager().setNextState(this);
+            player.getStateManager().setNextState(player);
+
         }
         else
-            player.getStateManager().notifyError();
+            player.notify(1);
     }
 
     @Override
-    public void onStateTransition() {
+    public void onStateTransition() throws IOException {
         List<String> allowedInputs=new <String>ArrayList();
         boolean usable=flowPower.isUsable(player);
         if(usable){
@@ -46,8 +50,11 @@ public class PowerActivationState extends State {
             allowedInputs.add(dontActivatePower);
             setAllowedInputs(allowedInputs);
         }
-        else
-            player.getStateManager().setNextState(this);
+        else{
+            player.setPowerNotUsable(true);
+            player.getStateManager().setNextState(player);
+
+        }
     }
 
     public String toString(){

@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class GodSetState extends State {
     }
 
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         String input=visitor.visit(this);
         if(allowedInputs.contains(input)){
             turnManager.addGod(input);
@@ -21,7 +22,7 @@ public class GodSetState extends State {
             numberOfGodsReceived++;
         }
         else
-            notifyError();
+            player.notify(1);
 
         if(numberOfGodsReceived==numberOfGodsRequired)
             player.getStateManager().setNextState(player);
@@ -34,5 +35,9 @@ public class GodSetState extends State {
         turnManager=player.getStateManager().getTurnManager();
         numberOfGodsReceived=0;
         numberOfGodsRequired=player.getStateManager().getTurnManager().getPlayers().size();
+    }
+
+    public String toString(){
+        return "GodSetState";
     }
 }

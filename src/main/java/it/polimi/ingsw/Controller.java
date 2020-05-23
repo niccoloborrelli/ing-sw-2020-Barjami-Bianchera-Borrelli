@@ -51,6 +51,7 @@ public class Controller implements Observer {
 
     private Player player;
     private HandlerHub handlerHub;
+    private HashMap<String,List<String>> godMap;
 
     public Controller() {
         player = new Player();
@@ -456,4 +457,13 @@ public class Controller implements Observer {
         return generateField(code + message, DATA);
     }
 
+    public void createGodMap(){
+        Parser parser=new Parser();
+        this.godMap=parser.createHashRepresentation();
+    }
+
+    public void decoratePlayer(Player playerToDecorate) throws NoSuchMethodException, ClassNotFoundException {
+        GodFactory godFactory=new GodFactory();
+        godFactory.decoratePlayer(godMap,playerToDecorate);
+    }
 }

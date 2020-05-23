@@ -4,55 +4,177 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class GodFactory {
+    private static final String CLASSNAME1="Player";
+    private static final String INGAME="isInGame";
+    private static final String DENYUPPERMOVE="denyUpperMove";
+    private static final String SWAPEFFECT="swap";
+    private static final String PUSHEFFECT="push";
+    private static final String NOPERIMETER="perimeterSpace";
+    private static final String NODOME="dome";
+    private static final String NOINITIAL="initialSpace";
+    private static final String NOMOVEUP="moveUp";
+    private static final String ENDTURN="EndTurnState";
+    private static final String ACTION="ActionState";
+    private static final String ANOTHERBUILD="hasBuildsToDo";
+    private static final String ANOTHERMOVE="hasMovesToDo";
+    private static final String ANOTHERACTION="hasActionsToPerform";
+    private static final String INPUTFORACTION="ReadyForActionState";
 
-    public List<God> godList(HashMap<String, List<String>> mappa){
-        List<God> godList=new ArrayList<God>();
-        Set<String> keys=mappa.keySet();
-        for (String tempS:keys) {
-            God tempGod=new God(tempS);
-            List<String> effects=mappa.get(tempS);
-            //GROSSO if; if; if.....if;
-            //il decorato verra' sostituito mettendo quello del player
-            if(effects.contains("SwapWorkers")){
-                tempGod.addMoveEffect(new SwapWorkers(new BaseMovement()));
-                tempGod.addOwnRestrictionEffect(new SwapWorkersRestriction(new BaseRestriction()));
-            }
-            if(effects.contains("AdditionalMove"))
-                tempGod.addMoveEffect(new AdditionalMove(new BaseMovement()));
-            if(effects.contains("DenyUpperMove")) {
-                tempGod.addEnemyRestrictionEffect(new DenyUpperMove(new BaseRestriction()));
-                tempGod.addMoveEffect(new ActivateOthersNotMoveUpIfNotMoveUp(new BaseMovement()));
-            }
-            if(effects.contains("DomeEverywhere"))
-                tempGod.addBuildEffect(new CanBuildADomeAtAnyLevel(new BaseBuild()));
-            if(effects.contains("AdditionalBuildNoInitial"))
-                tempGod.addBuildEffect(new AdditionalBuildNoInitial(new BaseBuild()));
-            if(effects.contains("CanBuildTwiceNotDome"))
-                tempGod.addBuildEffect(new CanBuildTwiceNotDome(new BaseBuild()));
-            if(effects.contains("PushBack")){
-                tempGod.addMoveEffect(new PushWorker(new BaseMovement()));
-                tempGod.addOwnRestrictionEffect(new PushWorkerRestriction(new BaseRestriction()));
-            }
-            if(effects.contains("JumpMoreLevelsWin"))
-                tempGod.addWinConditionEffect(new JumpMoreLevelsWin(new BaseWinCondition()));
-            if(effects.contains("BuildAlsoBeforeIfNotMoveUp"))
-                tempGod.addMoveEffect(new BuildAlsoBeforeIfNotMoveUp(new BaseMovement()));
-            if(effects.contains("CompleteTowerWin"))
-                tempGod.addWinConditionEffect(new CompleteTowerWin(new BaseWinCondition()));
-            if(effects.contains("AdditionalBuildNotPerimeter"))
-                tempGod.addBuildEffect(new AdditionalBuildNotPerimeter(new BaseBuild()));
-            if(effects.contains("IfHigherNoMove"))
-                tempGod.addEnemyRestrictionEffect(new IfHigherNoMoveRestriction(new BaseRestriction()));
-            if(effects.contains("MustMoveUp"))
-                tempGod.addEnemyRestrictionEffect(new MustMoveUpRestriction(new BaseRestriction()));
-            if(effects.contains("BuildUnderYou"))
-                tempGod.addOwnRestrictionEffect(new BuildUnderYouRestriction(new BaseRestriction()));
-
-
-            godList.add(tempGod);
+    public void decoratePlayer(HashMap<String, List<String>> godMap,Player player) throws NoSuchMethodException, ClassNotFoundException {
+        Set<String> keys=godMap.keySet();
+        StateManager stateManager=player.getStateManager();
+        List<String> effects=godMap.get(player.getPlayerGod());
+        if(effects.contains("SwapWorkers")){
+            swapWorkers(player,stateManager);
         }
-        return godList;
+
+        if(effects.contains("AdditionalMove")){
+            additionalMove(player,stateManager);
+        }
+
+        if(effects.contains("DenyUpperMove")) {
+            denyUpperMove(player,stateManager);
+        }
+
+        if(effects.contains("DomeEverywhere")){
+            domeEveryWhere(player);
+        }
+
+        if(effects.contains("AdditionalBuildNoInitial")){
+            additionalBuildNoInitial(player,stateManager);
+        }
+        if(effects.contains("CanBuildTwiceNotDome")) {
+            CanBuildTwiceNotDome(player,stateManager);
+        }
+        if(effects.contains("PushBack")){
+            pushBack(player,stateManager);
+        }
+        if(effects.contains("JumpMoreLevelsWin")){
+            jumpMoreLevelsWin(player);
+        }
+
+        if(effects.contains("BuildAlsoBeforeIfNotMoveUp")){
+            buildAlsoBefore(player,stateManager);
+        }
+
+        if(effects.contains("CompleteTowerWin")){
+            completeTowerWin(player);
+        }
+
+        if(effects.contains("AdditionalBuildNotPerimeter")){
+            additionalBuildsNoPerimeter(player,stateManager);
+        }
+
+        if(effects.contains("IfHigherNoMove")){
+
+        }
+
+        if(effects.contains("MustMoveUp")) {
+
+        }
+
+        if(effects.contains("BuildUnderYou")){
+            buildUnderYou(player);
+        }
+
+    }
+
+
+    private void additionalMove(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
+        PowerActivationState activationState=new PowerActivationState(player,new AdditionalMoveFlow());
+        afterActionActivation(stateManager, activationState, ANOTHERMOVE);
+
+    }
+
+    private void afterActionActivation(StateManager stateManager, PowerActivationState activationState, String hasToDo) throws ClassNotFoundException, NoSuchMethodException {
+        stateManager.addNewState(activationState);
+        State readyForActionState=stateManager.getState(INPUTFORACTION);
+        State endTurnState=stateManager.getState(ENDTURN);
+        State actionState=stateManager.getState(ACTION);
+        Class cl = Class.forName(CLASSNAME1);
+        Method m1=cl.getDeclaredMethod("isPowerUsed");
+        Method m2 = cl.getDeclaredMethod(hasToDo);
+        Method m4=cl.getDeclaredMethod(ANOTHERACTION);
+        stateManager.addNewFinishSpace(actionState,activationState,m1,false,3);
+        stateManager.addNewConditions(actionState,activationState,m2,false,3);
+        stateManager.addNewFinishSpace(activationState,readyForActionState,m4,true,3);
+        stateManager.addNewFinishSpace(activationState,endTurnState,m4,false,3);
+    }
+
+    private void swapWorkers(Player player,StateManager stateManager){
+        AbstractActionState actionState;
+        actionState=(AbstractActionState) stateManager.getState(ACTION);
+        MoveOnOccupiedDecorator decorator=new MoveOnOccupiedDecorator(actionState,SWAPEFFECT);
+        player.setCantSwap(false);
+        stateManager.changeStates(decorator,actionState); //metodo che cambia tutte le occurrenze di actionState in decorator
+    }
+
+    private void denyUpperMove(Player player,StateManager stateManager){
+        AbstractActionState actionState;
+        actionState=(AbstractActionState) stateManager.getState(ACTION);
+        OnMoveUpDecorator decorator=new OnMoveUpDecorator(actionState,DENYUPPERMOVE);
+        stateManager.changeStates(decorator,actionState);
+    }
+
+    private void domeEveryWhere(Player player){
+        player.setDomeEveryWhere(true);
+    }
+
+    private void additionalBuildNoInitial(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
+        PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOINITIAL));
+        additionalBuilds(player,stateManager,activationState);
+    }
+
+    private void CanBuildTwiceNotDome(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
+        PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NODOME));
+        additionalBuilds(player,stateManager,activationState);
+    }
+
+    private void additionalBuilds(Player player,StateManager stateManager, PowerActivationState activationState) throws ClassNotFoundException, NoSuchMethodException {
+        afterActionActivation(stateManager, activationState, ANOTHERBUILD);
+    }
+
+    private void pushBack(Player player,StateManager stateManager){
+        AbstractActionState actionState;
+        actionState=(AbstractActionState) stateManager.getState(ACTION);
+        MoveOnOccupiedDecorator decorator=new MoveOnOccupiedDecorator(actionState,PUSHEFFECT);
+        player.setCantPush(false);
+        stateManager.changeStates(decorator,actionState); //metodo che cambia tutte le occurrenze di actionState in decorator
+    }
+
+    private void jumpMoreLevelsWin(Player player){
+        JumpMoreLevelsWin jmw=new JumpMoreLevelsWin(player.getWinCondition());
+        player.setWinCondition(jmw);
+    }
+
+    private void completeTowerWin(Player player){
+        CompleteTowerWin ctw=new CompleteTowerWin(player.getWinCondition());
+        player.setWinCondition(ctw);
+    }
+
+    private void additionalBuildsNoPerimeter(Player player,StateManager stateManager) throws NoSuchMethodException, ClassNotFoundException {
+        PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOPERIMETER));
+        additionalBuilds(player,stateManager,activationState);
+    }
+
+    private void buildUnderYou(Player player){
+        for(Worker tempWorker:player.getWorkers()){
+            tempWorker.setCantBuildUnder(false);
+        }
+    }
+
+    private void buildAlsoBefore(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
+        PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOMOVEUP));
+        stateManager.addNewState(activationState);
+        State readyForActionState=stateManager.getState(INPUTFORACTION);
+        State endTurnState=stateManager.getState(ENDTURN);
+        Class cl = Class.forName(CLASSNAME1);
+        Method m = cl.getDeclaredMethod(INGAME);
+        stateManager.addNewFinishSpace(endTurnState,activationState,m,true,3);
+        stateManager.addNewFinishSpace(activationState,readyForActionState,m,true,3);
     }
 }

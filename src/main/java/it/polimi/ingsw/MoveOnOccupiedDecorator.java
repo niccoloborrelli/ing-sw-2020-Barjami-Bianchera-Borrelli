@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
-    private static final String actionType1="move";
-    private static final String actionType2="build";
-    private static final String PushBack="Push";
-    private static final String Swap="Swap";
+    private static final String ACTIONTYPE1="move";
+    private static final String ACTIONTYPE2="build";
+    private static final String PUSHBACK="push";
+    private static final String SWAP="swap";
 
     MoveOnOccupiedDecorator(AbstractActionState decorated,String effect) {
         super(decorated,effect);
@@ -15,7 +15,7 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
 
     @Override
-    public void onInput(Visitor visitor){
+    public void onInput(Visitor visitor) throws IOException {
         decorated.onInput(visitor);
     }
 
@@ -26,10 +26,11 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         Space spaceToAct=decorated.getSpaceToAct();
         Worker actingWorker=decorated.getActingWorker();
         if(spaceToAct.getOccupator()!=null&&spaceToAct.getOccupator()!=actingWorker){
-            if(action.equals(actionType1)) {
+            if(action.equals(ACTIONTYPE1)) {
                 moveAbility(actingWorker,spaceToAct);
+                player.notify(new SpaceInput(actingWorker,spaceToAct),action);
                 player.getStateManager().getTurnManager().checkWin(); //LA CHECK FOR WIN LA FACCIO QUI
-                player.getStateManager().setNextState(this);
+                player.getStateManager().setNextState(player);
             }
         }
     }
@@ -39,9 +40,9 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         actingWorker.setMovedThisTurn(true);
         actingWorker.setCantBuild(false);
 
-        if(effect.equals(Swap))
+        if(effect.equals(SWAP))
             swap(actingWorker,spaceToAct);
-        else if(effect.equals(PushBack))
+        else if(effect.equals(PUSHBACK))
             pushBack(actingWorker,spaceToAct);
     }
 

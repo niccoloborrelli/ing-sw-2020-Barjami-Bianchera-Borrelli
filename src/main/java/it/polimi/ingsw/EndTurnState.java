@@ -12,8 +12,10 @@ public class EndTurnState extends State {
     public void onStateTransition() {
         for (Worker tempWorker:player.getWorkers()) {
             tempWorker.resetWorker();
+            player.setPowerUsed(false);
+            player.setPowerNotUsable(false);
+            player.setPowerActivated(false);
         }
-        player.getStateManager().setNextState(this);
     }
 
     public String toString(){
