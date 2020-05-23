@@ -16,7 +16,7 @@ public class Player {
     private State state;
     private List<String> actionsToPerform;
     private StateManager stateManager;
-    private String lastReceivedInput;
+    private SpaceInput lastReceivedInput;
     private IslandBoard islandBoard;
     private boolean empty;
 
@@ -85,11 +85,11 @@ public class Player {
         return actionsToPerform;
     }
 
-    public String getLastReceivedInput() {
+    public SpaceInput getLastReceivedInput() {
         return lastReceivedInput;
     }
 
-    public void setLastReceivedInput(String lastReceivedInput) {
+    public void setLastReceivedInput(SpaceInput lastReceivedInput) {
         this.lastReceivedInput = lastReceivedInput;
     }
 

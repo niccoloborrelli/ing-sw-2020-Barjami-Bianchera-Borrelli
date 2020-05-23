@@ -4,7 +4,8 @@ import java.io.IOException;
 
 public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
-
+    private static final String actionType1="move";
+    private static final String actionType2="build";
     private static final String PushBack="Push";
     private static final String Swap="Swap";
 
@@ -14,12 +15,12 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
 
     @Override
-    public void onInput(String input){
-        decorated.onInput(input);
+    public void onInput(Visitor visitor){
+        decorated.onInput(visitor);
     }
 
     @Override
-    public void onStateTransition(){
+    public void onStateTransition() throws IOException {
         String action=player.getActionsToPerform().get(0);
         decorated.onStateTransition();
         Space spaceToAct=decorated.getSpaceToAct();
@@ -27,7 +28,7 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         if(spaceToAct.getOccupator()!=null&&spaceToAct.getOccupator()!=actingWorker){
             if(action.equals(actionType1)) {
                 moveAbility(actingWorker,spaceToAct);
-                game.checkForWin(); //LA CHECK FOR WIN LA FACCIO QUI
+                player.getStateManager().getTurnManager().checkWin(); //LA CHECK FOR WIN LA FACCIO QUI
                 player.getStateManager().setNextState(this);
             }
         }

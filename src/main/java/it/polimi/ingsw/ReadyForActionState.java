@@ -11,57 +11,89 @@ public class ReadyForActionState extends State {
     private static final int workerInInput = 1;
     private static final int rowInInput = 2;
     private static final int columnInInput = 3;
+    private List <SpaceInput> allowedSpaces;
+
     ReadyForActionState(Player player) {
         super(player);
     }
 
     /**
      * This state permits to perform a change in the state of the game when the player hits it with an input
-     * @param input the input wich produce a change in the state of the fsm
+     * @param visitor the visitor used to get the input
      * @throws IOException
      */
     @Override
-    public void onInput(String input){
-        if(allowedInputs.contains(input)) {
+    public void onInput(Visitor visitor){
+        SpaceInput input=visitor.visit(this);
+        if(inputAcceptable(input)){
             player.setLastReceivedInput(input);
-            player.getStateManager().setNextState(this);
+            player.getStateManager().setNextState(player);
         }
         else
-            player.getStateManager().notifyError();
+            player.getStateManager().notifyErorr();
     }
 
     @Override
     public void onStateTransition() {
+        boolean hasLost = false;
         List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
         String action = player.getActionsToPerform().get(0);
-        possibleAction = CheckingUtility.getLists(player,action);
-        setAllowed(possibleAction);
+        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
+        possibleAction=CheckingUtility.getLists(player,action);
+        hasLost = checkForLosing(possibleAction);
+        if(hasLost) {
+            player.setInGame(false);
+            player.getStateManager().setNextState(this); //se ho perso richiamo il stateManager perche' cambi lo stato
+        }//fine della parte della fu-RestrictionState
+        else
+            setAllowedSpaces();
     }
 
     /**
      * this method sets the inputs this state of the FSM is allowed to receive and which from this can evolve
-     * @param possibleAction list of the spaces in which the can player can act, these spaces has to be converted in strings
      */
-    private void setAllowed(List<ArrayList<Space>> possibleAction) {
-        List<String> inputs = new ArrayList<String>();
+    private void setAllowedSpaces() {
         String action=player.getActionsToPerform().get(0);
-        int i = 0;
-        for(ArrayList<Space> spaceList : possibleAction){
-            for (Space s: spaceList) {
-                if(action.equals(actionType1)){
-                    inputs.add("M"+"-"+i+"-"+s.getRow()+"-"+s.getColumn()+"-");
-                }
-                else if(action.equals(actionType2)){
-                    inputs.add("B"+"-"+i+"-"+s.getRow()+"-"+s.getColumn()+"-");
-                }
+        List<SpaceInput> allowed=new ArrayList<SpaceInput>();
+        for(Worker tempWorker:player.getWorkers()){
+            if(action.equals(actionType1)){
+                for(Space sp:tempWorker.getPossibleMovements())
+                    allowed.add(new SpaceInput(tempWorker,sp));
             }
-            i++;
+            else if(action.equals(actionType2)){
+                for(Space sp:tempWorker.getPossibleBuilding())
+                    allowed.add(new SpaceInput(tempWorker,sp));
+            }
         }
-        super.setAllowedInputs(inputs);
+
+        allowedSpaces=allowed;
+    }
+
+    /**
+     * method wich returns true if the player isn't able of doing any action
+     * @param possibleActions are the possible actions a player can make, if this is 0 the method actually return true
+     * @return true: if the player has lost, false: if the player hasn't lost (has at least one possible action to perform)
+     */
+    private boolean checkForLosing(List<ArrayList<Space>> possibleActions) {
+        for (ArrayList<Space> spaceList : possibleActions) {
+            if (spaceList.size()>0)
+                return false;
+        }
+        player.setInGame(false);
+        return true; //se arrivo qui vuol dire che non ho nessuna action possibile
     }
 
     @Override
     public String toString() {
         return "ReadyForAction";
+    }
+
+
+    public boolean inputAcceptable(SpaceInput spaceInput){
+        for (SpaceInput temp:allowedSpaces) {
+            if(temp.getSpace()==spaceInput.getSpace()&&temp.getWorker()==spaceInput.getWorker())
+                return true;
+        }
+        return false;
     }
 }

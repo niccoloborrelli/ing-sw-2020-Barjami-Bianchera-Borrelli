@@ -11,7 +11,7 @@ public class NotYourTurnState extends State {
     }
 
     @Override
-    public void onInput(String input) throws IOException {
+    public void onInput(Visitor visitor) throws IOException {
         if(input.equals(spectateAction1))
             doSomething();
         else if(input.equals(spectateAction2))

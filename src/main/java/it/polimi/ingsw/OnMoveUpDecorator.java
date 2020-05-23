@@ -11,12 +11,12 @@ public class OnMoveUpDecorator extends ActionStateDecorator {
     }
 
     @Override
-    public void onInput(String input){
-        decorated.onInput(input);
+    public void onInput(Visitor visitor){
+        decorated.onInput(visitor);
     }
 
     @Override
-    public void onStateTransition() {
+    public void onStateTransition() throws IOException {
         decorated.onStateTransition();
         String action=player.getActionsToPerform().get(0);
         if(action.equals(ACTIONTYPE1)&&decorated.getSpaceToAct().getLevel()>decorated.getStartingSpace().getLevel()) //attivo gli effetti di oneMoveUp se il livello in cui si agisce e' superiore
