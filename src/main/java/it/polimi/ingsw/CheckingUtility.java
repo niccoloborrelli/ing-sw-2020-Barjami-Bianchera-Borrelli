@@ -9,12 +9,13 @@ public class CheckingUtility {
     private static final int CODE_BUILD = 1;
     private static final int CODE_OTHERS = 2;
     private static final int LOWEST_ROW = 0;
-    private static final int BIGGEST_ROW = 5;
+    private static final int BIGGEST_ROW = 4;
     private static final int LOWEST_COLUMN = 0;
-    private static final int BIGGEST_COLUMN = 5;
+    private static final int BIGGEST_COLUMN = 4;
     private static final int RANGE_ROW_ALLOWED_ACTION = 1;
     private static final int RANGE_COLUMN_ALLOWED_ACTION = 1;
     private static final int FIRST_INDEX_OF_WORKER = 0;
+    private static final int MAX_LEVEL = 3;
     private static final int MAX_DIFFERENCE = 1;
     private static final int MIN_DIFFERENCE = -3;
 
@@ -22,7 +23,7 @@ public class CheckingUtility {
      * Copies determined action list of both workers.
      * @param player is worker's owner.
      * @param action is the specific action controlled.
-     * @return an array containg (specific) action list of every worker.
+     * @return an array containing (specific) action list of every worker.
      */
 
     public static List<ArrayList<Space>> getLists(Player player, String action){
@@ -76,7 +77,7 @@ public class CheckingUtility {
         List<Space> leftPossibleSpace;
 
         possibleSpace = findAroundSpace(worker, islandBoard);
-        leftPossibleSpace = setValidSpace(worker, possibleSpace, code);
+        leftPossibleSpace = setValidSpace(worker, possibleSpace, islandBoard, code);
 
         return leftPossibleSpace;
     }
@@ -104,16 +105,18 @@ public class CheckingUtility {
      * If <move>true</move> it also remove spaces with a level's difference major than MAXDIFFERENCE.
      * @param worker  is the worker investigated.
      * @param spaceList contains valid spaces until now
+     * @param islandBoard is game field.
      * @param code indicates what kind of more restrictive check are needed.
      * @return list containing valid spaces.
      */
 
-    private static List<Space> setValidSpace(Worker worker, List<Space> spaceList, int code) {
+    private static List<Space> setValidSpace(Worker worker, List<Space> spaceList, IslandBoard islandBoard, int code) {
         List<Space> totalSpace = new ArrayList<>(spaceList);
 
         for (Space space : totalSpace) {
             removeInvalidSpace(spaceList, space);
             if (code == CODE_MOVE) {
+                addSpecifiedMove(space,spaceList, worker, islandBoard);
                 removeSpecifiedMove(spaceList, worker.getWorkerSpace().getLevel(), space);
                 removeDueToMoveFlag(spaceList, worker, space);
             }else if(code == CODE_BUILD) {
@@ -136,6 +139,54 @@ public class CheckingUtility {
     private static void removeInvalidSpace(List<Space> spaceList, Space space) {
         if (space.getOccupator() != null || space.HasDome())
             spaceList.remove(space);
+    }
+
+    /**
+     * Adds spaces to list of possible spaces in determined condition.
+     * @param space is this space analyzed.
+     * @param spaceList is list of possible spaces.
+     * @param worker is worker that has to move.
+     * @param islandBoard is game field.
+     */
+
+    private static void addSpecifiedMove(Space space, List<Space> spaceList, Worker worker, IslandBoard islandBoard){
+        if(!worker.isCantPush){
+            canMovePushing(space, spaceList, worker.getWorkerSpace(), islandBoard);
+        }
+        if(!worker.isCantSwap){
+            canMoveSwapping(space, spaceList, worker);
+        }
+    }
+
+    /**
+     * Adds space to list if the worker on it could be pushed one space away.
+     * @param space is this space analyzed.
+     * @param possibleSpaces is this list of possible spaces.
+     * @param workerSpace is space of worker that has to move.
+     * @param islandBoard is game field.
+     */
+
+    private static void canMovePushing(Space space, List<Space> possibleSpaces, Space workerSpace, IslandBoard islandBoard){
+        if(space.getOccupator()!=null) {
+            int pushedRow = space.getRow() * 2 - workerSpace.getRow();
+            int pushedColumn = space.getColumn() * 2 - workerSpace.getColumn();
+            if (pushedRow >= LOWEST_ROW && pushedRow <= BIGGEST_ROW && pushedColumn >= LOWEST_COLUMN && pushedColumn <= BIGGEST_COLUMN) {
+                if (islandBoard.getSpace(pushedRow, pushedColumn).getOccupator() == null && !islandBoard.getSpace(pushedRow, pushedColumn).HasDome())
+                    possibleSpaces.add(space);
+            }
+        }
+    }
+
+    /**
+     * Adds space to possible spaces list if it has an opponent's worker on.
+     * @param space is space analyzed.
+     * @param spaceList is list of possible spaces.
+     * @param worker is worker who has to move.
+     */
+
+    private static void canMoveSwapping(Space space, List<Space> spaceList, Worker worker){
+        if(space.getOccupator()!=null && !worker.getWorkerPlayer().equals(space.getOccupator().getWorkerPlayer()))
+            spaceList.add(space);
     }
 
     /**
@@ -241,13 +292,14 @@ public class CheckingUtility {
     }
 
     /**
-     * Adds worker space to the list of valid spaces.
+     * Adds worker space to the list of valid spaces if it's not in maximum level.
      * @param spaceList is list of valid spaces.
      * @param worker is worker that can build under itself.
      */
 
     private static void canBuildUNDER(List<Space> spaceList, Worker worker){
-        spaceList.add(worker.getWorkerSpace());
+        if(worker.getWorkerSpace().getLevel() < MAX_LEVEL)
+            spaceList.add(worker.getWorkerSpace());
     }
 
     /**

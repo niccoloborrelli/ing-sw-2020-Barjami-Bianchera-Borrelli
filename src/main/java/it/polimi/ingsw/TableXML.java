@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +26,11 @@ public class TableXML {
      * if priority missed, then it would automatically sets at lowest_priority indicated.
      * Condition could be absent, in this case the relative structure will be empty.
      * Flag (that are considered) are always boolean. (It could be expanded in a int way in Line class).
-     * If there is flag, "reference" has to be not empty. If it's not present or flag doesn't exist in this class,
-     * finish state would be considered wrong and not added to table.
+     * If  flag doesn't exist in this class, finish state would be considered wrong and not added to table.
      */
 
     private File inputFile;
+    private Object flagClass;  // VEDERE SE FARE UNA LISTA OPPURE NO
     private static final int INVALID_PRIORITY = -50;
     private static final int INDEX_BEGIN = 0;
     private static final int NUMBER_OF_TEXT_CONTENT = 0;
@@ -42,12 +43,12 @@ public class TableXML {
     private static final String FLAG = "flag";
     private static final String PREFIX_METHOD = "is";
     private static final String EXPECTED_VALUE = "expectedValue";
-    private static final String REFERENCE = "reference";
     private static final String CONDITION = "condition";
     private static final String PRIORITY = "priority";
     private static final String PACKAGE_NAME = "it.polimi.ingsw.";
 
-    public TableXML(File inputFile) {
+    public TableXML(File inputFile, Object flagClass) {
+        this.flagClass = flagClass;
         this.inputFile = inputFile;
     }
 
@@ -206,6 +207,7 @@ public class TableXML {
 
         return priority;
     }
+    
 
     /**
      * Finds conditions in the element and fill the map (if exists)
@@ -240,7 +242,7 @@ public class TableXML {
             Element p = (Element) node;
             value = expectedValue(p);
             methodName = getFlag(p);
-            String className = getNameClass(p);
+            String className = flagClass.getClass().getName();
 
             putMethodInMap(className, methodName, value, methodBooleanHashMap);
         }
@@ -264,22 +266,26 @@ public class TableXML {
      * @return name of method to control.
      */
 
-    private String getFlag(Element el){
+    private String getFlag(Element el) {
+        String nameMethod = null;
 
-        return PREFIX_METHOD + el.getElementsByTagName(FLAG).item(NUMBER_OF_TEXT_CONTENT).getTextContent();
-    }
+        switch (el.getElementsByTagName(FLAG).item(0).getTextContent()) {
+            case "HasWon":
+                nameMethod =  "isHasWon";
+                break;
+            case "HasLost":
+                nameMethod = "isHasLost";
+                break;
+            case "ValidInput":
+                nameMethod =  "isValidInput";
+                break;
+            case "IsEmpty":
+                nameMethod =  "isEmpty";
+                break;
 
-    /**
-     * Gets name class from element.
-     * @param el is element analyzed.
-     * @return name of class containing method to control if exists, otherwise null.
-     */
+        }
 
-    private String getNameClass(Element el){
-        if(el.getElementsByTagName(REFERENCE).item(NUMBER_OF_TEXT_CONTENT)!=null) {
-            return PACKAGE_NAME + el.getElementsByTagName(REFERENCE).item(NUMBER_OF_TEXT_CONTENT).getTextContent();
-        }else
-            return null;
+        return nameMethod;
     }
 
     /**

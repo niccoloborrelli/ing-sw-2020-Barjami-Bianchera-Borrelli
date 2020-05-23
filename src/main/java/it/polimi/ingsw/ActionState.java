@@ -5,9 +5,6 @@ import java.io.IOException;
 public class ActionState extends AbstractActionState {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
-    private static final int workerInInput = 1;
-    private static final int rowInInput = 2;
-    private static final int columnInInput = 3;
     private static final int firstIndex=0;
     private Worker actingWorker;
     private Space spaceToAct;
@@ -18,15 +15,11 @@ public class ActionState extends AbstractActionState {
     }
 
     @Override
-    public void onStateTransition() {
-        String input=player.getLastReceivedInput();
+    public void onStateTransition() throws IOException {
+        SpaceInput input=player.getLastReceivedInput();
         String action=player.getActionsToPerform().get(firstIndex);
-        Worker actingWorker=player.getWorkers().get(parseInput(input,workerInInput));
-        int row=parseInput(input,rowInInput);
-        int column=parseInput(input,columnInInput);
-        Space spaceToAct=player.getIslandBoard().getSpace(row,column);
-        this.actingWorker=actingWorker;
-        this.spaceToAct=spaceToAct;
+        this.actingWorker=input.getWorker();
+        this.spaceToAct=input.getSpace();
         this.startingSpace=actingWorker.getWorkerSpace();
 
         if(spaceToAct.getOccupator()==null) {
@@ -36,23 +29,9 @@ public class ActionState extends AbstractActionState {
                 build(actingWorker, spaceToAct);
             }
 
-            game.checkForWin(); //LA CHECK FOR WIN LA FACCIO QUI
+            player.getStateManager().getTurnManager().checkWin();
             player.getStateManager().setNextState(this);
         }
-    }
-
-    private int parseInput(String input,int occurrence){
-        String temp;
-        int start=0;
-        int end=0;
-        boolean out;
-        String tempString=input;
-        for (int i = firstIndex; i < occurrence; i++) {
-            start = tempString.indexOf("-");
-            tempString = tempString.substring(start+1);
-            end = tempString.indexOf("-");
-        }
-        return Integer.parseInt(tempString.substring(firstIndex,end));
     }
 
     /**

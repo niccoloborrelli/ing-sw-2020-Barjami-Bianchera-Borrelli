@@ -3,15 +3,14 @@ package it.polimi.ingsw;
 import java.io.IOException;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.*;
+
 public class JumpMoreLevelsWin extends PowerWinDecorator {
 
-    private final int numberLevels = 2;
-
     /*
-    You also win if your worker
-    moves down two or more levels
+    You also win if your worker moves down two or more levels
+    PAN
      */
-    //PAN
 
     /**
      * This is a classic decorator pattern constructor
@@ -23,33 +22,34 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
 
     /**
      * This method checks if the player has won by the base win condition or the Pan one
-     * @param worker is the worker moved by the player
-     * @param startLevel is the level at the beginning of the round
+     * @param player is the player to check
      */
     @Override
-    public void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException {
-        winCondition.checkHasWon(worker, startLevel, islandBoard);
+    public void checkHasWon(Player player) throws IOException {
+        winCondition.checkHasWon(player);
         if(!gethasWon())
-            checkHasWonJump(worker, startLevel, islandBoard);
-    }
-
-    /**
-     * This method checks if the player is the only remained
-     * @param players is the list of all the players in the game
-     */
-    @Override
-    public void checkHasWon(List<Player> players){
-        winCondition.checkHasWon(players);
+            checkHasWonJump(player);
     }
 
     /**
      * This method checks if the player has move down at least 2 levels
-     * @param worker is the worker moved by the player
-     * @param startLevel is the level at the beginning of the round
+     * @param player is the player to check
      */
-    private void checkHasWonJump(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException { //(VERIFICATA)
-        if(startLevel - worker.getWorkerSpace().getLevel() >= numberLevels) {
-            setHasWon(true);
+    private void checkHasWonJump(Player player) throws IOException {//(VERIFICATA)
+        Worker workerChosen;
+        if(player.getWorkers().get(0).isChosen()) {
+            workerChosen = player.getWorkers().get(0);
+            if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
+                setHasWon(true);
+                //notifyWin();
+            }
+        }
+        else if(player.getWorkers().get(1).isChosen()){
+            workerChosen = player.getWorkers().get(1);
+            if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
+                setHasWon(true);
+                //notifyWin();
+            }
         }
     }
 

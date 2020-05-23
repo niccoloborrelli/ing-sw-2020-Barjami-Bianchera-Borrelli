@@ -1,9 +1,11 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.DefinedValues.*;
+
 public class Field {
 
-    private final int ROW = 12;
-    private final int COLUMN = 22;
+    private String[][] field = new String[ROW_CLI][COLUMN_CLI];
 
     /*
         CONVERSIONE ISLANDBOARD -> VIEW
@@ -13,8 +15,7 @@ public class Field {
                 3 -> 8                  3 -> 14
                 4 -> 10                 4 -> 18
                 (2x + 2)                (4x + 2)
-         */
-    String[][] field = new String[ROW][COLUMN];
+    */
 
     /**
      * The constructor methods initializes a field with all level 0
@@ -24,66 +25,23 @@ public class Field {
     }
 
     private void loadEmpty(){
-
-        for(int i = 0; i < ROW; i++)
-            for(int j = 0; j < COLUMN; j++)
-                field[i][j] = " ";
-
-        //numeri fuori campo per coordinate, \u001B[32m è il verde
-        field[2][0] = "\u001B[32m" +"0 ";
-        field[4][0] = "\u001B[32m" +"1 ";
-        field[6][0] = "\u001B[32m" +"2 ";
-        field[8][0] = "\u001B[32m" +"3 ";
-        field[10][0] = "\u001B[32m" +"4 ";
-        field[0][3] = "\u001B[32m" +"  0  ";
-        field[0][7] = "\u001B[32m" +" 1  ";
-        field[0][11] = "\u001B[32m" +" 2  ";
-        field[0][15] = "\u001B[32m" +" 3  ";
-        field[0][19] = "\u001B[32m" +" 4  ";
-
-        //margini prima riga
-        field[1][1] = " ┌";
-        field[1][5] = field [1][9] = field [1][13] = field [1][17] = "┬";
-        field[1][21] = "┐";
-
-        //tutti i margini orizzontali
-        for(int i = 1; i < ROW; i = i + 2)
-            for(int j = 2; j < COLUMN - 1; j++){
-                if(j != 5 && j != 9 && j != 13 && j != 17)
-                    field[i][j] = "--";
-            }
-
-        //margini intermedi
-        for(int i = 3; i < ROW - 2; i = i + 2) {
-            field[i][1] = " ├";
-            field[i][5] = field[i][9] = field[i][13] = field[i][17] = "+";
-            field[i][21] = "┤";
-        }
-
-        //margini finali
-        field[11][1] = " └";
-        field[11][5] = field [11][9] = field [11][13] = field [11][17] = "┴";
-        field[11][21] = "┘";
-
-        //tutti i margini verticali
-        for(int i = 2; i < ROW - 1 ; i = i + 2)
-            for(int j = 1; j < COLUMN; j = j + 4)
-                field[i][j] = "│   ";
-
-        //imposto livelli iniziali
-        for(int i = 2; i < ROW - 1 ; i = i + 2)
-            for(int j = 4; j < COLUMN - 1; j = j + 4)
-                field[i][j] = "\u001B[34m" +"0";  //\u001B[34m è il blu
-
+        blankSpaces();
+        outsideNumbers();
+        firstMargins();
+        horizontalMargins();
+        middleMargins();
+        finalMargins();
+        verticalMargins();
+        startingLevels();
     }
 
     /**
      * This methods prints the board on screen
      */
-    final void plot() {
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COLUMN; c++) {
-                System.out.print("\u001B[32m" + field[r][c]);
+    public final void plot() {
+        for (int r = MINROW; r < ROW_CLI; r++) {
+            for (int c = MINCOLUMN; c < COLUMN_CLI; c++) {
+                System.out.print(ANSI_GREEN.escape() + field[r][c]);
             }
             System.out.println();
         }
@@ -98,12 +56,12 @@ public class Field {
      * @param hasDome is true if a dome is built
      */
     public void viewBuild(int row, int column, int level, int hasDome){
-        row = 2*row + 2;
-        column = 4*column + 4;
+        row = 2 * row + 2;
+        column = 4 * column + 4;
         if(hasDome == 1)
-            field[row][column] = "\u001B[34m" + "C";    //"\u001B[34m" è il blu
+            field[row][column] = ANSI_BLUE.escape() + "C";
         else
-            field[row][column] = "\u001B[34m" + level;
+            field[row][column] = ANSI_BLUE.escape() + level;
         plot();
     }
 
@@ -116,10 +74,10 @@ public class Field {
      * @param color is the color player
      */
     public void viewMove(int oldRow, int oldColumn, int newRow, int newColumn, String color){
-        oldRow = 2*oldRow + 2;
-        oldColumn = 4*oldColumn + 2;
-        newRow = 2*newRow + 2;
-        newColumn = 4*newColumn + 2;
+        oldRow = 2 * oldRow + 2;
+        oldColumn = 4 * oldColumn + 2;
+        newRow = 2 * newRow + 2;
+        newColumn = 4 * newColumn + 2;
 
         field[oldRow][oldColumn] = " ";
         field[newRow][newColumn] = color + "W";
@@ -132,8 +90,8 @@ public class Field {
      * @param column is the start space column
      */
     public void viewSetup(int row, int column, String color){
-        row = 2*row + 2;
-        column = 4*column + 2;
+        row = 2 * row + 2;
+        column = 4* column + 2;
 
         field[row][column] = color + "W";
         plot();
@@ -145,9 +103,66 @@ public class Field {
      * @param column is the column of the worker to remove
      */
     public void viewRemoveWorker(int row, int column){
-        row = 2*row + 2;
-        column = 4*column + 2;
+        row = 2 * row + 2;
+        column = 4 * column + 2;
 
         field[row][column] = " ";
+    }
+
+    private void blankSpaces(){
+        for(int row = MINROW; row < ROW_CLI; row++)
+            for(int column = MINCOLUMN; column < COLUMN_CLI; column++)
+                field[row][column] = " ";
+    }
+
+    private void outsideNumbers(){
+        for(int i = 2, number = 0; i < ROW_CLI - 1; i = i + 2, number++)
+            field[i][MINCOLUMN] = number + " ";
+        field[MINROW][3] = "  0  ";
+        for(int j = 7, number = 1; j < COLUMN_CLI; j = j + 4, number++)
+            field[MINROW][j] = " " + number + "  ";
+    }
+
+    private void firstMargins(){
+        field[FIRST_ROW_CLI][FIRST_COLUMN_CLI] = " ┌";
+        for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+            field[FIRST_ROW_CLI][j] = "┬";
+        field[FIRST_ROW_CLI][COLUMN_CLI - 1] = "┐";
+    }
+
+    private void horizontalMargins(){
+        for(int i = FIRST_ROW_CLI; i < ROW_CLI; i = i + 2)
+            for(int j = 2; j < COLUMN_CLI - 1; j++){
+                if(j % 4 != 1)
+                    field[i][j] = "--";
+            }
+    }
+
+    private void middleMargins(){
+        for(int i = 3; i < ROW_CLI - 2; i = i + 2) {
+            field[i][FIRST_COLUMN_CLI] = " ├";
+            for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+                field[i][j] = "+";
+            field[i][COLUMN_CLI - 1] = "┤";
+        }
+    }
+
+    private void finalMargins(){
+        field[ROW_CLI - 1][FIRST_COLUMN_CLI] = " └";
+        for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+            field[ROW_CLI - 1][j] = "┴";
+        field[ROW_CLI - 1][COLUMN_CLI - 1] = "┘";
+    }
+
+    private void verticalMargins(){
+        for(int i = 2; i < ROW_CLI - 1 ; i = i + 2)
+            for(int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + 4)
+                field[i][j] = "│   ";
+    }
+
+    private void startingLevels(){
+        for(int i = 2; i < ROW_CLI - 1 ; i = i + 2)
+            for(int j = 4; j < COLUMN_CLI - 1; j = j + 4)
+                field[i][j] = ANSI_BLUE.escape() + "0";
     }
 }

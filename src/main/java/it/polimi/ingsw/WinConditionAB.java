@@ -14,7 +14,5 @@ public abstract class WinConditionAB {
         this.hasWon = hasWon;
     }
 
-    public abstract void checkHasWon(Worker worker, int startLevel, IslandBoard islandBoard) throws IOException;
-
-    public abstract void checkHasWon(List<Player> players);
+    public abstract void checkHasWon(Player player) throws IOException;
 }

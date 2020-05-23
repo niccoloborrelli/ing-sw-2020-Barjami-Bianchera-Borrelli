@@ -21,11 +21,12 @@ public class PowerActivationState extends State {
 
     /**
      * if input is activate this method recalls changeFlow, if input equals dontActivate this method does nothing, in both cases at the end of the method setNextState is recalled
-     * @param input the input wich produce a change in the state of the fsm
+     * @param visitor the Visitor used for receiving the input
      * @throws IOException
-     */
+     **/
     @Override
-    public void onInput(String input){
+    public void onInput(Visitor visitor){
+        String input=visitor.visit(this);
         if(allowedInputs.contains(input)){
             if (input.equals(activatePower)) {
                 flowPower.changeFlow(player);

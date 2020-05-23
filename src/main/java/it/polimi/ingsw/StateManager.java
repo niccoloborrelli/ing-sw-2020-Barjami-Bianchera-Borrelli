@@ -27,6 +27,10 @@ public class StateManager {
     private HashMap<State, List<Line>> table;
     private TurnManager turnManager;
 
+    public State getCurrent_state() {
+        return current_state;
+    }
+
     /*
     NON è POSSIBILE AVERE LO STESSO STATO DI PARTENZA PER STATI DI ARRIVO CON UGUALE PRIORITà
     SE IL METODO NON DEVE CONTROLLARE NESSUNA CONDIZIONE, SI USERà IL METODO QUI SOTTO ALWAYSTRUE E EXPECTED VALUE = TRUE
