@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -42,6 +43,8 @@ public class Controller implements Observer {
     private static final String MESSAGE = "message";
     private static final String DATA = "data";
     private static final String LEVEL = "level";
+    private static final String MOVE = "move";
+    private static final String BUILD = "build";
     private static final String ENDTURN = "Turn completed. Good job";
     private static final String ENDGAME = "Game is finished. Press quit to exit.";
     private static final String WINNER = "Congratulations! You won.";
@@ -52,8 +55,11 @@ public class Controller implements Observer {
     private Player player;
     private HandlerHub handlerHub;
     private HashMap<String,List<String>> godMap;
+    private Visitor visitor;
 
-    public Controller() {}
+    public Controller() {
+        visitor = new Visitor();
+    }
 
     /**
      * Sets visitor depending of message receveid.
@@ -66,14 +72,22 @@ public class Controller implements Observer {
 
         if (code == STRING_RECEIVING) {
             String operation = parseString(message);
-            // manca parte Visitor
+            visitor.setStringInput(operation);
         } else if (code == SPACE_RECEIVING) {
             HashMap<Worker, Space> workerSpaceHashMap = parseSpace(message);
-            // manca parte Visitor
+            setSpaceInput(workerSpaceHashMap);
         } else if (code == INT_RECEIVING) {
             int value = parseItemInt(message);
-            // manca parte Visitor
+            visitor.getSpaceInput().setAnInt(value);
         }
+    }
+
+    private void setSpaceInput(HashMap<Worker, Space> workerSpaceHashMap){
+        for(Worker worker: workerSpaceHashMap.keySet())
+            visitor.getSpaceInput().setWorker(worker);
+
+        for(Space space: workerSpaceHashMap.values())
+            visitor.getSpaceInput().setSpace(space);
     }
 
     /**
@@ -344,7 +358,14 @@ public class Controller implements Observer {
         return null;
     }
 
-    public void updateMovement(Worker worker, Space space) {
+    public void update(SpaceInput spaceInput, String action){
+        if(action.equals(MOVE))
+            updateMovement(spaceInput.getWorker(), spaceInput.getSpace());
+        else if(action.equals(BUILD))
+            updateBuilding(spaceInput.getSpace());
+    }
+
+    private void updateMovement(Worker worker, Space space) {
         String workerTranslation = generateStringWorker(worker);
         String spaceTranslation = generateStringSpace(space);
 
@@ -357,7 +378,7 @@ public class Controller implements Observer {
         handlerHub.sendData(data, this, BROADCAST);
     }
 
-    public void updateBuilding(Space space) {
+    private void updateBuilding(Space space) {
         String code = insertCode(UPDATE_BUILDING);
 
         String row = String.valueOf(space.getRow());
@@ -375,25 +396,42 @@ public class Controller implements Observer {
 
     }
 
-    public void updateEndTurn() {
+    public void update(int code){
+        if(code==0)
+            updateActivationPower();
+        else if(code==1)
+            updateEndTurn();
+        else if(code==2)
+            updateEndTurn();
+        else if(code==3)
+            updateLost();
+        else if(code==4)
+            updateWon();
+        else if(code==5)
+            updateEndGame();
+    }
+
+
+
+    private void updateEndTurn() {
         String data = dataOnlyToPrint(ENDTURN);
 
         handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
     }
 
-    public void updateEndGame() {
+    private void updateEndGame() {
         String data = dataOnlyToPrint(ENDGAME);
 
         handlerHub.sendData(data, this, BROADCAST);
     }
 
-    public void updateActivationPower() {
+    private void updateActivationPower() {
         String data = dataOnlyToPrint(POWER_ACTIVATION);
 
         handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
     }
 
-    public void updateWon() {
+    private void updateWon() {
         String dataWin = dataOnlyToPrint(WINNER);
         String dataLose = dataOnlyToPrint(LOSER);
 
@@ -401,13 +439,13 @@ public class Controller implements Observer {
         handlerHub.sendData(dataLose, this, ALL_NOT_ME);
     }
 
-    public void updateLost() {
+    private void updateLost() {
         String dataLose = dataOnlyToPrint(LOSER);
 
         handlerHub.sendData(dataLose, this, SINGLE_COMMUNICATION);
     }
 
-    public void updatePossibleAction(List<Space> spaceList) {
+    public void update(List<Space> spaceList) {
         StringBuilder mess = new StringBuilder();
         for (Space space : spaceList) {
             mess.append(generateStringSpace(space));
@@ -453,7 +491,7 @@ public class Controller implements Observer {
     }
 
     public void createGodMap(){
-        Parser parser=new Parser();
+        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation();
     }
 
@@ -461,4 +499,12 @@ public class Controller implements Observer {
         GodFactory godFactory=new GodFactory();
         godFactory.decoratePlayer(godMap,playerToDecorate);
     }
+
+    public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
+        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
+        player.getStateManager().createBaseStates(player);
+        HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
+        player.getStateManager().setTable(table);
+    }
+
 }

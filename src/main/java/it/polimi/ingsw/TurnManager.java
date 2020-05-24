@@ -75,9 +75,20 @@ public class TurnManager {
     public void checkWin() throws IOException {
         if(!oneRemain()) {
             for (Player p : players)
-                if (p.isInGame())
+                if (p.isInGame()) {
                     p.getWinCondition().checkHasWon(p);
+                    if(p.isHasWon()){
+                        p.notify(0);
+                        setEndGame();
+                        break;
+                    }
+                }
         }
+    }
+
+    private void setEndGame(){
+        for(Player player: players)
+            player.setInGame(false);
     }
 
     /**

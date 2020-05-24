@@ -1,5 +1,8 @@
 package it.polimi.ingsw;
 
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 public class NameSettingState extends State {
@@ -26,6 +29,11 @@ public class NameSettingState extends State {
 
     @Override
     public void onStateTransition() {
+        try {
+            player.getController().createFluxTable();
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
         // player.getStateManager().notifyState();
     }
 

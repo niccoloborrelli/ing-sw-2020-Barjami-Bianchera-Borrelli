@@ -32,6 +32,6 @@ public class GodChoice extends State {
     }
 
     public String toString(){
-        return "GodChoice";
+        return "GodChoiceState";
     }
 }

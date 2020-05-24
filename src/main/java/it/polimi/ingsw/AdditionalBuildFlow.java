@@ -24,6 +24,7 @@ public class AdditionalBuildFlow extends FlowChanger {
     private boolean noPerimeter;
     private boolean beforeMove;
     private boolean noDome;
+    private static final String actionTypeB = "build";
 
 
     /**

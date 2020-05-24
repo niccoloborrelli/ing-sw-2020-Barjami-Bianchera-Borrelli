@@ -47,6 +47,7 @@ public class LobbyManager {
         turnManager.setPlayers(lobby.getPlayers());
         for (Player p: lobby.getPlayers()) {
             p.setState(p.getStateManager().getState("NameSettingState"));
+            p.getStateManager().setTurnManager(turnManager);
         }
     }
 }

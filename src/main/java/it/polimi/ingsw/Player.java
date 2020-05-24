@@ -26,6 +26,8 @@ public class Player implements Observed{
     private boolean cantPush;
     private boolean powerUsed;
     private boolean domeEveryWhere;
+    private boolean hasWon;
+
     private Controller controller;
 
     public Player(){
@@ -250,13 +252,21 @@ public class Player implements Observed{
     }
 
     public boolean hasMovesToDo(){
-        if(actionsToPerform.contains("move"))
-            return false;
-        return  true;
+        return !actionsToPerform.contains("move");
     }
     public boolean hasBuildsToDo(){
-        if(actionsToPerform.contains("build"))
-            return false;
-        return  true;
+        return !actionsToPerform.contains("build");
+    }
+
+    public boolean isHasWon() {
+        return hasWon;
+    }
+
+    public boolean isChallenger(){
+        return this.equals(stateManager.getTurnManager().getPlayers().get(0));
+    }
+
+    public boolean isValidGod() {
+        return playerGod != null;
     }
 }

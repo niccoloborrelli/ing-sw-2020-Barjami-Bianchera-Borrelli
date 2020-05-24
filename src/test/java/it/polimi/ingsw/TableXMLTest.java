@@ -19,10 +19,10 @@ class TableXMLTest {
         File file = new File("C:\\Users\\Yoshi\\Desktop\\testXML.txt");
         HashMap<State, List<Line>> hash = null;
         Player player = new Player();
-        TableXML tableXML = new TableXML(file);
+        TableXML tableXML = new TableXML(file, player);
         State readyForAction = new ReadyForActionState(player);
         State endTurn = new EndTurnState(player);
-        State restriction = new RestrictionState(player);
+        State restriction = new ReadyForActionState(player);
 
         HashMap<String, State> hashMap = new HashMap<>();
         hashMap.put(restriction.toString(), restriction);

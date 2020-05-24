@@ -84,7 +84,7 @@ public class ReadyForActionState extends State {
 
     @Override
     public String toString() {
-        return "ReadyForAction";
+        return "ReadyForActionState";
     }
 
 

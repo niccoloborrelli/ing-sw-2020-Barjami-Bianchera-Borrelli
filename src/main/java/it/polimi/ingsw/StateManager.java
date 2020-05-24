@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import jdk.javadoc.internal.doclets.formats.html.markup.Table;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,9 +42,31 @@ public class StateManager {
         table = new HashMap<>();
     }
 
+    public void createBaseStates(Player player){
+        State nameSetting = new NameSettingState(player);
+        State colorSetting = new ColorSettingState(player);
+        State readyForAction = new ReadyForActionState(player);
+        State action = new ActionState(player);
+        State endTurn = new EndTurnState(player);
+        State godSet = new GodSetState(player);
+        State godChoice = new GodChoice(player);
+
+        stateHashMap.put(nameSetting.toString(), nameSetting);
+        stateHashMap.put(colorSetting.toString(), colorSetting);
+        stateHashMap.put(readyForAction.toString(), readyForAction);
+        stateHashMap.put(action.toString(), action);
+        stateHashMap.put(endTurn.toString(), endTurn);
+        stateHashMap.put(godSet.toString(), godSet);
+        stateHashMap.put(godChoice.toString(), godChoice);
+    }
+
     public void setTable(HashMap<State, List<Line>> table) {
         this.table = table;
         sortAllTable();
+    }
+
+    public HashMap<String, State> getStateHashMap() {
+        return stateHashMap;
     }
 
     /*

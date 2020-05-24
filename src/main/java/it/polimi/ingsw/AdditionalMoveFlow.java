@@ -35,7 +35,7 @@ public class AdditionalMoveFlow extends FlowChanger {
         else
             workerChosen = player.getWorkers().get(1);
 
-        CheckingUtility.restriction(player, actionType);
+        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(), actionType);
         List<Space> movement = new ArrayList<>(workerChosen.getPossibleMovements());
         movement.remove(workerChosen.getLastSpaceOccupied());
 

@@ -18,7 +18,7 @@ public class ColorSettingState extends State {
                 colorSetted=true;
             }
         }
-        if(colorSetted==false)
+        if(!colorSetted)
             player.notify(1);
     }
 

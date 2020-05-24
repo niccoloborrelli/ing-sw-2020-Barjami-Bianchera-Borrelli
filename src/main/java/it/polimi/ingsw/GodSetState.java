@@ -30,7 +30,7 @@ public class GodSetState extends State {
 
     @Override
     public void onStateTransition() {
-        List allGodsNames=new AòkfafafrrayList(); //Riempio questa lista con i nomi di tutte le divinita', da finire
+        List allGodsNames=new ArrayList(); //Riempio questa lista con i nomi di tutte le divinita', da finire
         setAllowedInputs(allGodsNames);
         turnManager=player.getStateManager().getTurnManager();
         numberOfGodsReceived=0;

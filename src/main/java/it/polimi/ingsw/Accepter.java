@@ -15,6 +15,7 @@ public class Accepter {
             Socket sc = serverSocket.accept();
             Thread accepter = new Thread(() -> {
                 try {
+                    System.out.println("Collegato");
                     Player player = new Player();
                     StateManager stateManager = new StateManager();
                     player.setStateManager(stateManager);

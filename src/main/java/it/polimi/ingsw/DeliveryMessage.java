@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,11 @@ public class DeliveryMessage {
     private boolean graphicInterface;
     private Field field;
     private NetHandler netHandler;
+
+    public DeliveryMessage(Socket sc) throws IOException {
+        field = new Field();
+        netHandler = new NetHandler(this, sc);
+    }
 
     /**
      * Traduces input e sends it to net manager.

@@ -2,9 +2,10 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
-import static it.polimi.ingsw.DefinedValues.actionTypeB;
-import static it.polimi.ingsw.DefinedValues.actionTypeM;
-import static org.junit.jupiter.api.Assertions.*;
+//import static it.polimi.ingsw.DefinedValues.actionTypeB;
+//import static it.polimi.ingsw.DefinedValues.actionTypeM;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AdditionalBuildFlowTest {
 
@@ -210,8 +211,8 @@ class AdditionalBuildFlowTest {
     @Test
     void changeFlowBeforeMoveTest1(){
         Player player = new Player();
-        player.getActionsToPerform().add(actionTypeM);
-        player.getActionsToPerform().add(actionTypeB);
+      //  player.getActionsToPerform().add(actionTypeM);
+        //player.getActionsToPerform().add(actionTypeB);
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
         Worker worker1 = new Worker();
@@ -241,8 +242,8 @@ class AdditionalBuildFlowTest {
     @Test
     void changeFlowBeforeMoveTest2(){
         Player player = new Player();
-        player.getActionsToPerform().add(actionTypeM);
-        player.getActionsToPerform().add(actionTypeB);
+        //player.getActionsToPerform().add(actionTypeM);
+        //player.getActionsToPerform().add(actionTypeB);
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
         Worker worker1 = new Worker();
