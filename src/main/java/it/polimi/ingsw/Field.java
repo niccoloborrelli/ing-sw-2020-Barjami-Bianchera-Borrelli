@@ -165,4 +165,8 @@ public class Field {
             for(int j = 4; j < COLUMN_CLI - 1; j = j + 4)
                 field[i][j] = ANSI_BLUE.escape() + "0";
     }
+
+    public void printData(String message){
+        System.out.println(message);
+    }
 }

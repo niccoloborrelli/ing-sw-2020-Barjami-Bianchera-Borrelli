@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import jdk.javadoc.internal.doclets.formats.html.markup.Table;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +42,11 @@ public class StateManager {
     public StateManager() {
         stateHashMap = new HashMap<>();
         table = new HashMap<>();
+    }
+
+    public void setTable(HashMap<State, List<Line>> table) {
+        this.table = table;
+        sortAllTable();
     }
 
     /*
@@ -318,6 +325,19 @@ public class StateManager {
         searchUnique(startState,oldFinishState,conditions).setFinishState(newFinishState);
     }
 
+    public void changeStates(State newState, State oldState){
+        List<Line> foundFinishState;
+        for(List<Line> lineList : table.values()) {
+            foundFinishState = searchFinishState(lineList, oldState);
+            substituteStates(foundFinishState, newState);
+        }
+    }
+
+    private void substituteStates(List<Line> lines, State newState){
+        for(Line line: lines)
+            line.setFinishState(newState);
+    }
+
     /**
      * Permits to find only one specific line determined by: start state, arrival state and conditions.
      * @param startState is start state.
@@ -363,6 +383,10 @@ public class StateManager {
     AREA METODO -- SORT FOR PRIORITY
      */
 
+    public void sortAllTable(){
+        for(List<Line> lineList: table.values())
+            sortForPriority(lineList);
+    }
     /**
      * Sorts for priority this given list.
      * @param listToOrder is list to order.

@@ -3,32 +3,27 @@ package it.polimi.ingsw;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 
-public class Handler extends Thread {
+import static java.lang.Thread.sleep;
 
-    private Socket sc;
+public class NetHandler {
+
+    private DeliveryMessage deliveryMessage;
+    private Socket socket;
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
-    private HandlerHub handlerHub;
     private boolean endGame;
 
-    public Handler(Socket sc, HandlerHub handlerHub) throws IOException {
-        this.sc = sc;
-        dataInputStream = new DataInputStream(sc.getInputStream());
-        dataOutputStream = new DataOutputStream(sc.getOutputStream());
-        this.handlerHub = handlerHub;
+
+
+    public NetHandler(DeliveryMessage deliveryMessage, Socket socket) throws IOException {
+        this.deliveryMessage = deliveryMessage;
         endGame = false;
-    }
-
-    public Socket getSc() {
-        return sc;
-    }
-
-    public void setEndGame(boolean endGame) {
-        this.endGame = endGame;
-    }
+        this.socket = socket;
+        dataInputStream = new DataInputStream(socket.getInputStream());
+        dataOutputStream = new DataOutputStream(socket.getOutputStream());
+    };
 
     public void handle(){
         Thread reading = createReadingThread();
@@ -46,9 +41,9 @@ public class Handler extends Thread {
             while (!endGame){
                 try {
                     String message = dataInputStream.readUTF();
-                    handlerHub.callController(this, message);
+                    deliveryMessage.receive(message);
                 } catch (IOException e) {
-                    handlerHub.quitGame(this);
+                    deliveryMessage.quitGame();
                 }
                 try {
                     sleep(400);
@@ -58,10 +53,12 @@ public class Handler extends Thread {
         });
     }
 
-    public void communicate(String message){
+    public void sendMessage(String message){
         try {
             dataOutputStream.writeUTF(message);
-        } catch (IOException ignored) {
+            dataOutputStream.flush();
+        } catch (IOException e) {
+            deliveryMessage.quitGame();
         }
     }
 }
