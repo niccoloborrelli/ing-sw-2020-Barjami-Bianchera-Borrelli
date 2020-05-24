@@ -23,16 +23,30 @@ public class LobbyManager {
             lobbies.add(new Lobby(player, numberOfPlayers));
         }
         for (Lobby l: lobbies) {
-            if(l.getNumberOfPlayers() == numberOfPlayers && l.getPlayers().size() < l.getNumberOfPlayers() && !l.getPlayers().contains(player)) {
+            if(canAddPlayer(l ,player, numberOfPlayers)) {
                     l.getPlayers().add(player);
-                if(l.getPlayers().size() == l.getNumberOfPlayers()){
-                    TurnManager turnManager = new TurnManager();
-                    turnManager.setPlayers(l.getPlayers());
-                    System.out.println("Game set for " + l.getNumberOfPlayers() + " players");
+                if(lobbyFull(l)){
+                    createGame(l);
                     return;
                 }
             }
         }
         lobbies.add(new Lobby(player, numberOfPlayers));
+    }
+
+    private boolean canAddPlayer(Lobby l, Player player, int numberOfPlayers){
+        return l.getNumberOfPlayers() == numberOfPlayers && l.getPlayers().size() < l.getNumberOfPlayers() && !l.getPlayers().contains(player);
+    }
+
+    private boolean lobbyFull(Lobby lobby){
+        return lobby.getPlayers().size() == lobby.getNumberOfPlayers();
+    }
+
+    private void createGame(Lobby lobby){
+        TurnManager turnManager = new TurnManager();
+        turnManager.setPlayers(lobby.getPlayers());
+        for (Player p: lobby.getPlayers()) {
+            p.setState(p.getStateManager().getState("NameSettingState"));
+        }
     }
 }

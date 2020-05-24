@@ -36,6 +36,7 @@ public class Player implements Observed{
         cantPush=true;
         powerUsed=false;
         domeEveryWhere=false;
+        stateManager = new StateManager();
     }
 
     /**

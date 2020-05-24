@@ -53,11 +53,7 @@ public class Controller implements Observer {
     private HandlerHub handlerHub;
     private HashMap<String,List<String>> godMap;
 
-    public Controller() {
-        player = new Player();
-        IslandBoard islandboard = new IslandBoard();
-        player.setIslandBoard(islandboard);
-    }
+    public Controller() {}
 
     /**
      * Sets visitor depending of message receveid.
@@ -65,7 +61,6 @@ public class Controller implements Observer {
      *
      * @param message is string receveid.
      */
-
     public void giveInput(String message) {
         int code = findCode(message);
 

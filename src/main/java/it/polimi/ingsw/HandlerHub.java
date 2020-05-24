@@ -12,10 +12,12 @@ public class HandlerHub {
     private static final String endMessage = "Somebody disconnected from server! Game is nullified"; // DA CAMBIARE
 
 
-    public HandlerHub(List<Socket> socketList) throws IOException {
+    public HandlerHub() throws IOException {
         handlerControllerHashMap = new HashMap<>();
-        for(Socket socket: socketList)
-            handlerControllerHashMap.put(new Controller(), new Handler(socket,this));
+    }
+
+    public void addHandlerForSocket(Socket socket, Controller controller) throws IOException {
+        handlerControllerHashMap.put(controller, new Handler(socket,this));
     }
 
     public void quitGame(Handler handler){

@@ -28,7 +28,7 @@ public class ActionState extends AbstractActionState {
             player.getStateManager().getTurnManager().checkWin();
             player.getStateManager().setNextState(player);
         }
-        else if(actionType2.equals(actionType2)){
+        else if(action.equals(actionType2)){
             build(actingWorker, spaceToAct);
             player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();
