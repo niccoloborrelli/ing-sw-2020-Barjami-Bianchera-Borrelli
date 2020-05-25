@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class GodSetState extends State {
     private int numberOfGodsReceived;
@@ -11,6 +12,7 @@ public class GodSetState extends State {
 
     GodSetState(Player player) {
         super(player);
+        numberOfGodsReceived=0;
     }
 
     @Override
@@ -24,15 +26,17 @@ public class GodSetState extends State {
         else
             player.notify(1);
 
-        if(numberOfGodsReceived==numberOfGodsRequired)
+        if(numberOfGodsReceived==numberOfGodsRequired) {
             player.getStateManager().setNextState(player);
+        }
     }
 
     @Override
     public void onStateTransition() {
+        player.getController().createGodMap();
         player.notify(6);
-        List allGodsNames=new ArrayList(); //Riempio questa lista con i nomi di tutte le divinita', da finire
-        setAllowedInputs(allGodsNames);
+        Set allGodsNames= player.getController().getGodMap().keySet();
+        setAllowedInputs(new ArrayList<String>(allGodsNames));
         turnManager=player.getStateManager().getTurnManager();
         numberOfGodsReceived=0;
         numberOfGodsRequired=player.getStateManager().getTurnManager().getPlayers().size();

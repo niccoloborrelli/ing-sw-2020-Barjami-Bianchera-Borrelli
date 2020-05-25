@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +47,19 @@ public class LobbyManager {
     }
 
     private void createGame(Lobby lobby){
+        IslandBoard islandBoard = new IslandBoard();
         TurnManager turnManager = new TurnManager();
         HandlerHub handlerHub = new HandlerHub();
         createLocalHub(handlerHub, lobby.getPlayers());
         turnManager.setPlayers(lobby.getPlayers());
         for (Player p: lobby.getPlayers()) {
-            p.setState(p.getStateManager().getState("NameSettingState"));
+            p.setIslandBoard(islandBoard);
+            State name = p.getStateManager().getState("NameSettingState");
+            p.getStateManager().setCurrent_state(name);
+            try {
+                p.getState().onStateTransition();
+            } catch (IOException ignored) {
+            }
             p.getStateManager().setTurnManager(turnManager);
         }
     }

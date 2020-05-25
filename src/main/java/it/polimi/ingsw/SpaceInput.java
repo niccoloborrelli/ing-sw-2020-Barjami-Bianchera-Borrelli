@@ -3,21 +3,12 @@ package it.polimi.ingsw;
 public class SpaceInput  {
     private Worker worker;
     private Space space;
-    private int anInt;
     public SpaceInput(){
 
     };
     public SpaceInput(Worker worker,Space space){
         this.worker=worker;
         this.space=space;
-    }
-
-    public int getAnInt() {
-        return anInt;
-    }
-
-    public void setAnInt(int anInt) {
-        this.anInt = anInt;
     }
 
     public Worker getWorker() {

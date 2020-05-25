@@ -13,23 +13,28 @@ public class Accepter {
 
         while (true) {
             Socket sc = serverSocket.accept();
-            Thread accepter = new Thread(() -> {
+            Player player = new Player();
+            StateManager stateManager = new StateManager();
+            stateManager.createBaseStates(player);
+            player.setStateManager(stateManager);
+            Controller controller = new Controller();
+            player.setController(controller);
+            controller.setPlayer(player);
+            globalHub.addHandlerForSocket(sc, controller);
+            new Thread(()->{
+                Thread t = globalHub.createThreadHandle(globalHub.getHandlerControllerHashMap().get(controller));
+                t.start();
                 try {
-                    System.out.println("Collegato");
-                    Player player = new Player();
-                    StateManager stateManager = new StateManager();
-                    player.setStateManager(stateManager);
-                    Controller controller = new Controller();
-                    globalHub.addHandlerForSocket(sc, controller);
-                    player.setState(new PreLobbyState(player, lobbyManager));
-                } catch (IOException e) {
+                    t.join();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }, "accepter");
-
-            accepter.start();
-            accepter.join();
+            }).start();
+            player.getStateManager().setCurrent_state(new PreLobbyState(player, lobbyManager));
+            player.getState().onStateTransition();
         }
+
+
     }
 
 }

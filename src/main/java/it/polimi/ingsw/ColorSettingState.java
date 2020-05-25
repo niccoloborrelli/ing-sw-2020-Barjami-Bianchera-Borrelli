@@ -16,6 +16,7 @@ public class ColorSettingState extends State {
             if(turnManager.getAllowedColors().contains(input)) {
                 turnManager.setColor(player, input);
                 player.getStateManager().setNextState(player);
+                turnManager.getAllowedColors().remove(input);
                 colorSetted=true;
             }
         }

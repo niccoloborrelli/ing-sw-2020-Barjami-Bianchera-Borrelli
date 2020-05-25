@@ -287,6 +287,9 @@ public class TableXML {
             case "ValidGod":
                 nameMethod =  "isValidGod";
                 break;
+            case "WorkerPlaced":
+                nameMethod = "isWorkerPlaced";
+                break;
 
         }
 

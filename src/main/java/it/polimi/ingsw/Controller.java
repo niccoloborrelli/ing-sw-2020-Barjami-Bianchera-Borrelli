@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,7 @@ public class Controller{
     private static final String LOBBY_CHOICE = "How many players do you want to play with? Insert 2 or 3";
     private static final String CHOICE = "You have to choose ";
     private static final String ERROR = "You wrote an invalid input";
+    private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 
     private Player player;
@@ -66,6 +68,13 @@ public class Controller{
         visitor = new Visitor();
     }
 
+    public HashMap<String, List<String>> getGodMap() {
+        return godMap;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 
     public void setHandlerHub(HandlerHub handlerHub) {
         this.handlerHub = handlerHub;
@@ -88,8 +97,11 @@ public class Controller{
             setSpaceInput(workerSpaceHashMap);
         } else if (code == INT_RECEIVING) {
             int value = parseItemInt(message);
-            visitor.getSpaceInput().setAnInt(value);
+            visitor.setIntInput(value);
         }
+        try {
+            player.onInput(visitor);
+        }catch (IOException ignored){}
     }
 
     private void setSpaceInput(HashMap<Worker, Space> workerSpaceHashMap){
@@ -178,9 +190,8 @@ public class Controller{
             Node node = nodeList.item(FIRST_CHILD);
             if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                if (!node.hasChildNodes()) {
+                //if (!node.hasChildNodes())
                     coord = element.getTextContent();
-                }
             }
         }
 
@@ -385,7 +396,7 @@ public class Controller{
 
         String data = generateField(code + message, DATA);
 
-        handlerHub.sendData(data, this, BROADCAST);
+        handlerHub.sendData(PREFIX + data, this, BROADCAST);
     }
 
     private void updateBuilding(Space space) {
@@ -402,7 +413,7 @@ public class Controller{
         String message = generateField(rowPart + columnPart + levelPart, MESSAGE);
         String data = generateField(code + message, DATA);
 
-        handlerHub.sendData(data, this, BROADCAST);
+        handlerHub.sendData(PREFIX + data, this, BROADCAST);
 
     }
 
@@ -412,7 +423,7 @@ public class Controller{
             String spacesWorker = buildAvailableSpace(player.getWorkers().get(0), spaceInputs);
             String message = generateField(spacesWorker, MESSAGE);
             String data = generateField(code + message, DATA);
-            handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+            handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
         }
     }
 
@@ -445,16 +456,16 @@ public class Controller{
     public void update(String haveToChose){
         String data = dataOnlyToPrint(CHOICE + haveToChose);
 
-        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
 
     }
 
     public void updateGods(){
         String data = "";
         for(String s: godMap.keySet())
-            data = s + "\n";
+            data = data +  s + "\n";
         String mess = dataOnlyToPrint(data);
-        handlerHub.sendData(mess, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + mess, this, SINGLE_COMMUNICATION);
     }
 
     public void update(int code){
@@ -478,22 +489,22 @@ public class Controller{
 
     private void updateLobby(){
         String data = dataOnlyToPrint(LOBBY_CHOICE);
-        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
 
     public void updateLeft(List<String> stringList){
         String data = "";
         for(String s: stringList)
-            data = s + "\n";
+            data = data +  s + "\n";
         String mess = dataOnlyToPrint(data);
-        handlerHub.sendData(mess, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + mess, this, SINGLE_COMMUNICATION);
 
     }
 
     private void updateError(){
         String data = dataOnlyToPrint(ERROR);
 
-        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
 
 
@@ -501,33 +512,33 @@ public class Controller{
     private void updateEndTurn() {
         String data = dataOnlyToPrint(ENDTURN);
 
-        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
 
     private void updateEndGame() {
         String data = dataOnlyToPrint(ENDGAME);
 
-        handlerHub.sendData(data, this, BROADCAST);
+        handlerHub.sendData(PREFIX + data, this, BROADCAST);
     }
 
     private void updateActivationPower() {
         String data = dataOnlyToPrint(POWER_ACTIVATION);
 
-        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
 
     private void updateWon() {
         String dataWin = dataOnlyToPrint(WINNER);
         String dataLose = dataOnlyToPrint(LOSER);
 
-        handlerHub.sendData(dataWin, this, SINGLE_COMMUNICATION);
-        handlerHub.sendData(dataLose, this, ALL_NOT_ME);
+        handlerHub.sendData(PREFIX + dataWin, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + dataLose, this, ALL_NOT_ME);
     }
 
     private void updateLost() {
         String dataLose = dataOnlyToPrint(LOSER);
 
-        handlerHub.sendData(dataLose, this, SINGLE_COMMUNICATION);
+        handlerHub.sendData(PREFIX + dataLose, this, SINGLE_COMMUNICATION);
     }
 
     private String generateStringWorker(Worker worker) {
@@ -573,12 +584,12 @@ public class Controller{
 
     public void decoratePlayer(Player playerToDecorate) throws NoSuchMethodException, ClassNotFoundException {
         GodFactory godFactory=new GodFactory();
+        createGodMap();
         godFactory.decoratePlayer(godMap,playerToDecorate);
     }
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
         TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
-        player.getStateManager().createBaseStates(player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
     }

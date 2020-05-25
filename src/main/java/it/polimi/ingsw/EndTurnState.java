@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import java.io.IOException;
-
 public class EndTurnState extends State {
 
     EndTurnState(Player player) {
@@ -16,6 +14,9 @@ public class EndTurnState extends State {
             player.setPowerNotUsable(false);
             player.setPowerActivated(false);
         }
+        player.getActionsToPerform().add("move");
+        player.getActionsToPerform().add("build");
+        player.getStateManager().getTurnManager().setNextPlayer(player);
     }
 
     public String toString(){

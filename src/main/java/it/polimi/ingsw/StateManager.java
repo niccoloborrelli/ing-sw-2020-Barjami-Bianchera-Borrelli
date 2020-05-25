@@ -32,6 +32,9 @@ public class StateManager {
         return current_state;
     }
 
+    public void setCurrent_state(State current_state) {
+        this.current_state = current_state;
+    }
     /*
     NON è POSSIBILE AVERE LO STESSO STATO DI PARTENZA PER STATI DI ARRIVO CON UGUALE PRIORITà
     SE IL METODO NON DEVE CONTROLLARE NESSUNA CONDIZIONE, SI USERà IL METODO QUI SOTTO ALWAYSTRUE E EXPECTED VALUE = TRUE
@@ -46,6 +49,7 @@ public class StateManager {
         State nameSetting = new NameSettingState(player);
         State colorSetting = new ColorSettingState(player);
         State readyForAction = new ReadyForActionState(player);
+        State workerSetting = new WorkerSettingState(player);
         State action = new ActionState(player);
         State endTurn = new EndTurnState(player);
         State godSet = new GodSetState(player);
@@ -54,6 +58,7 @@ public class StateManager {
         stateHashMap.put(nameSetting.toString(), nameSetting);
         stateHashMap.put(colorSetting.toString(), colorSetting);
         stateHashMap.put(readyForAction.toString(), readyForAction);
+        stateHashMap.put(workerSetting.toString(), workerSetting);
         stateHashMap.put(action.toString(), action);
         stateHashMap.put(endTurn.toString(), endTurn);
         stateHashMap.put(godSet.toString(), godSet);
@@ -387,15 +392,17 @@ public class StateManager {
     public void setNextState(Object obRef) throws IOException {
         List<Line> stateLines = table.get(current_state);
 
-        for(Line line: stateLines){
+
+        for (Line line : stateLines) {
             try {
                 if (line.controlCondition(obRef))
                     current_state = line.getFinishState();
             } catch (InvocationTargetException | IllegalAccessException e) {
-                removeSpecifiedCondition(current_state,line.getFinishState(),line.getConditions());
+                removeSpecifiedCondition(current_state, line.getFinishState(), line.getConditions());
             }
         }
         current_state.onStateTransition();
+
     }
 
 

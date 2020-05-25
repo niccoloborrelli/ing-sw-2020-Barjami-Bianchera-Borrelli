@@ -12,7 +12,6 @@ public class Player implements Observed{
     private String playerGod;
     private List<Worker> workers;
     private WinConditionAB winCondition;
-    private State state;
     private List<String> actionsToPerform;
     private StateManager stateManager;
     private SpaceInput lastReceivedInput;
@@ -44,6 +43,8 @@ public class Player implements Observed{
             workers.add(new Worker());
             workers.get(i).setWorkerPlayer(this);
         }
+        actionsToPerform.add("move");
+        actionsToPerform.add("build");
     }
 
     /**
@@ -52,7 +53,7 @@ public class Player implements Observed{
      * @throws IOException
      */
     public void onInput(Visitor visitor) throws IOException {
-            state.onInput(visitor);
+            getState().onInput(visitor);
     }
 
     public void setActionsToPerform(List<String> actions){
@@ -113,17 +114,13 @@ public class Player implements Observed{
     }
 
     public State getState() {
-        return state;
+        return stateManager.getCurrent_state();
     }
 
-    public boolean hasActionsToPerform(){
-        if(actionsToPerform.size()==0)
+    public boolean hasActionsToPerform() {
+        if (actionsToPerform.size() == 0)
             return false;
         return true;
-    }
-
-    public void setState(State state) {
-        this.state = state;
     }
 
     public void setPlayerColor(String playerColor) {
@@ -288,5 +285,13 @@ public class Player implements Observed{
 
     public boolean isValidGod() {
         return playerGod != null;
+    }
+
+    public boolean isWorkerPlaced(){
+        for(Worker worker: workers){
+            if(worker.getWorkerSpace()==null)
+                return false;
+        }
+        return true;
     }
 }

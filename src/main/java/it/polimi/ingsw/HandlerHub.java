@@ -22,6 +22,8 @@ public class HandlerHub {
 
     public void addHandlerForSocket(Socket socket, Controller controller) throws IOException {
         handlerControllerHashMap.put(controller, new Handler(socket,this));
+        handlerControllerHashMap.get(controller).setHandlerHub(this);
+        controller.setHandlerHub(this);
     }
 
     public void quitGame(Handler handler){
@@ -81,7 +83,7 @@ public class HandlerHub {
 
         return null;
     }
-
+/*
     public void actionateEveryHandler(){
         List<Thread> threadList;
         threadList = createThreadList();
@@ -90,8 +92,8 @@ public class HandlerHub {
         }
         joinEveryHandle(threadList);
     }
-
-
+*/
+/*
     private List<Thread> createThreadList(){
         List<Thread> threadList = new ArrayList<>();
 
@@ -101,7 +103,8 @@ public class HandlerHub {
 
         return threadList;
     }
-
+*/
+    /*
     private void joinEveryHandle(List<Thread> threadList){
         for(Thread t: threadList){
             try {
@@ -111,8 +114,9 @@ public class HandlerHub {
             }
         }
     }
+     */
 
-    private Thread createThreadHandle(Handler handler){
+    public Thread createThreadHandle(Handler handler){
         return new Thread(handler::handle);
     }
 }

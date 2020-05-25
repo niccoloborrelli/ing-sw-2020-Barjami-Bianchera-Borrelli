@@ -28,6 +28,14 @@ public class Visitor {
         return this.stringInput;
     }
 
+    public int getIntInput() {
+        return intInput;
+    }
+
+    public void setIntInput(int intInput) {
+        this.intInput = intInput;
+    }
+
     public SpaceInput getSpaceInput() {
         return spaceInput;
     }

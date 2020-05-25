@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class GodFactory {
-    private static final String CLASSNAME1="Player";
+    private static final String CLASSNAME1="it.polimi.ingsw.Player";
     private static final String INGAME="isInGame";
     private static final String DENYUPPERMOVE="denyUpperMove";
     private static final String SWAPEFFECT="swap";
@@ -25,7 +25,6 @@ public class GodFactory {
     private static final String INPUTFORACTION="ReadyForActionState";
 
     public void decoratePlayer(HashMap<String, List<String>> godMap,Player player) throws NoSuchMethodException, ClassNotFoundException {
-        Set<String> keys=godMap.keySet();
         StateManager stateManager=player.getStateManager();
         List<String> effects=godMap.get(player.getPlayerGod());
         if(effects.contains("SwapWorkers")){

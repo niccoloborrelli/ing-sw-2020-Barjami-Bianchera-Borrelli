@@ -19,7 +19,7 @@ public class GodChoice extends State {
                 player.getController().decoratePlayer(player);
             }
             catch (Exception e){
-                System.out.println("error");
+                e.printStackTrace();
             }
             player.getStateManager().setNextState(player);
         }
@@ -28,11 +28,23 @@ public class GodChoice extends State {
     }
 
     @Override
-    public void onStateTransition() throws IOException {
+    public void onStateTransition() {
 
-        turnManager=player.getStateManager().getTurnManager();
-        player.notifyLeft(turnManager.getAvailableGods());
-        setAllowedInputs(turnManager.getAvailableGods());
+        turnManager = player.getStateManager().getTurnManager();
+        if(turnManager.getAvailableGods().size()==1) {
+            player.setPlayerGod(turnManager.getAvailableGods().get(0));
+            turnManager.getAvailableGods().remove(player.getPlayerGod());
+            try {
+                player.getController().decoratePlayer(player);
+                player.getStateManager().setNextState(player);
+                player.getStateManager().setNextState(player);
+            } catch (IOException | NoSuchMethodException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }else{
+            player.notifyLeft(turnManager.getAvailableGods());
+            setAllowedInputs(turnManager.getAvailableGods());
+        }
     }
 
     public String toString(){

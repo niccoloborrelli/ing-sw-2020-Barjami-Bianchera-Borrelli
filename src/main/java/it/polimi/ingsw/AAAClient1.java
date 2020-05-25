@@ -10,6 +10,7 @@ public class AAAClient1 {
         Scanner scanner = new Scanner(System.in);
         Socket socket = new Socket("localhost",60100);
         DeliveryMessage deliveryMessage = new DeliveryMessage(socket);
+        new Thread(deliveryMessage::startReading).start();
 
         while (true){
             String input = scanner.nextLine();

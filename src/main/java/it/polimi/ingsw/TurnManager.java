@@ -23,6 +23,7 @@ public class TurnManager {
         allowedColors.add("cyan");
         notAllowedNames = new ArrayList<>();
         players = new ArrayList<>();
+        availableGods = new ArrayList<>();
     }
 
     public List<Player> getPlayers() {
@@ -95,12 +96,32 @@ public class TurnManager {
      * @param player is the player who has just finished hir turn
      * @return the next player to play
      */
-    public Player setNextPlayer(Player player){
-        int pos = players.indexOf(player);
-        if(pos == players.size() - 1)
-            return players.get(0);
-        else
-            return players.get(++pos);
+    public void setNextPlayer(Player player){
+        if(allPlayerWait()) {
+            int pos = players.indexOf(player);
+            if (pos == players.size() - 1) {
+                try {
+                    players.get(0).getStateManager().setNextState(player);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                try {
+                    players.get(++pos).getStateManager().setNextState(player);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private boolean allPlayerWait(){
+        for(Player player: players){
+            if(!player.getState().equals(player.getStateManager().getStateHashMap().get("EndTurnState")))
+                return false;
+        }
+        return true;
     }
 
     private boolean oneRemain(){

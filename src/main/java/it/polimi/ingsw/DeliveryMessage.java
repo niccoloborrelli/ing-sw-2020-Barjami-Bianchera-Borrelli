@@ -306,18 +306,8 @@ public class DeliveryMessage {
     }
 
     private String parseMessage(Element element){
-        String message = null;
 
-        NodeList nodeList = element.getElementsByTagName(MESSAGE);
-        Node node = nodeList.item(0);
-
-        if(node!=null && node.getNodeType() == Node.ELEMENT_NODE){
-            Element el = (Element) node;
-            if(!node.hasChildNodes())
-                message =  el.getTextContent();
-        }
-
-        return message;
+        return element.getTextContent();
     }
 
     private String parseColor(String message){
@@ -355,7 +345,7 @@ public class DeliveryMessage {
     }
 
     public void quitGame(){
-
+        System.out.println("Figa, si è scollegato");
     }
 
     /**
@@ -461,6 +451,9 @@ public class DeliveryMessage {
         return String.valueOf(number);
     }
 
+    public void startReading(){
+        netHandler.handle();
+    }
 
 
 }
