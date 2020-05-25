@@ -36,6 +36,7 @@ public class ReadyForActionState extends State {
     @Override
     public void onStateTransition() throws IOException {
         boolean hasLost = false;
+        player.setLastReceivedInput(null);
         List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
         String action = player.getActionsToPerform().get(0);
         CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
@@ -43,10 +44,13 @@ public class ReadyForActionState extends State {
         hasLost = checkForLosing(possibleAction);
         if(hasLost) {
             player.setInGame(false);
+            player.notify(3);
             player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
         }//fine della parte della fu-RestrictionState
-        else
+        else {
             setAllowedSpaces();
+            player.notify(allowedSpaces);
+        }
     }
 
     /**
@@ -94,5 +98,9 @@ public class ReadyForActionState extends State {
                 return true;
         }
         return false;
+    }
+
+    public List<SpaceInput> getAllowedSpaces() {
+        return allowedSpaces;
     }
 }

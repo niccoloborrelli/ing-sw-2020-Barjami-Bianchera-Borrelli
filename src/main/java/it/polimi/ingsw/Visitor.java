@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 public class Visitor {
     private SpaceInput spaceInput;
     private String stringInput;
+    private int intInput;
 
     public Visitor(){
         spaceInput = new SpaceInput();
@@ -11,8 +12,8 @@ public class Visitor {
     public SpaceInput visit(ReadyForActionState readyForAction){
         return this.spaceInput;
     }
-    public String visit(PowerActivationState powerActivationState){
-        return this.stringInput;
+    public int visit(PowerActivationState powerActivationState){
+        return this.intInput;
     }
     public String visit(GodSetState godSetState){
         return this.stringInput;
@@ -41,6 +42,14 @@ public class Visitor {
 
     public void setStringInput(String stringInput) {
         this.stringInput = stringInput;
+    }
+
+    public int visit(PreLobbyState preLobbyState){
+        return this.intInput;
+    }
+
+    public SpaceInput visit(WorkerSettingState workerSettingState){
+        return this.spaceInput;
     }
 }
 

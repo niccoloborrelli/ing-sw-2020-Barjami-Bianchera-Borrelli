@@ -13,10 +13,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Controller implements Observer {
+public class Controller{
 
     private static final int STRING_RECEIVING = 0;
     private static final int SPACE_RECEIVING = 1;
@@ -25,6 +26,7 @@ public class Controller implements Observer {
     private static final int INVALID_COORDINATE = -1;
     private static final int INVALID_CODE = -1;
     private static final int PRINT = 0;
+    private static final int UPDATE_AVAILABLE_SPACE = 2;
     private static final int UPDATE_MOVEMENT = 3;
     private static final int UPDATE_BUILDING = 4;
     private static final int BROADCAST = 0;
@@ -49,7 +51,10 @@ public class Controller implements Observer {
     private static final String ENDGAME = "Game is finished. Press quit to exit.";
     private static final String WINNER = "Congratulations! You won.";
     private static final String LOSER = "I'm sorry, you lost.";
-    private static final String POWER_ACTIVATION = "Do you want to use yor God power?";
+    private static final String POWER_ACTIVATION = "Do you want to use yor God power? Insert 1 if you want, 0 otherwise";
+    private static final String LOBBY_CHOICE = "How many players do you want to play with? Insert 2 or 3";
+    private static final String CHOICE = "You have to choose ";
+    private static final String ERROR = "You wrote an invalid input";
 
 
     private Player player;
@@ -59,6 +64,11 @@ public class Controller implements Observer {
 
     public Controller() {
         visitor = new Visitor();
+    }
+
+
+    public void setHandlerHub(HandlerHub handlerHub) {
+        this.handlerHub = handlerHub;
     }
 
     /**
@@ -396,11 +406,62 @@ public class Controller implements Observer {
 
     }
 
+    public void update(List<SpaceInput> spaceInputs){
+        for(Worker w: player.getWorkers()) {
+            String code = insertCode(UPDATE_AVAILABLE_SPACE);
+            String spacesWorker = buildAvailableSpace(player.getWorkers().get(0), spaceInputs);
+            String message = generateField(spacesWorker, MESSAGE);
+            String data = generateField(code + message, DATA);
+            handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+        }
+    }
+
+    public String buildAvailableSpace(Worker worker, List<SpaceInput> spaceInputList){
+        List<Space> spaces = new ArrayList<>();
+        for(SpaceInput spaceInput: spaceInputList){
+            if(spaceInput.getWorker().equals(worker))
+                spaces.add(spaceInput.getSpace());
+        }
+
+        String numberOfWorker = generateField(String.valueOf(player.getWorkers().indexOf(worker)), WORKER);
+        String spaceList = createSpaceList(spaces);
+
+        if(spaceList.length()>0)
+            return numberOfWorker+spaceList;
+        return numberOfWorker;
+
+    }
+
+    private String createSpaceList(List<Space> spaceList) {
+        StringBuilder mess = new StringBuilder();
+        for (Space space : spaceList) {
+            mess.append(generateStringSpace(space));
+        }
+
+        return mess.toString();
+
+    }
+
+    public void update(String haveToChose){
+        String data = dataOnlyToPrint(CHOICE + haveToChose);
+
+        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+
+    }
+
+    public void updateGods(){
+        String data = "";
+        for(String s: godMap.keySet())
+            data = s + "\n";
+        String mess = dataOnlyToPrint(data);
+        handlerHub.sendData(mess, this, SINGLE_COMMUNICATION);
+    }
+
     public void update(int code){
         if(code==0)
             updateActivationPower();
         else if(code==1)
-            updateEndTurn();
+            updateError();
         else if(code==2)
             updateEndTurn();
         else if(code==3)
@@ -409,6 +470,30 @@ public class Controller implements Observer {
             updateWon();
         else if(code==5)
             updateEndGame();
+        else if(code==6)
+            updateGods();
+        else if(code==7)
+            updateLobby();
+    }
+
+    private void updateLobby(){
+        String data = dataOnlyToPrint(LOBBY_CHOICE);
+        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
+    }
+
+    public void updateLeft(List<String> stringList){
+        String data = "";
+        for(String s: stringList)
+            data = s + "\n";
+        String mess = dataOnlyToPrint(data);
+        handlerHub.sendData(mess, this, SINGLE_COMMUNICATION);
+
+    }
+
+    private void updateError(){
+        String data = dataOnlyToPrint(ERROR);
+
+        handlerHub.sendData(data, this, SINGLE_COMMUNICATION);
     }
 
 
@@ -443,15 +528,6 @@ public class Controller implements Observer {
         String dataLose = dataOnlyToPrint(LOSER);
 
         handlerHub.sendData(dataLose, this, SINGLE_COMMUNICATION);
-    }
-
-    public void update(List<Space> spaceList) {
-        StringBuilder mess = new StringBuilder();
-        for (Space space : spaceList) {
-            mess.append(generateStringSpace(space));
-        }
-
-        dataOnlyToPrint(mess.toString());
     }
 
     private String generateStringWorker(Worker worker) {

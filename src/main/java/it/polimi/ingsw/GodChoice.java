@@ -23,11 +23,15 @@ public class GodChoice extends State {
             }
             player.getStateManager().setNextState(player);
         }
+        else
+            player.notify(1);
     }
 
     @Override
     public void onStateTransition() throws IOException {
+
         turnManager=player.getStateManager().getTurnManager();
+        player.notifyLeft(turnManager.getAvailableGods());
         setAllowedInputs(turnManager.getAvailableGods());
     }
 

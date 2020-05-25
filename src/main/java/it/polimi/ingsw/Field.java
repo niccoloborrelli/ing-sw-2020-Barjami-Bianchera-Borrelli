@@ -1,11 +1,20 @@
 package it.polimi.ingsw;
 
+import java.util.HashMap;
+
 import static it.polimi.ingsw.Color.*;
 import static it.polimi.ingsw.DefinedValues.*;
 
 public class Field {
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
+    private static final String WORKER = "Your worker n.";
+    private static final String ACTION = "can do an action in this space: \n";
+    private static final String SPACE = "Space n.";
+    private static final String ROW = "row: ";
+    private static final String COLUMN = "column: ";
+    private static final String NONE = "None";
+
 
     /*
         CONVERSIONE ISLANDBOARD -> VIEW
@@ -168,5 +177,26 @@ public class Field {
 
     public void printData(String message){
         System.out.println(message);
+    }
+
+    public void printData(HashMap<String,String> hashMap, String worker){
+        String workerConv = WORKER + worker + ACTION + "\n";
+        String spaces = findSpaces(hashMap);
+
+        System.out.println(workerConv + spaces);
+    }
+
+    public String findSpaces(HashMap<String,String> hashMap){
+        StringBuilder spaces = new StringBuilder();
+        if(hashMap.size()>0) {
+            for (String row : hashMap.keySet()){
+                String column = hashMap.get(row);
+                String data = ROW + row + " " + COLUMN + column + "\n";
+                spaces.append(data);
+            }
+            return spaces.toString();
+        }else
+            return NONE;
+
     }
 }

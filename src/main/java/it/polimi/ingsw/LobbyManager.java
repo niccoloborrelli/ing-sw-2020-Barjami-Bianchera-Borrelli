@@ -6,9 +6,11 @@ import java.util.List;
 public class LobbyManager {
 
     private List<Lobby> lobbies;
+    private HandlerHub globalHub;
 
-    public LobbyManager() {
+    public LobbyManager(HandlerHub globalHub) {
         this.lobbies = new ArrayList<>();
+        this.globalHub = globalHub;
     }
 
     /**
@@ -24,11 +26,12 @@ public class LobbyManager {
         }
         for (Lobby l: lobbies) {
             if(canAddPlayer(l ,player, numberOfPlayers)) {
-                    l.getPlayers().add(player);
+                l.getPlayers().add(player);
                 if(lobbyFull(l)){
                     createGame(l);
                     return;
                 }
+                return;
             }
         }
         lobbies.add(new Lobby(player, numberOfPlayers));
@@ -44,10 +47,22 @@ public class LobbyManager {
 
     private void createGame(Lobby lobby){
         TurnManager turnManager = new TurnManager();
+        HandlerHub handlerHub = new HandlerHub();
+        createLocalHub(handlerHub, lobby.getPlayers());
         turnManager.setPlayers(lobby.getPlayers());
         for (Player p: lobby.getPlayers()) {
             p.setState(p.getStateManager().getState("NameSettingState"));
             p.getStateManager().setTurnManager(turnManager);
+        }
+    }
+
+    private void createLocalHub(HandlerHub handlerHub, List<Player> playerList) {
+        for(Player p: playerList){
+            Handler handler = globalHub.getHandlerControllerHashMap().get(p.getController());
+            handlerHub.getHandlerControllerHashMap().put(p.getController(),handler);
+            p.getController().setHandlerHub(handlerHub);
+            handler.setHandlerHub(handlerHub);
+            globalHub.getHandlerControllerHashMap().remove(p.getController());
         }
     }
 }

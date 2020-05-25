@@ -8,8 +8,8 @@ public class Accepter {
 
     public void accept() throws IOException, InterruptedException {
         ServerSocket serverSocket = new ServerSocket(60100);
-        LobbyManager lobbyManager = new LobbyManager();
-        HandlerHub globalhub = new HandlerHub();
+        HandlerHub globalHub = new HandlerHub();
+        LobbyManager lobbyManager = new LobbyManager(globalHub);
 
         while (true) {
             Socket sc = serverSocket.accept();
@@ -20,7 +20,7 @@ public class Accepter {
                     StateManager stateManager = new StateManager();
                     player.setStateManager(stateManager);
                     Controller controller = new Controller();
-                    globalhub.addHandlerForSocket(sc, controller);
+                    globalHub.addHandlerForSocket(sc, controller);
                     player.setState(new PreLobbyState(player, lobbyManager));
                 } catch (IOException e) {
                     e.printStackTrace();

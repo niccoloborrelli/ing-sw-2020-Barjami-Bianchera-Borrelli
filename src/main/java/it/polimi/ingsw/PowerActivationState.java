@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PowerActivationState extends State {
-    private static String activatePower="activate";
-    private static String dontActivatePower="dontActivate";
+
     private FlowChanger flowPower;
 
     /**
@@ -26,16 +25,14 @@ public class PowerActivationState extends State {
      **/
     @Override
     public void onInput(Visitor visitor) throws IOException {
-        String input=visitor.visit(this);
-        if(allowedInputs.contains(input)){
+        int input=visitor.visit(this);
+        if(input==1||input==0){
             player.setPowerUsed(true);
-
-            if (input.equals(activatePower)) {
+            if (input==1) {
                 player.setPowerActivated(true);
                 flowPower.changeFlow(player);
             }
             player.getStateManager().setNextState(player);
-
         }
         else
             player.notify(1);
@@ -43,18 +40,12 @@ public class PowerActivationState extends State {
 
     @Override
     public void onStateTransition() throws IOException {
-        List<String> allowedInputs=new <String>ArrayList();
         boolean usable=flowPower.isUsable(player);
-        if(usable){
-            allowedInputs.add(activatePower);
-            allowedInputs.add(dontActivatePower);
-            setAllowedInputs(allowedInputs);
-        }
-        else{
+        if(!usable){
             player.setPowerNotUsable(true);
             player.getStateManager().setNextState(player);
-
         }
+        player.notify(0);
     }
 
     public String toString(){

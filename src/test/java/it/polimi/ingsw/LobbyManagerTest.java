@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LobbyManagerTest {
 
+
     /*
     Questo test crea una lobby da 2 giocatori
      */
+    /*
     @Test
     void addPlayerTest1() {
         Player ciro = new Player();
@@ -24,6 +26,7 @@ class LobbyManagerTest {
     /*
     Questo test crea una lobby da 3 giocatori
      */
+    /*
     @Test
     void addPlayerTest2(){
         Player ciro = new Player();
@@ -37,4 +40,6 @@ class LobbyManagerTest {
         lobbyManager.addPlayer(pippo, 3);
         lobbyManager.addPlayer(pluto, 3);
     }
+
+     */
 }

@@ -18,6 +18,7 @@ public class Player implements Observed{
     private SpaceInput lastReceivedInput;
     private IslandBoard islandBoard;
 
+    private static final int NUMBEROFWORKERS=2;
     private boolean powerActivated;
     private boolean powerNotUsable;
     private boolean empty;
@@ -39,6 +40,10 @@ public class Player implements Observed{
         powerUsed=false;
         domeEveryWhere=false;
         stateManager = new StateManager();
+        for(int i=0;i<NUMBEROFWORKERS;i++) {
+            workers.add(new Worker());
+            workers.get(i).setWorkerPlayer(this);
+        }
     }
 
     /**
@@ -225,6 +230,21 @@ public class Player implements Observed{
     @Override
     public void notify(int code) {
         controller.update(code);
+    }
+
+    @Override
+    public void notify(String string){
+        controller.update(string);
+    }
+
+    @Override
+    public void notify(List <SpaceInput> spaceInputList){
+        controller.update(spaceInputList);
+    }
+
+    @Override
+    public void notifyLeft(List<String> strings){
+        controller.updateLeft(strings);
     }
 
     public boolean isDomeEveryWhere() {

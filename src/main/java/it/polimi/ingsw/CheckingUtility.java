@@ -93,7 +93,7 @@ public class CheckingUtility {
         List<Space> spaceList = new ArrayList<>();
         for (int i = worker.getWorkerSpace().getRow() - RANGE_ROW_ALLOWED_ACTION; i <= worker.getWorkerSpace().getRow() + RANGE_ROW_ALLOWED_ACTION; i++)
             for (int j = worker.getWorkerSpace().getColumn() - RANGE_COLUMN_ALLOWED_ACTION; j <= worker.getWorkerSpace().getColumn() + RANGE_COLUMN_ALLOWED_ACTION; j++) {
-                if ((LOWEST_ROW <= i && i < BIGGEST_ROW) && (LOWEST_COLUMN <= j && j < BIGGEST_COLUMN) && ((i!=worker.getWorkerSpace().getRow()) || (j!=worker.getWorkerSpace().getColumn())))
+                if ((LOWEST_ROW <= i && i <= BIGGEST_ROW) && (LOWEST_COLUMN <= j && j <= BIGGEST_COLUMN) && ((i!=worker.getWorkerSpace().getRow()) || (j!=worker.getWorkerSpace().getColumn())))
                     spaceList.add(islandBoard.getSpace(i, j));
             }
         return spaceList;

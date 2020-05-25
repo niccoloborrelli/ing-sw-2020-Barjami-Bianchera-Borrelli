@@ -23,15 +23,21 @@ public class ActionState extends AbstractActionState {
         this.startingSpace=actingWorker.getWorkerSpace();
 
         if(spaceToAct.getOccupator()==null&&action.equals(actionType1)) {
+            input.setSpace(actingWorker.getWorkerSpace());
             move(actingWorker, spaceToAct);
             player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();
+            if(player.isHasWon())
+                player.notify(5);
             player.getStateManager().setNextState(player);
         }
         else if(action.equals(actionType2)){
+            input.setSpace(actingWorker.getWorkerSpace());
             build(actingWorker, spaceToAct);
             player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();
+            if(player.isHasWon())
+                player.notify(5);
             player.getStateManager().setNextState(player);
         }
     }

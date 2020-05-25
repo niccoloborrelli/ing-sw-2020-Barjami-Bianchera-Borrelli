@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 public class NameSettingState extends State {
+    private static final String MESSAGENAME="name";
     NameSettingState(Player player) {
         super(player);
     }
@@ -34,7 +35,7 @@ public class NameSettingState extends State {
         } catch (IOException | SAXException | ParserConfigurationException e) {
             e.printStackTrace();
         }
-        // player.getStateManager().notifyState();
+        player.notify(MESSAGENAME);
     }
 
     public String toString(){

@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import java.io.IOException;
 
 public class ColorSettingState extends State {
+    private static final String COLORMESSAGE="color";
     ColorSettingState(Player player) {
         super(player);
     }
@@ -25,7 +26,7 @@ public class ColorSettingState extends State {
 
     @Override
     public void onStateTransition() {
-       // player.getStateManager().notifyState();
+        player.notify(COLORMESSAGE);
     }
 
     public String toString(){

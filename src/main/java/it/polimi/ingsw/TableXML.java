@@ -269,17 +269,23 @@ public class TableXML {
         String nameMethod = null;
 
         switch (el.getElementsByTagName(FLAG).item(0).getTextContent()) {
+            case "Challenger":
+                nameMethod =  "isChallenger";
+                break;
+            case "InGame":
+                nameMethod = "isInGame";
+                break;
             case "HasWon":
                 nameMethod =  "isHasWon";
                 break;
-            case "HasLost":
-                nameMethod = "isHasLost";
+            case "Move":
+                nameMethod =  "hasMovesToDo";
                 break;
-            case "ValidInput":
-                nameMethod =  "isValidInput";
+            case "Build":
+                nameMethod =  "hasBuildsToDo";
                 break;
-            case "IsEmpty":
-                nameMethod =  "isEmpty";
+            case "ValidGod":
+                nameMethod =  "isValidGod";
                 break;
 
         }

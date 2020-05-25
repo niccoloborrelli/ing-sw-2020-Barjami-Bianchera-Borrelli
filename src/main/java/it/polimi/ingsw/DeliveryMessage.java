@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DeliveryMessage {
@@ -200,6 +201,10 @@ public class DeliveryMessage {
         if(code ==0) { //da stampare
             String data = parseMessToPrint(message);
             sendToInterface(data);
+        }else if(code==2){
+            HashMap<String, String> data = parseListSpace(message);
+            String worker = parseWorker(message);
+            sendToInterface(data, worker);
         }else if(code==3) { //si potrebbero unire le update
             listOfParameters = parseUpdate(message, true);
             String color = parseColor(message);
@@ -225,6 +230,12 @@ public class DeliveryMessage {
     private void sendToInterface(List<Integer> integerList, String color){
         if(!graphicInterface){
             field.viewMove(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), color);
+        }
+    }
+
+    private void sendToInterface(HashMap<String, String> hashMap, String worker){
+        if(!graphicInterface){
+            field.printData(hashMap, worker);
         }
     }
 
@@ -393,6 +404,63 @@ public class DeliveryMessage {
 
         return code;
     }
+
+    private HashMap<String, String> parseListSpace(String message){
+        HashMap<String, String> spaces = new HashMap<>();
+        Document doc = buildDocument(message);
+        Element el = insideMessage(doc);
+
+        parseSpaces(spaces, el);
+
+        return spaces;
+    }
+
+    private void parseSpaces(HashMap<String, String> spaceList, Element el){
+        Element element;
+        NodeList nodeList = el.getElementsByTagName(SPACE);
+        for(int i=0; i<nodeList.getLength(); i++){
+            if(nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                element = (Element) nodeList.item(i);
+                String row = parseCoordinate(element, ROW);
+                String column = parseCoordinate(element, COLUMN);
+                if(row!=null && column!=null)
+                    spaceList.put(row, column);
+            }
+        }
+    }
+
+    private String parseCoordinate(Element element, String target){
+        NodeList nodeList = element.getElementsByTagName(target);
+        Node node = nodeList.item(0);
+        if(node!=null && node.getNodeType()==Node.ELEMENT_NODE)
+            return node.getTextContent();
+        return  null;
+    }
+
+    private String parseWorker(String message){
+        Document document = buildDocument(message);
+        Element el = insideMessage(document);
+        String worker = null;
+        String content = null;
+        NodeList nodeList = el.getElementsByTagName(WORKER);
+        Node node = nodeList.item(0);
+
+        if(node!=null && node.getNodeType()==Node.ELEMENT_NODE){
+            content = node.getTextContent();
+        }
+
+        worker = content;
+        //if(content!=null)
+          //  worker = addOneToString(content);
+        return worker;
+    }
+
+    private String addOneToString(String content){
+        int number = Integer.parseInt(content);
+        number++;
+        return String.valueOf(number);
+    }
+
 
 
 }

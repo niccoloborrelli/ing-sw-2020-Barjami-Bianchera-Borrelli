@@ -14,6 +14,10 @@ public class Handler extends Thread {
     private HandlerHub handlerHub;
     private boolean endGame;
 
+    public void setHandlerHub(HandlerHub handlerHub) {
+        this.handlerHub = handlerHub;
+    }
+
     public Handler(Socket sc, HandlerHub handlerHub) throws IOException {
         this.sc = sc;
         dataInputStream = new DataInputStream(sc.getInputStream());
