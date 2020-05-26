@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import static it.polimi.ingsw.Color.*;
 
 public class DeliveryMessage {
 
@@ -44,6 +45,7 @@ public class DeliveryMessage {
     private static final String COLOR = "color";
     private static final String DOME = "dome";
     private static final int FIRST_CHILD = 0;
+    private static final String ENDGAME = "Game is finished. Press quit to exit";
 
 
     private boolean graphicInterface;
@@ -65,8 +67,9 @@ public class DeliveryMessage {
         String cd = generateField(String.valueOf(code), CODE);
         String message;
 
-        if(code==1)
+        if(code==1) {
             message = buildActionMessage(input);
+        }
         else if (code==2)
             message = buildIntMessage(input);
         else
@@ -133,10 +136,11 @@ public class DeliveryMessage {
      */
 
     private String buildActionMessage(String input){
-        String workerNumb = input.substring(input.indexOf(ACTION), input.indexOf(SPECIAL_CHAR1));
+        String workerNumb = input.substring(input.indexOf(ACTION)+1, input.indexOf(SPECIAL_CHAR1));
         String worker = generateField(workerNumb, WORKER);
+        String space = buildSpace(input.substring(input.indexOf(SPECIAL_CHAR1) +1));
 
-        return buildSpace(input.substring(input.indexOf(SPECIAL_CHAR1) +1));
+        return generateField(worker + space, MESSAGE) ;
 
     }
 
@@ -259,7 +263,6 @@ public class DeliveryMessage {
         addTargetCoordinate(integerList, el, SPACE, COLUMN);
         addTargetCoordinate(integerList, el, WORKER, ROW);
         addTargetCoordinate(integerList, el, WORKER, COLUMN);
-
     }
 
     private void parseBuilding(List<Integer> integerList, String message){
@@ -317,9 +320,27 @@ public class DeliveryMessage {
 
         Element element = findTarget(el, COLOR);
 
-        if(element!=null)
-            color = element.getTextContent();
+        if(element!=null) {
+            String codeColor = element.getTextContent();
+            color = getCodeColor(codeColor);
+        }
         return color;
+    }
+
+    private String getCodeColor(String color){
+        switch (color){
+            case "1":
+                return ANSI_RED.escape();
+            case "2":
+                return ANSI_PURPLE.escape();
+            case "3":
+                return ANSI_WHITE.escape();
+            case "4":
+                return ANSI_CYAN.escape();
+            case "5":
+                return ANSI_GREY.escape();
+        }
+        return "0";
     }
 
     /**
@@ -344,8 +365,16 @@ public class DeliveryMessage {
         return element;
     }
 
-    public void quitGame(){
-        System.out.println("Figa, si è scollegato");
+    public void quitGame() {
+        try {
+            netHandler.getSocket().close();
+            netHandler.setEndGame(true);
+            if(!graphicInterface)
+                sendToInterface(ENDGAME);
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

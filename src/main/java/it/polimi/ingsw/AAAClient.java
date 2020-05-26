@@ -14,6 +14,8 @@ public class AAAClient {
 
         while (true){
             String input = scanner.nextLine();
+            if(input.equals("quit"))
+                break;
             deliveryMessage.send(input);
         }
     }

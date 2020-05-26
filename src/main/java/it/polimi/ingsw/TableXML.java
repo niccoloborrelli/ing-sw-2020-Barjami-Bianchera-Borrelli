@@ -290,6 +290,15 @@ public class TableXML {
             case "WorkerPlaced":
                 nameMethod = "isWorkerPlaced";
                 break;
+            case "GodSetFormed":
+                nameMethod = "isGodSetFormed";
+                break;
+            case "LastGod":
+                nameMethod = "isLastGod";
+                break;
+            case "ChallengerWorkerSet":
+                nameMethod = "isChallengerWorkerSet";
+                break;
 
         }
 

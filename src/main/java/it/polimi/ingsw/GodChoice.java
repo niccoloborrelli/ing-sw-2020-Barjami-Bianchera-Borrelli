@@ -15,6 +15,7 @@ public class GodChoice extends State {
         if(getAllowedInputs().contains(input)){
             player.setPlayerGod(input);
             turnManager.removeGod(input);
+            System.out.println("Ha scelto: " + input);
             try {
                 player.getController().decoratePlayer(player);
             }
@@ -32,12 +33,13 @@ public class GodChoice extends State {
 
         turnManager = player.getStateManager().getTurnManager();
         if(turnManager.getAvailableGods().size()==1) {
+            System.out.println("Ha forzatamanete scelto: " + turnManager.getAvailableGods().get(0));
             player.setPlayerGod(turnManager.getAvailableGods().get(0));
             turnManager.getAvailableGods().remove(player.getPlayerGod());
             try {
                 player.getController().decoratePlayer(player);
                 player.getStateManager().setNextState(player);
-                player.getStateManager().setNextState(player);
+                //player.getStateManager().setNextState(player);
             } catch (IOException | NoSuchMethodException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

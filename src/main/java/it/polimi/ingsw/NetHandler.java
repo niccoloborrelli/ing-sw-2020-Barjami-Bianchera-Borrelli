@@ -25,6 +25,22 @@ public class NetHandler {
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
     };
 
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
+    }
+
     public void handle(){
         Thread reading = createReadingThread();
 

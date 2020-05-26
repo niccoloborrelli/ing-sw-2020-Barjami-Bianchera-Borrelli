@@ -1,7 +1,6 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +44,7 @@ public class Player implements Observed{
         }
         actionsToPerform.add("move");
         actionsToPerform.add("build");
+        playerGod=null;
     }
 
     /**
@@ -280,6 +280,8 @@ public class Player implements Observed{
     }
 
     public boolean isChallenger(){
+        if(this.equals(stateManager.getTurnManager().getPlayers().get(0)))
+            System.out.println("è il challenger");
         return this.equals(stateManager.getTurnManager().getPlayers().get(0));
     }
 
@@ -289,9 +291,22 @@ public class Player implements Observed{
 
     public boolean isWorkerPlaced(){
         for(Worker worker: workers){
-            if(worker.getWorkerSpace()==null)
+            if(worker.getWorkerSpace()==null) {
+                System.out.println("Non sono stati posizionati tutti i worker");
                 return false;
+            }
         }
+        System.out.println("Sono posizionati tutti i worker");
         return true;
+    }
+
+    public boolean isGodSetFormed(){
+        return stateManager.getTurnManager().getAvailableGods().size()>0 || playerGod!=null;
+    }
+
+    public boolean isLastGod(){return stateManager.getTurnManager().getAvailableGods().size()==1;}
+
+    public boolean isChallengerWorkerSet(){
+        return stateManager.getTurnManager().getPlayers().get(0).getWorkers().get(0).getWorkerSpace()!=null;
     }
 }

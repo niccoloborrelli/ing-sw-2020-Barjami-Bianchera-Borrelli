@@ -14,9 +14,13 @@ public class EndTurnState extends State {
             player.setPowerNotUsable(false);
             player.setPowerActivated(false);
         }
-        player.getActionsToPerform().add("move");
-        player.getActionsToPerform().add("build");
+        if(player.getActionsToPerform().size()==0) {
+            player.getActionsToPerform().add("move");
+            player.getActionsToPerform().add("build");
+        }
+        System.out.println("Ho finito il turno");
         player.getStateManager().getTurnManager().setNextPlayer(player);
+
     }
 
     public String toString(){

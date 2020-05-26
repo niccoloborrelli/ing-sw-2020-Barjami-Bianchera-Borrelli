@@ -8,10 +8,6 @@ public class WorkerSettingState extends State {
     private final int STARTINGNUMBER=0;
     private final int ROWS=4;
     private final int COLUMNS=4;
-    private final int WORKER1INDEX=0;
-    private final int WORKER2INDEX=1;
-    private boolean worker1Setted;
-    private boolean worker2Setted;
     private List<SpaceInput> spaceInputList;
 
 
@@ -25,42 +21,60 @@ public class WorkerSettingState extends State {
         if(inputAcceptable(input)){
             spaceInputList.remove(input);
             Worker worker=input.getWorker();
-            int workerNumber;
-            workerNumber=player.getWorkers().indexOf(worker);
-            if(workerNumber==WORKER1INDEX){
-                worker1Setted=true;
-                removeWorkerFromInput(worker); //needed to remove this worker from the available inputs cause it is already setted
-            }
-            else if (workerNumber==WORKER2INDEX) {
-                worker2Setted = true;
-                removeWorkerFromInput(worker); //needed to remove this worker from the available inputs cause it is already setted
-            }
-            Space space=input.getSpace();
-            worker.setWorkerSpace(space);
-            space.setOccupator(worker);
-            player.notify(input,"move");
+            setSpaceIfPossible(worker, input);
         }
         else
             player.notify(1);
 
-
-        if(worker2Setted&&worker1Setted) {
+        if(allWorkerOccupied()) {
+            System.out.println("Tutti occupati");
             player.getStateManager().setNextState(player);
+        }else {
+            player.notify(8);
+            System.out.println("Manca ancora un worker");
         }
     }
 
     @Override
-    public void onStateTransition() throws IOException {
-        worker1Setted=false;
-        worker2Setted=false;
+    public void onStateTransition() {
         for (Worker worker:player.getWorkers()) {
             addWorkerAvailableSpaces(worker);
         }
+        System.out.println("Stampo la notify");
+        player.notify(8);
+    }
+
+    private void setSpaceIfPossible(Worker worker, SpaceInput input){
+        if(worker.getWorkerSpace()==null){
+            settingSpaceWorker(worker, input);
+            removeFromInput(worker,input.getSpace());;
+            player.notify(input,"move");
+        }else
+            player.notify(1);
+    }
+
+    private boolean allWorkerOccupied(){
+        for(Worker worker: player.getWorkers()){
+            if(worker.getWorkerSpace()==null)
+                return false;
+        }
+        return true;
+    }
+
+    private void removeFromInput(Worker worker, Space space){
+        removeWorkerFromInput(worker); //needed to remove this worker from the available inputs cause it is already setted
+        removeSpaceFromInput(space);
+    }
+
+    private void settingSpaceWorker(Worker worker, SpaceInput input){
+        Space space=input.getSpace();
+        worker.setWorkerSpace(space);
+        space.setOccupator(worker);
     }
 
     public void addWorkerAvailableSpaces(Worker worker){
-        for(int i=STARTINGNUMBER;i<ROWS;i++){
-            for(int j=STARTINGNUMBER;j<COLUMNS;j++){
+        for(int i=STARTINGNUMBER;i<=ROWS;i++){
+            for(int j=STARTINGNUMBER;j<=COLUMNS;j++){
                 if(player.getIslandBoard().getSpace(i,j).getOccupator()==null){
                     spaceInputList.add(new SpaceInput(worker,player.getIslandBoard().getSpace(i,j)));
                 }
@@ -68,16 +82,28 @@ public class WorkerSettingState extends State {
         }
     }
 
+    public void removeSpaceFromInput(Space space){
+        for(int i=STARTINGNUMBER;i<spaceInputList.size();i++){
+            if(spaceInputList.get(i).getSpace().equals(space)) {
+                spaceInputList.remove(i);
+                i--;
+            }
+        }
+    }
+
     public void removeWorkerFromInput(Worker worker){
         for(int i=STARTINGNUMBER;i<spaceInputList.size();i++){
-            if(spaceInputList.get(i).getWorker()==worker)
+            if(spaceInputList.get(i).getWorker().equals(worker)) {
                 spaceInputList.remove(i);
+                i--;
+            }
         }
     }
 
     public String toString(){
         return "WorkerSettingState";
     }
+
 
     public boolean inputAcceptable(SpaceInput spaceInput){
         for (SpaceInput temp:spaceInputList) {

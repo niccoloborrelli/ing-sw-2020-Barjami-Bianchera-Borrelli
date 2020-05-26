@@ -171,8 +171,9 @@ public class StateManager {
 
         if(lines!=null && finishState!=null) {
             for (Line line : lines) {
-                if (line.getFinishState().equals(finishState))
+                if (line.getFinishState().equals(finishState)){
                     resultOfSearch.add(line);
+                }
             }
         }
         return sizeControl(resultOfSearch);
@@ -352,15 +353,26 @@ public class StateManager {
 
     public void changeStates(State newState, State oldState){
         List<Line> foundFinishState;
+        substituteStartState(newState,oldState);
         for(List<Line> lineList : table.values()) {
             foundFinishState = searchFinishState(lineList, oldState);
-            substituteStates(foundFinishState, newState);
+            if(foundFinishState!=null) {
+                substituteStates(foundFinishState, newState);
+                foundFinishState=null;
+            }
         }
     }
 
     private void substituteStates(List<Line> lines, State newState){
         for(Line line: lines)
             line.setFinishState(newState);
+    }
+
+    private void substituteStartState(State newState, State oldState){
+        for(State state: table.keySet()){
+            if(state.equals(oldState))
+                state = newState;  //non so se funzioni
+        }
     }
 
     /**
@@ -390,6 +402,7 @@ public class StateManager {
      */
 
     public void setNextState(Object obRef) throws IOException {
+        sortAllTable();
         List<Line> stateLines = table.get(current_state);
 
 
@@ -401,6 +414,9 @@ public class StateManager {
                 removeSpecifiedCondition(current_state, line.getFinishState(), line.getConditions());
             }
         }
+        System.out.println("Il player è: " + current_state.getPlayer());
+        System.out.println("Il prossimos stato è: " +current_state.toString());
+
         current_state.onStateTransition();
 
     }
@@ -435,7 +451,7 @@ public class StateManager {
                 int firstPriority = o1.getPriority();
                 int secondPriority = o2.getPriority();
 
-                if(firstPriority>secondPriority)
+                if(firstPriority<secondPriority)
                     return 1;
                 else if(firstPriority==secondPriority)
                     return 0;

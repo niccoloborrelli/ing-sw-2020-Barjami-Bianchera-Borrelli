@@ -65,7 +65,7 @@ public class TurnManager {
                 player.setPlayerColor(ANSI_CYAN.escape());
                 break;
             case "gray":
-                player.setPlayerColor(ANSI_GRAY.escape());
+                player.setPlayerColor(ANSI_GREY.escape());
                 break;
         }
     }

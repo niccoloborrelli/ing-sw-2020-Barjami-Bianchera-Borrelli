@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import static it.polimi.ingsw.Color.*;
 
 public class Controller{
 
@@ -48,6 +49,7 @@ public class Controller{
     private static final String LEVEL = "level";
     private static final String MOVE = "move";
     private static final String BUILD = "build";
+    private static final String COLOR = "color";
     private static final String ENDTURN = "Turn completed. Good job";
     private static final String ENDGAME = "Game is finished. Press quit to exit.";
     private static final String WINNER = "Congratulations! You won.";
@@ -55,6 +57,8 @@ public class Controller{
     private static final String POWER_ACTIVATION = "Do you want to use yor God power? Insert 1 if you want, 0 otherwise";
     private static final String LOBBY_CHOICE = "How many players do you want to play with? Insert 2 or 3";
     private static final String CHOICE = "You have to choose ";
+    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ are number of workers you want to place." +
+            "Second _ is row of space and third is column";
     private static final String ERROR = "You wrote an invalid input";
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
@@ -388,7 +392,7 @@ public class Controller{
 
     private void updateMovement(Worker worker, Space space) {
         String workerTranslation = generateStringWorker(worker);
-        String spaceTranslation = generateStringSpace(space);
+        String spaceTranslation = generateStringSpace(space, SPACE);
 
         String code = insertCode(UPDATE_MOVEMENT);
 
@@ -420,7 +424,7 @@ public class Controller{
     public void update(List<SpaceInput> spaceInputs){
         for(Worker w: player.getWorkers()) {
             String code = insertCode(UPDATE_AVAILABLE_SPACE);
-            String spacesWorker = buildAvailableSpace(player.getWorkers().get(0), spaceInputs);
+            String spacesWorker = buildAvailableSpace(w, spaceInputs);
             String message = generateField(spacesWorker, MESSAGE);
             String data = generateField(code + message, DATA);
             handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
@@ -446,7 +450,7 @@ public class Controller{
     private String createSpaceList(List<Space> spaceList) {
         StringBuilder mess = new StringBuilder();
         for (Space space : spaceList) {
-            mess.append(generateStringSpace(space));
+            mess.append(generateStringSpace(space, SPACE));
         }
 
         return mess.toString();
@@ -485,6 +489,13 @@ public class Controller{
             updateGods();
         else if(code==7)
             updateLobby();
+        else if (code==8)
+            updateSetUp();
+    }
+
+    private void updateSetUp(){
+        String data = dataOnlyToPrint(SET_UP);
+        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
 
     private void updateLobby(){
@@ -542,19 +553,35 @@ public class Controller{
     }
 
     private String generateStringWorker(Worker worker) {
-        String workerSpace = generateStringSpace(worker.getWorkerSpace());
+        String workerSpace = generateStringSpace(worker.getWorkerSpace(), WORKER);
+        String valueOfColor = getCodeColor(worker.getWorkerPlayer().getPlayerColor());
+        String color = generateField(valueOfColor, COLOR);
 
-        return generateField(workerSpace, WORKER);
+        return color +  generateField(workerSpace, WORKER);
     }
 
-    private String generateStringSpace(Space space) {
+    private String getCodeColor(String color){
+        if(color.equals(ANSI_RED.escape()))
+            return "1";
+        else if (color.equals(ANSI_PURPLE.escape()))
+            return "2";
+        else if(color.equals(ANSI_WHITE.escape()))
+            return "3";
+        else if(color.equals(ANSI_CYAN))
+            return "4";
+        else if(color.equals(ANSI_GREY.escape()))
+            return "4";
+        return "0";
+    }
+
+    private String generateStringSpace(Space space, String field) {
         String row = String.valueOf(space.getRow());
         String column = String.valueOf(space.getColumn());
 
         String rowPart = generateField(row, ROW);
         String columnPart = generateField(column, COLUMN);
 
-        return generateField(rowPart + columnPart, SPACE);
+        return generateField(rowPart + columnPart, field);
     }
 
     private String generateField(String content, String field) {
@@ -592,6 +619,8 @@ public class Controller{
         TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
+        player.getStateManager().sortAllTable();
+
     }
 
 }

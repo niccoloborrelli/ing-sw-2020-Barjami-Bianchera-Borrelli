@@ -8,12 +8,15 @@ import static it.polimi.ingsw.DefinedValues.*;
 public class Field {
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
-    private static final String WORKER = "Your worker n.";
-    private static final String ACTION = "can do an action in this space: \n";
+    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ are number of workers you want to place." +
+            "Second _ is row of space and third is column";
+    private static final String WORKER = "Your worker n. ";
+    private static final String ACTION = " can do an action in this space: \n";
     private static final String SPACE = "Space n.";
     private static final String ROW = "row: ";
     private static final String COLUMN = "column: ";
     private static final String NONE = "None";
+    public static final String ANSI_RESET = "\u001B[0m";
 
 
     /*
@@ -55,6 +58,7 @@ public class Field {
             System.out.println();
         }
         System.out.println();
+        System.out.println(ANSI_RESET);
     }
 
     /**
@@ -180,7 +184,7 @@ public class Field {
     }
 
     public void printData(HashMap<String,String> hashMap, String worker){
-        String workerConv = WORKER + worker + ACTION + "\n";
+        String workerConv = SET_UP + "\n" + WORKER + worker + ACTION + "\n";
         String spaces = findSpaces(hashMap);
 
         System.out.println(workerConv + spaces);

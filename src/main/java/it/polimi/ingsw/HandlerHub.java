@@ -9,7 +9,8 @@ import java.util.List;
 public class HandlerHub {
 
     private HashMap<Controller, Handler> handlerControllerHashMap;
-    private static final String endMessage = "Somebody disconnected from server! Game is nullified"; // DA CAMBIARE
+    private static final String endMessage = "<data><code>0</code><message>Somebody disconnected from server! Game is nullified</message></data>"; // DA CAMBIARE
+    private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 
     public HandlerHub() {
@@ -31,7 +32,7 @@ public class HandlerHub {
         for(Handler leftHandler: handlerControllerHashMap.values()){
             try {
                 if(!leftHandler.equals(handler))
-                    leftHandler.communicate(endMessage);
+                    leftHandler.communicate(PREFIX + endMessage);
                 handler.setEndGame(true);
                 leftHandler.getSc().close(); //oppure attendere il messaggio di quit?
             } catch (IOException ignored) {

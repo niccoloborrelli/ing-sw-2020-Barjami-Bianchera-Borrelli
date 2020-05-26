@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Worker {
@@ -35,6 +36,9 @@ public class Worker {
         cantBuildUnder=true;
         cantBuildDome=false;
         cantBuildPerimeter=false;
+        possibleBuilding = new ArrayList<>();
+        possibleMovements = new ArrayList<>();
+        workerSpace = null;
     }
 
     //metodo da richiamare alla fine di ogni turno su worker

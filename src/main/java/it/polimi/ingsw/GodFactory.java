@@ -115,6 +115,7 @@ public class GodFactory {
     private void denyUpperMove(Player player,StateManager stateManager){
         AbstractActionState actionState;
         actionState=(AbstractActionState) stateManager.getState(ACTION);
+        System.out.println(actionState.toString());
         OnMoveUpDecorator decorator=new OnMoveUpDecorator(actionState,DENYUPPERMOVE);
         stateManager.changeStates(decorator,actionState);
     }
