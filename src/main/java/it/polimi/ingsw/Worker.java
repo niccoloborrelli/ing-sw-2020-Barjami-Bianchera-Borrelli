@@ -206,5 +206,9 @@ public class Worker {
     public boolean isCantSwap(){
         return workerPlayer.isCantSwap();
     }
+
+    public String toString(){
+        return workerPlayer.getPlayerName() + workerPlayer.getWorkers().indexOf(this);
+    }
 }
 

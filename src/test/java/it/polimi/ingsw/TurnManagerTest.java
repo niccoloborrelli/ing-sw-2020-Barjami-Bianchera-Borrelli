@@ -149,4 +149,34 @@ class TurnManagerTest {
     }
 
      */
+    @Test
+    public void insertColor(){
+        Player ciro = new Player();
+        Player francois = new Player();
+
+        List<Player> players = new ArrayList<>();
+        players.add(ciro);
+        players.add(francois);
+
+        TurnManager turnManager = new TurnManager();
+        turnManager.setPlayers(players);
+        turnManager.setColor(ciro, "red");
+        turnManager.setColor(francois, "cyan");
+
+        System.out.println("Il colore di ciro è " + ciro.getPlayerColor() + "questo" + Color.RESET);
+        System.out.println("Il colore di francois è " + francois.getPlayerColor() + "questo");
+    }
+
+    @Test
+    public void colorTest(){
+        System.out.println(Color.ANSI_BLUE.escape() + "BLUE" + Color.RESET);
+        System.out.println(Color.ANSI_RED.escape() + "RED" + Color.RESET);
+        System.out.println(Color.ANSI_CYAN.escape() + "CYAN" + Color.RESET);
+        System.out.println(Color.ANSI_PURPLE.escape() + "PURPLE" + Color.RESET);
+        System.out.println(Color.ANSI_WHITE.escape() + "WHITE" + Color.RESET);
+        System.out.println(Color.ANSI_GREY.escape() + "GRAY" + Color.RESET);
+        System.out.println(Color.ANSI_GREEN.escape() + "GREEN" + Color.RESET);
+        System.out.println(Color.ANSI_YELLOW.escape() + "YELLOW" + Color.RESET);
+
+    }
 }

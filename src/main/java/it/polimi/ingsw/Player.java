@@ -45,6 +45,7 @@ public class Player implements Observed{
         actionsToPerform.add("move");
         actionsToPerform.add("build");
         playerGod=null;
+        winCondition = new BaseWinCondition();
     }
 
     /**
@@ -292,12 +293,14 @@ public class Player implements Observed{
     public boolean isWorkerPlaced(){
         for(Worker worker: workers){
             if(worker.getWorkerSpace()==null) {
-                System.out.println("Non sono stati posizionati tutti i worker");
                 return false;
             }
         }
-        System.out.println("Sono posizionati tutti i worker");
         return true;
+    }
+
+    public String toString(){
+        return playerName;
     }
 
     public boolean isGodSetFormed(){

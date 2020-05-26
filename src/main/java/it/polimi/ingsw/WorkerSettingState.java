@@ -27,11 +27,9 @@ public class WorkerSettingState extends State {
             player.notify(1);
 
         if(allWorkerOccupied()) {
-            System.out.println("Tutti occupati");
             player.getStateManager().setNextState(player);
         }else {
             player.notify(8);
-            System.out.println("Manca ancora un worker");
         }
     }
 
@@ -40,7 +38,6 @@ public class WorkerSettingState extends State {
         for (Worker worker:player.getWorkers()) {
             addWorkerAvailableSpaces(worker);
         }
-        System.out.println("Stampo la notify");
         player.notify(8);
     }
 

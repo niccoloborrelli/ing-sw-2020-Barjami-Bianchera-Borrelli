@@ -5,13 +5,13 @@ import java.util.List;
 public class GodSet
 {
     private List<String> gods;
-    private List<God>activeGods;
+    private List<String>activeGods;
 
     public void setGods(List<String> gods) {
         this.gods = gods;
-    }
+    }}
 
-    public void setActiveGods(List<God> activeGods) {
+    /*public void setActiveGods(List<God> activeGods) {
         this.activeGods = activeGods;
     }
 
@@ -23,3 +23,5 @@ public class GodSet
         return activeGods;
     }
 }
+
+     */

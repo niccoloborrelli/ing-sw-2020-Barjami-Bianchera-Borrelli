@@ -97,18 +97,21 @@ public class TurnManager {
      * @return the next player to play
      */
     public void setNextPlayer(Player player){
+        Player nextPlayer;
         if(allPlayerWait()) {
             int pos = players.indexOf(player);
             if (pos == players.size() - 1) {
+                nextPlayer = players.get(0);
                 try {
-                    players.get(0).getStateManager().setNextState(player);
+                    nextPlayer.getStateManager().setNextState(nextPlayer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             else {
+                nextPlayer = players.get(pos + 1);
                 try {
-                    players.get(++pos).getStateManager().setNextState(player);
+                    nextPlayer.getStateManager().setNextState(nextPlayer);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
