@@ -27,7 +27,7 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
     @Override
     public void checkHasWon(Player player) throws IOException {
         winCondition.checkHasWon(player);
-        if(!gethasWon())
+        if(!player.isHasWon())
             checkHasWonJump(player);
     }
 
@@ -37,18 +37,16 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
      */
     private void checkHasWonJump(Player player) throws IOException {//(VERIFICATA)
         Worker workerChosen;
-        if(player.getWorkers().get(0).isChosen()) {
+        if(player.getWorkers().get(0).isMovedThisTurn()) {
             workerChosen = player.getWorkers().get(0);
             if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
-                setHasWon(true);
-                //notifyWin();
+                player.setHasWon(true);
             }
         }
-        else if(player.getWorkers().get(1).isChosen()){
+        else if(player.getWorkers().get(1).isMovedThisTurn()){
             workerChosen = player.getWorkers().get(1);
             if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
-                setHasWon(true);
-                //notifyWin();
+                player.setHasWon(true);
             }
         }
     }

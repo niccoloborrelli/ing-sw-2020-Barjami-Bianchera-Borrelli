@@ -50,6 +50,7 @@ public class Controller{
     private static final String MOVE = "move";
     private static final String BUILD = "build";
     private static final String COLOR = "color";
+    private static final String DOME = "dome";
     private static final String ENDTURN = "Turn completed. Good job";
     private static final String ENDGAME = "Game is finished. Press quit to exit.";
     private static final String WINNER = "Congratulations! You won.";
@@ -57,8 +58,8 @@ public class Controller{
     private static final String POWER_ACTIVATION = "Do you want to use yor God power? Insert 1 if you want, 0 otherwise";
     private static final String LOBBY_CHOICE = "How many players do you want to play with? Insert 2 or 3";
     private static final String CHOICE = "You have to choose ";
-    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ are number of workers you want to place." +
-            "Second _ is row of space and third is column";
+    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
+            "Second _ is the row of space and third _ is the column";
     private static final String ERROR = "You wrote an invalid input";
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
@@ -419,20 +420,18 @@ public class Controller{
 
     private void updateBuilding(Space space) {
         String code = insertCode(UPDATE_BUILDING);
-
         String row = String.valueOf(space.getRow());
         String column = String.valueOf(space.getColumn());
         String level = String.valueOf(space.getLevel());
-
+        String dome = String.valueOf(space.HasDome());
         String rowPart = generateField(row, ROW);
         String columnPart = generateField(column, COLUMN);
         String levelPart = generateField(level, LEVEL);
-
-        String message = generateField(rowPart + columnPart + levelPart, MESSAGE);
+        String domePart = generateField(dome, DOME);
+        String spacePart = generateField(rowPart + columnPart + levelPart + domePart, SPACE);
+        String message = generateField(spacePart, MESSAGE);
         String data = generateField(code + message, DATA);
-
         handlerHub.sendData(PREFIX + data, this, BROADCAST);
-
     }
 
     public void update(List<SpaceInput> spaceInputs){
@@ -481,7 +480,7 @@ public class Controller{
     public void updateGods(){
         String data = "";
         for(String s: godMap.keySet())
-            data = data +  s + "\n";
+            data = data + s + "\n";
         String mess = dataOnlyToPrint(data);
         handlerHub.sendData(PREFIX + mess, this, SINGLE_COMMUNICATION);
     }
@@ -531,8 +530,6 @@ public class Controller{
 
         handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
     }
-
-
 
     private void updateEndTurn() {
         String data = dataOnlyToPrint(ENDTURN);
@@ -584,7 +581,7 @@ public class Controller{
         else if(color.equals(ANSI_CYAN.escape()))
             return "4";
         else if(color.equals(ANSI_GREY.escape()))
-            return "4";
+            return "5";
         return "0";
     }
 

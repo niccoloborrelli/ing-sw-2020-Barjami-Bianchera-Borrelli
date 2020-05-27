@@ -10,19 +10,19 @@ public class BaseWinCondition extends WinConditionAB {
      * Space at level 3
      * @param player is the player to check
      */
-    @Override //VERIFICATO
-    public void checkHasWon(Player player) throws IOException {
+    @Override
+    public void checkHasWon(Player player) {
         Worker workerChosen;
-        if(player.getWorkers().get(0).isChosen()) {
+        if(player.getWorkers().get(0).isMovedThisTurn()) {
             workerChosen = player.getWorkers().get(0);
             if (workerChosen.getLastSpaceOccupied().getLevel() == 2 && workerChosen.getWorkerSpace().getLevel() == 3) {
-                setHasWon(true);
+                player.setHasWon(true);
             }
         }
-        else if(player.getWorkers().get(1).isChosen()){
+        else if(player.getWorkers().get(1).isMovedThisTurn()){
             workerChosen = player.getWorkers().get(1);
             if (workerChosen.getLastSpaceOccupied().getLevel() == 2 && workerChosen.getWorkerSpace().getLevel() == 3) {
-                setHasWon(true);
+                player.setHasWon(true);
             }
         }
     }

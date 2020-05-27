@@ -18,12 +18,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
@@ -31,12 +27,15 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4,4).setOccupator(worker2);
 
         worker1.setChosen(true);
+        worker1.setCantBuild(false);
         worker1.setLastSpaceBuilt(islandBoard.getSpace(1,1));
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("initialSpace");
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
-        System.out.println(player.getActionsToPerform());
+
         System.out.println("Worker chosen -> cantBuildFirstSpace: " + worker1.isCantBuildFirstSpace());
         assertEquals(1, player.getActionsToPerform().size());
     }
@@ -50,12 +49,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(worker1);
@@ -63,10 +58,13 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4, 4).setOccupator(worker2);
 
         worker1.setChosen(true);
+        worker1.setCantBuild(false);
         worker1.setLastSpaceBuilt(islandBoard.getSpace(1, 1));
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("initialSpace");
         islandBoard.getSpace(0,1).setHasDome(true);
         islandBoard.getSpace(1,0).setHasDome(true);
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
@@ -84,12 +82,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(worker1);
@@ -97,8 +91,11 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4, 4).setOccupator(worker2);
 
         worker2.setChosen(true);
+        worker2.setCantBuild(false);
         worker2.setLastSpaceBuilt(islandBoard.getSpace(3,4));
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("perimeterSpace");
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
@@ -115,12 +112,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0, 0));
         islandBoard.getSpace(0, 0).setOccupator(worker1);
@@ -128,9 +121,12 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4, 4).setOccupator(worker2);
 
         worker2.setChosen(true);
+        worker2.setCantBuild(false);
         worker2.setLastSpaceBuilt(islandBoard.getSpace(3,4));
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("perimeterSpace");
         islandBoard.getSpace(3,3).setHasDome(true);
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
@@ -148,12 +144,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
@@ -161,9 +153,12 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4,4).setOccupator(worker2);
 
         worker1.setChosen(true);
+        worker1.setCantBuild(false);
         worker1.setLastSpaceBuilt(islandBoard.getSpace(1,1));
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("dome");
         islandBoard.getSpace(1,1).setLevel(2);
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
@@ -180,12 +175,8 @@ class AdditionalBuildFlowTest {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
@@ -193,9 +184,12 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(4,4).setOccupator(worker2);
 
         worker1.setChosen(true);
+        worker1.setCantBuild(false);
         worker1.setLastSpaceBuilt(islandBoard.getSpace(1,1));
         islandBoard.getSpace(1,1).setLevel(3);
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("dome");
+        player.getActionsToPerform().remove("move");
+        player.getActionsToPerform().remove("build");
 
         if(additionalBuildFlow.isUsable(player))
             additionalBuildFlow.changeFlow(player);
@@ -211,21 +205,18 @@ class AdditionalBuildFlowTest {
     @Test
     void changeFlowBeforeMoveTest1(){
         Player player = new Player();
-      //  player.getActionsToPerform().add(actionTypeM);
-        //player.getActionsToPerform().add(actionTypeB);
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
         worker2.setWorkerSpace(islandBoard.getSpace(4,4));
         islandBoard.getSpace(4,4).setOccupator(worker2);
+
+        worker1.setCantBuild(false);
+        worker2.setCantBuild(false);
 
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("moveUp");
         if(additionalBuildFlow.isUsable(player))
@@ -242,16 +233,10 @@ class AdditionalBuildFlowTest {
     @Test
     void changeFlowBeforeMoveTest2(){
         Player player = new Player();
-        //player.getActionsToPerform().add(actionTypeM);
-        //player.getActionsToPerform().add(actionTypeB);
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
@@ -262,6 +247,9 @@ class AdditionalBuildFlowTest {
         islandBoard.getSpace(1,1).setHasDome(true);
         islandBoard.getSpace(1,2).setHasDome(true);
         islandBoard.getSpace(0,2).setHasDome(true);
+
+        worker1.setCantBuild(false);
+        worker2.setCantBuild(false);
 
         AdditionalBuildFlow additionalBuildFlow = new AdditionalBuildFlow("moveUp");
         if(additionalBuildFlow.isUsable(player))

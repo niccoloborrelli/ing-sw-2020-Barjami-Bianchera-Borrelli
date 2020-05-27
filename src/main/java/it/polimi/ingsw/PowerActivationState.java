@@ -27,6 +27,7 @@ public class PowerActivationState extends State {
     public void onInput(Visitor visitor) throws IOException {
         int input=visitor.visit(this);
         if(input==1||input==0){
+            System.out.println("potere:" + input);
             player.setPowerUsed(true);
             if (input==1) {
                 player.setPowerActivated(true);
@@ -42,6 +43,7 @@ public class PowerActivationState extends State {
     public void onStateTransition() throws IOException {
         boolean usable=flowPower.isUsable(player);
         if(!usable){
+            System.out.println("Usable: " + usable);
             player.setPowerNotUsable(true);
             player.getStateManager().setNextState(player);
         }

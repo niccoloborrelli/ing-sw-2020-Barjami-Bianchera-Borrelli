@@ -6,7 +6,13 @@ import java.net.Socket;
 
 public class Accepter {
 
-    public void accept() throws IOException, InterruptedException {
+    /**
+     * The method accepts socket, create a player with a state manager and a controller and
+     * then add the socket and the controller to a globalhub that contains all players waiting
+     * for a game, it starts the thread that reads the client scanner and finally set the
+     * player state to PreLobbyState
+     */
+    public void accept() throws IOException {
         ServerSocket serverSocket = new ServerSocket(60100);
         HandlerHub globalHub = new HandlerHub();
         LobbyManager lobbyManager = new LobbyManager(globalHub);

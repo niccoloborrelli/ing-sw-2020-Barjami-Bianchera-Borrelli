@@ -24,7 +24,6 @@ public class Worker {
     private boolean cantBuildUnder;
 
 
-
     public Worker() {
         cantMoveUp=false;
         cantMove=false;

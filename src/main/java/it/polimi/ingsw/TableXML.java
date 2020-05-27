@@ -278,11 +278,8 @@ public class TableXML {
             case "HasWon":
                 nameMethod =  "isHasWon";
                 break;
-            case "Move":
-                nameMethod =  "hasMovesToDo";
-                break;
-            case "Build":
-                nameMethod =  "hasBuildsToDo";
+            case "Action":
+                nameMethod = "hasAction";
                 break;
             case "ValidGod":
                 nameMethod =  "isValidGod";

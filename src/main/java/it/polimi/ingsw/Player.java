@@ -269,12 +269,17 @@ public class Player implements Observed{
         this.powerActivated = powerActivated;
     }
 
+    public boolean hasAction(){ return actionsToPerform.size() > 0;}
+
     public boolean hasMovesToDo(){
-        return !actionsToPerform.contains("move");
+        return actionsToPerform.contains("move");
     }
+
     public boolean hasBuildsToDo(){
-        return !actionsToPerform.contains("build");
+        return actionsToPerform.contains("build");
     }
+
+    public void setHasWon(boolean hasWon) { this.hasWon = hasWon; }
 
     public boolean isHasWon() {
         return hasWon;

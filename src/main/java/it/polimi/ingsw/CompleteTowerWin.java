@@ -26,7 +26,7 @@ public class CompleteTowerWin extends PowerWinDecorator {
     @Override
     public void checkHasWon(Player player) throws IOException {
         winCondition.checkHasWon(player);
-        if(!gethasWon())
+        if(!player.isHasWon())
             checkHasWonTower(player);
     }
 
@@ -35,15 +35,14 @@ public class CompleteTowerWin extends PowerWinDecorator {
      * if there are at least 5 it sets as true the boolean attribute
      * "HasWon" of the player
      */
-    private void checkHasWonTower(Player player) throws IOException { //(VERIFICATA)
+    private void checkHasWonTower(Player player) {
         int completeTower = 0;
         for(int row = MINROW; row < DIM; row++)
             for(int column = MINCOLUMN; column < DIM; column++)
                 if(player.getIslandBoard().getSpace(row, column).getLevel() == DOME_LEVEL)
                     completeTower++;
         if(completeTower >= COMPLETE_TOWER_TO_WIN) {
-            player.getWinCondition().setHasWon(true);
-            //notifyWin();
+            player.setHasWon(true);
         }
     }
 }

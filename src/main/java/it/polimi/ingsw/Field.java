@@ -8,10 +8,10 @@ import static it.polimi.ingsw.DefinedValues.*;
 public class Field {
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
-    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ are number of workers you want to place." +
-            "Second _ is row of space and third is column";
-    private static final String WORKER = "Your worker n. ";
-    private static final String ACTION = " can do an action in this space: \n";
+    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
+            "Second _ is the row of space and third _ is the column";
+    private static final String WORKER = "Worker n.";
+    private static final String ACTION = " can do an action in these spaces: \n";
     private static final String SPACE = "Space n.";
     private static final String ROW = "row: ";
     private static final String COLUMN = "column: ";
@@ -184,10 +184,10 @@ public class Field {
     }
 
     public void printData(HashMap<String,String> hashMap, String worker){
-        String workerConv = SET_UP + "\n" + WORKER + worker + ACTION + "\n";
+        String workerConv = SET_UP + "\n" + WORKER + worker + ACTION;
         String spaces = findSpaces(hashMap);
 
-        System.out.println(workerConv + spaces);
+        System.out.println(workerConv + spaces + "\n");
     }
 
     public String findSpaces(HashMap<String,String> hashMap){
@@ -195,7 +195,7 @@ public class Field {
         if(hashMap.size()>0) {
             for (String row : hashMap.keySet()){
                 String column = hashMap.get(row);
-                String data = ROW + row + " " + COLUMN + column + "\n";
+                String data = "[" + row + "," + column + "] ";
                 spaces.append(data);
             }
             return spaces.toString();

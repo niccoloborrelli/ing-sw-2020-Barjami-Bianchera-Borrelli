@@ -24,7 +24,6 @@ public class AdditionalBuildFlow extends FlowChanger {
     private boolean noPerimeter;
     private boolean beforeMove;
     private boolean noDome;
-    private static final String actionTypeB = "build";
 
 
     /**
@@ -53,26 +52,26 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public void changeFlow(Player player) {
         if(beforeMove){
-            player.getActionsToPerform().add(0, actionTypeB);
+            player.getActionsToPerform().add(0, actionType2);
             for (Worker w: player.getWorkers()) {
                 w.setCantMoveUp(true);
             }
             return;
         }
 
-        player.getActionsToPerform().add(actionTypeB);
+        player.getActionsToPerform().add(actionType2);
         if(noInitialSpace){
-            if(player.getWorkers().get(0).isChosen())
+            if(!player.getWorkers().get(0).isCantBuild())
                 player.getWorkers().get(0).setCantBuildFirstSpace(true);
             else
                 player.getWorkers().get(1).setCantBuildFirstSpace(true);
         } else if (noPerimeter){
-            if(player.getWorkers().get(0).isChosen())
+            if(!player.getWorkers().get(0).isCantBuild())
                 player.getWorkers().get(0).setCantBuildPerimeter(true);
             else
                 player.getWorkers().get(1).setCantBuildPerimeter(true);
         } else if(noDome){
-            if(player.getWorkers().get(0).isChosen())
+            if(!player.getWorkers().get(0).isCantBuild())
                 player.getWorkers().get(0).setCantBuildDome(true);
             else
                 player.getWorkers().get(1).setCantBuildDome(true);
@@ -86,19 +85,19 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public boolean isUsable(Player player) {
         if(beforeMove){
-            CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionTypeB);
+            CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
 
             return (player.getWorkers().get(0).getPossibleBuilding().size() > 0 ||
                     player.getWorkers().get(1).getPossibleBuilding().size() > 0);
         }
 
         Worker workerChosen;
-        if(player.getWorkers().get(0).isChosen())
+        if(!player.getWorkers().get(0).isCantBuild())
             workerChosen = player.getWorkers().get(0);
         else
             workerChosen = player.getWorkers().get(1);
 
-        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionTypeB);
+        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
         List<Space> building = new ArrayList<>(workerChosen.getPossibleBuilding());
 
         if(noInitialSpace){

@@ -25,6 +25,7 @@ public class ActionState extends AbstractActionState {
         if(spaceToAct.getOccupator()==null&&action.equals(actionType1)) {
             input.setSpace(actingWorker.getWorkerSpace());
             move(actingWorker, spaceToAct);
+            actingWorker.setMovedThisTurn(true);
             player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
@@ -32,7 +33,7 @@ public class ActionState extends AbstractActionState {
             player.getStateManager().setNextState(player);
         }
         else if(action.equals(actionType2)){
-            input.setSpace(actingWorker.getWorkerSpace());
+            input.setSpace(spaceToAct);
             build(actingWorker, spaceToAct);
             player.notify(input,action);
             player.getStateManager().getTurnManager().checkWin();

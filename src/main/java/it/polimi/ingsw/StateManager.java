@@ -408,8 +408,10 @@ public class StateManager {
 
         for (Line line : stateLines) {
             try {
-                if (line.controlCondition(obRef))
+                if (line.controlCondition(obRef)) {
                     current_state = line.getFinishState();
+                    break;
+                }
             } catch (InvocationTargetException | IllegalAccessException e) {
                 removeSpecifiedCondition(current_state, line.getFinishState(), line.getConditions());
             }

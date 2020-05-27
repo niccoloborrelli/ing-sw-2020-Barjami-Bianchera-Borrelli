@@ -15,15 +15,10 @@ class AdditionalMoveFlowTest {
     @Test
     void changeFlowTest1() {
         Player player = new Player();
-        player.getActionsToPerform().add("build");
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker1.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker1);
@@ -33,6 +28,7 @@ class AdditionalMoveFlowTest {
         worker1.setChosen(true);
         worker1.setLastSpaceOccupied(islandBoard.getSpace(1,1));
         AdditionalMoveFlow additionalMoveFlow = new AdditionalMoveFlow();
+        player.getActionsToPerform().remove("move");
         if(additionalMoveFlow.isUsable(player)) {
             additionalMoveFlow.changeFlow(player);
         }
@@ -47,15 +43,10 @@ class AdditionalMoveFlowTest {
     @Test
     void changeFlowTest2() {
         Player player = new Player();
-        player.getActionsToPerform().add("build");
         IslandBoard islandBoard = new IslandBoard();
         player.setIslandBoard(islandBoard);
-        Worker worker1 = new Worker();
-        Worker worker2 = new Worker();
-        player.getWorkers().add(worker1);
-        player.getWorkers().add(worker2);
-        worker1.setWorkerPlayer(player);
-        worker2.setWorkerPlayer(player);
+        Worker worker1 = player.getWorkers().get(0);
+        Worker worker2 = player.getWorkers().get(1);
 
         worker2.setWorkerSpace(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setOccupator(worker2);
@@ -66,6 +57,7 @@ class AdditionalMoveFlowTest {
         worker2.setChosen(true);
         worker2.setLastSpaceOccupied(islandBoard.getSpace(1,1));
         AdditionalMoveFlow additionalMoveFlow = new AdditionalMoveFlow();
+        player.getActionsToPerform().remove("move");
         if(additionalMoveFlow.isUsable(player))
             additionalMoveFlow.changeFlow(player);
         else

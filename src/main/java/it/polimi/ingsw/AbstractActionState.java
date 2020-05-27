@@ -6,7 +6,7 @@ public abstract class AbstractActionState extends State {
         super(player);
     }
 
-    public abstract  Worker getActingWorker();
+    public abstract Worker getActingWorker();
     public abstract Space getSpaceToAct();
     public abstract Space getStartingSpace();
 }

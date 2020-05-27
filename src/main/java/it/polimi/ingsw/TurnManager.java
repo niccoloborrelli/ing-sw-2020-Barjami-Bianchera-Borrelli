@@ -79,7 +79,6 @@ public class TurnManager {
                 if (p.isInGame()) {
                     p.getWinCondition().checkHasWon(p);
                     if(p.isHasWon()){
-                        p.notify(0);
                         setEndGame();
                         break;
                     }
@@ -137,7 +136,8 @@ public class TurnManager {
             }
         }
         if(alive == 1) {
-            winner.getWinCondition().setHasWon(true);
+            winner.setHasWon(true);
+            setEndGame();
             //notifyWin();
             return true;
         }

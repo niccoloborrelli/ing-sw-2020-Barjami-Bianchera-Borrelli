@@ -6,7 +6,6 @@ import static it.polimi.ingsw.DefinedValues.*;
 public class OnMoveUpDecorator extends ActionStateDecorator {
     private final static String DENYUPPERMOVE="denyUpperMove";
     private static final String ACTIONTYPE1="move";
-    private AbstractActionState decorated;
 
     OnMoveUpDecorator(AbstractActionState decorated,String effect) {
         super(decorated,effect);

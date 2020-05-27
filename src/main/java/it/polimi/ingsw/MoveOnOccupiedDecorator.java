@@ -28,8 +28,9 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         if(spaceToAct.getOccupator()!=null&&spaceToAct.getOccupator()!=actingWorker){
             if(action.equals(ACTIONTYPE1)) {
                 moveAbility(actingWorker,spaceToAct);
+                actingWorker.setMovedThisTurn(true);
                 player.notify(new SpaceInput(actingWorker,actingWorker.getWorkerSpace()),action);
-                player.getStateManager().getTurnManager().checkWin(); //LA CHECK FOR WIN LA FACCIO QUI
+                player.getStateManager().getTurnManager().checkWin();
                 if(player.isHasWon())
                     player.notify(5);
                 player.getStateManager().setNextState(player);

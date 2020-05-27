@@ -70,11 +70,6 @@ public class ReadyForActionState extends State {
             }
         }
         allowedSpaces=allowed;
-
-        for(SpaceInput spaceInput: allowedSpaces){
-            System.out.println(spaceInput.getWorker());
-            System.out.println("Row: " + spaceInput.getSpace().getRow() + " Column: " + spaceInput.getSpace().getColumn());
-        }
     }
 
     /**
