@@ -30,7 +30,8 @@ public class ActionState extends AbstractActionState {
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
                 player.notify(5);
-            player.getStateManager().setNextState(player);
+            if(player.isInGame())
+                player.getStateManager().setNextState(player);
         }
         else if(action.equals(actionType2)){
             input.setSpace(spaceToAct);
@@ -39,7 +40,8 @@ public class ActionState extends AbstractActionState {
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
                 player.notify(5);
-            player.getStateManager().setNextState(player);
+            if(player.isInGame())
+                player.getStateManager().setNextState(player);
         }
     }
 

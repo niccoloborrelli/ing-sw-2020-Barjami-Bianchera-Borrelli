@@ -53,6 +53,8 @@ public class Worker {
         cantBuildPerimeter=false;
         cantBuildFirstSpace=false;
         cantMoveFirstSpace=false;
+        possibleBuilding.clear();
+        possibleMovements.clear();
     }
 
     public Player getWorkerPlayer() {

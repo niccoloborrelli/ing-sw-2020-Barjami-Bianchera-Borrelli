@@ -18,10 +18,8 @@ public class AdditionalMoveFlow extends FlowChanger {
     @Override
     public void changeFlow(Player player) {
         player.getActionsToPerform().add(0, actionType1);
-        if(!player.getWorkers().get(0).isCantMove())
-            player.getWorkers().get(0).setCantMoveFirstSpace(true);
-        else
-            player.getWorkers().get(1).setCantMoveFirstSpace(true);
+        Worker workerChosen = getWorkerChosen(player);
+        setFlag(workerChosen);
     }
 
     /**
@@ -30,16 +28,22 @@ public class AdditionalMoveFlow extends FlowChanger {
      */
     @Override
     public boolean isUsable(Player player) {
-        Worker workerChosen;
-        if(!player.getWorkers().get(0).isCantMove())
-            workerChosen = player.getWorkers().get(0);
-        else
-            workerChosen = player.getWorkers().get(1);
-
-        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(), actionType1);
+        Worker workerChosen = getWorkerChosen(player);
+        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType1);
         List<Space> movement = new ArrayList<>(workerChosen.getPossibleMovements());
         movement.remove(workerChosen.getLastSpaceOccupied());
 
         return movement.size() > 0;
+    }
+
+    private Worker getWorkerChosen(Player player){
+        if(player.getWorkers().get(0).isMovedThisTurn())
+            return player.getWorkers().get(0);
+        else
+            return player.getWorkers().get(1);
+    }
+
+    private void setFlag(Worker worker){
+        worker.setCantMoveFirstSpace(true);
     }
 }

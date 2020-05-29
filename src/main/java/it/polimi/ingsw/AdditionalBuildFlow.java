@@ -7,6 +7,10 @@ import static it.polimi.ingsw.DefinedValues.*;
 
 public class AdditionalBuildFlow extends FlowChanger {
 
+    private static final String INITIALSPACE = "initialSpace";
+    private static final String PERIMETERSPACE = "perimeterSpace";
+    private static final String MOVEUP = "moveUp";
+    private static final String DOME = "dome";
     /*
     Your worker may build one additional time, but not in the same space
     DEMETER
@@ -25,26 +29,24 @@ public class AdditionalBuildFlow extends FlowChanger {
     private boolean beforeMove;
     private boolean noDome;
 
-
     /**
      * @param typeBuild indicates which power is activated
      */
     public AdditionalBuildFlow(String typeBuild){
         switch (typeBuild){
-            case "initialSpace":
+            case INITIALSPACE:
                 noInitialSpace = true;
                 break;
-            case  "perimeterSpace":
+            case PERIMETERSPACE:
                 noPerimeter = true;
                 break;
-            case "moveUp":
+            case MOVEUP:
                 beforeMove = true;
                 break;
-            case "dome":
+            case DOME:
                 noDome = true;
         }
     }
-
 
     /**
      * This method change the flow of the action to perform by a player
@@ -53,29 +55,12 @@ public class AdditionalBuildFlow extends FlowChanger {
     public void changeFlow(Player player) {
         if(beforeMove){
             player.getActionsToPerform().add(0, actionType2);
-            for (Worker w: player.getWorkers()) {
-                w.setCantMoveUp(true);
-            }
+            setFlagBeforeMove(player);
             return;
         }
-
         player.getActionsToPerform().add(actionType2);
-        if(noInitialSpace){
-            if(!player.getWorkers().get(0).isCantBuild())
-                player.getWorkers().get(0).setCantBuildFirstSpace(true);
-            else
-                player.getWorkers().get(1).setCantBuildFirstSpace(true);
-        } else if (noPerimeter){
-            if(!player.getWorkers().get(0).isCantBuild())
-                player.getWorkers().get(0).setCantBuildPerimeter(true);
-            else
-                player.getWorkers().get(1).setCantBuildPerimeter(true);
-        } else if(noDome){
-            if(!player.getWorkers().get(0).isCantBuild())
-                player.getWorkers().get(0).setCantBuildDome(true);
-            else
-                player.getWorkers().get(1).setCantBuildDome(true);
-        }
+        Worker workerChosen = getWorkerChosen(player);
+        setFlag(workerChosen);
     }
 
     /**
@@ -86,17 +71,10 @@ public class AdditionalBuildFlow extends FlowChanger {
     public boolean isUsable(Player player) {
         if(beforeMove){
             CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
-
-            return (player.getWorkers().get(0).getPossibleBuilding().size() > 0 ||
-                    player.getWorkers().get(1).getPossibleBuilding().size() > 0);
+            return playerCanBuild(player);
         }
 
-        Worker workerChosen;
-        if(!player.getWorkers().get(0).isCantBuild())
-            workerChosen = player.getWorkers().get(0);
-        else
-            workerChosen = player.getWorkers().get(1);
-
+        Worker workerChosen = getWorkerChosen(player);
         CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
         List<Space> building = new ArrayList<>(workerChosen.getPossibleBuilding());
 
@@ -111,4 +89,31 @@ public class AdditionalBuildFlow extends FlowChanger {
         }
         return building.size() > 0;
     }
+
+    private Worker getWorkerChosen(Player player){
+        if(!player.getWorkers().get(0).isCantBuild())
+            return player.getWorkers().get(0);
+        else
+            return player.getWorkers().get(1);
+    }
+
+    private void setFlag(Worker worker){
+        if(noInitialSpace)
+            worker.setCantBuildFirstSpace(true);
+        else if(noPerimeter)
+            worker.setCantBuildPerimeter(true);
+        else if(noDome)
+            worker.setCantBuildDome(true);
+    }
+
+    private boolean playerCanBuild(Player player){
+        return (player.getWorkers().get(0).getPossibleBuilding().size() > 0 ||
+                player.getWorkers().get(1).getPossibleBuilding().size() > 0);
+    }
+
+    private void setFlagBeforeMove(Player player){
+        for (Worker w: player.getWorkers())
+            w.setCantMoveUp(true);
+    }
+
 }

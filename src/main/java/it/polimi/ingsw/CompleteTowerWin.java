@@ -20,7 +20,7 @@ public class CompleteTowerWin extends PowerWinDecorator {
     public CompleteTowerWin(WinConditionAB winConditionAB){ this.winCondition = winConditionAB;}
 
     /**
-     * This method checks if the player has won by the base win condition or the Chronus one
+     * This method checks if the player has won by the base win condition or by the Chronus one
      * @param player is the player to check
      */
     @Override
@@ -30,11 +30,6 @@ public class CompleteTowerWin extends PowerWinDecorator {
             checkHasWonTower(player);
     }
 
-    /**
-     * The method counts how many complete tower are on the board,
-     * if there are at least 5 it sets as true the boolean attribute
-     * "HasWon" of the player
-     */
     private void checkHasWonTower(Player player) {
         int completeTower = 0;
         for(int row = MINROW; row < DIM; row++)

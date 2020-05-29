@@ -46,7 +46,7 @@ public class ReadyForActionState extends State {
             player.setInGame(false);
             player.notify(3);
             player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
-        }//fine della parte della fu-RestrictionState
+        }
         else {
             setAllowedSpaces();
             player.notify(allowedSpaces);
@@ -94,7 +94,7 @@ public class ReadyForActionState extends State {
 
     public boolean inputAcceptable(SpaceInput spaceInput){
         for (SpaceInput temp:allowedSpaces) {
-            if(temp.getSpace()==spaceInput.getSpace()&&temp.getWorker()==spaceInput.getWorker())
+            if(temp.getSpace()==spaceInput.getSpace() && temp.getWorker()==spaceInput.getWorker())
                 return true;
         }
         return false;

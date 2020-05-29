@@ -21,7 +21,7 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
     }
 
     /**
-     * This method checks if the player has won by the base win condition or the Pan one
+     * This method checks if the player has won by the base win condition or by the Pan one
      * @param player is the player to check
      */
     @Override
@@ -31,24 +31,19 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
             checkHasWonJump(player);
     }
 
-    /**
-     * This method checks if the player has move down at least 2 levels
-     * @param player is the player to check
-     */
-    private void checkHasWonJump(Player player) throws IOException {//(VERIFICATA)
-        Worker workerChosen;
-        if(player.getWorkers().get(0).isMovedThisTurn()) {
-            workerChosen = player.getWorkers().get(0);
-            if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
+    private void checkHasWonJump(Player player) {
+        Worker workerChosen = getWorkerChosen(player);
+        if(workerChosen != null)
+            if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN)
                 player.setHasWon(true);
-            }
-        }
-        else if(player.getWorkers().get(1).isMovedThisTurn()){
-            workerChosen = player.getWorkers().get(1);
-            if (workerChosen.getLastSpaceOccupied().getLevel() - workerChosen.getWorkerSpace().getLevel() >= JUMP_LEVELS_TO_WIN) {
-                player.setHasWon(true);
-            }
-        }
+    }
+
+    private Worker getWorkerChosen(Player player){
+        if(player.getWorkers().get(0).isMovedThisTurn())
+            return player.getWorkers().get(0);
+        else if(player.getWorkers().get(1).isMovedThisTurn())
+            return player.getWorkers().get(1);
+        return null;
     }
 
 }

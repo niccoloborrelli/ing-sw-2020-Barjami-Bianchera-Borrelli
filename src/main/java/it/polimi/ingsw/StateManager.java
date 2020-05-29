@@ -7,6 +7,8 @@ import java.util.*;
 
 public class StateManager {
 
+    private static final int MINIMUM_PRIORITY = 0;
+
     /*
     Idee: ordinare subito la tabella in base alla priorità, in modo tale che il calcolo del nuovo stato sia veloce
      */
@@ -35,6 +37,7 @@ public class StateManager {
     public void setCurrent_state(State current_state) {
         this.current_state = current_state;
     }
+
     /*
     NON è POSSIBILE AVERE LO STESSO STATO DI PARTENZA PER STATI DI ARRIVO CON UGUALE PRIORITà
     SE IL METODO NON DEVE CONTROLLARE NESSUNA CONDIZIONE, SI USERà IL METODO QUI SOTTO ALWAYSTRUE E EXPECTED VALUE = TRUE
@@ -43,6 +46,10 @@ public class StateManager {
     public StateManager() {
         stateHashMap = new HashMap<>();
         table = new HashMap<>();
+    }
+
+    public HashMap<State, List<Line>> getTable() {
+        return table;
     }
 
     public void createBaseStates(Player player){
@@ -74,9 +81,6 @@ public class StateManager {
         return stateHashMap;
     }
 
-    /*
-        AREA METODI --ADD--
-     */
 
     /**
      * Adds a new state if it doesn't exist yet, it will be matched with his name and will be inserted in
@@ -84,7 +88,7 @@ public class StateManager {
      * @param newState is the new state added.
      */
     public void addNewState(State newState) {
-        if (!stateHashMap.containsValue(newState)) {
+        if (!stateHashMap.containsKey(newState.toString())) {
             stateHashMap.put(newState.toString(), newState);
             table.put(newState, new ArrayList<>());
         }
@@ -105,16 +109,21 @@ public class StateManager {
      */
 
     public void addNewFinishSpace(State startState, State finishState, Method method, boolean expectedValue, int priority) {
-        Line newLine = new Line(finishState);
-        newLine.getConditions().put(method, expectedValue);
-        newLine.setPriority(priority);
-        if(table.get(startState)!=null)
-            table.get(startState).add(newLine);
+        if(stateHashMap.containsKey(finishState.toString())) {
+            Line newLine = new Line(finishState);
+            if (priority >= MINIMUM_PRIORITY) {
+                newLine.setPriority(priority);
+                if (method != null)
+                    newLine.getConditions().put(method, expectedValue);
+                if (table.get(startState) != null)
+                    table.get(startState).add(newLine);
+            }
+        }
     }
 
     /**
-     * Adds a new condition to the changing from this start state and this finish state, both already existing.
-     * Sets also the level of priority of this condition.
+     * Adds a new condition to the changing from this start state and this finish state with a determined level of priority,
+     * both already existing.
      * If line exists, it has to be unique, due to class' specifications.
      * @param startState is the state's departure.
      * @param finishState is the state's arrival.
@@ -154,10 +163,6 @@ public class StateManager {
         addNewState(startState);
         addNewFinishSpace(startState, finishState, method, expectedValue, priority);
     }
-
-    /*
-        AREA METODI --SEARCH--
-     */
 
     /**
      * Finds which lines have this state as arrival.
@@ -230,10 +235,6 @@ public class StateManager {
             return null;
     }
 
-    /*
-        AREA METODI --REMOVE--
-     */
-
     /**
      * Removes from state's list this state.
      * Removes also from table this state, both as start state and lines (of every other state) which has it as arrival state.
@@ -274,7 +275,7 @@ public class StateManager {
      * @param deleted is the state that has to be deleted as arrival.
      */
 
-    public void removeFromArrival(List<Line> lineList, State deleted){
+    private void removeFromArrival(List<Line> lineList, State deleted){
         if(lineList!=null && deleted!=null)
             lineList.removeIf(line -> line.getFinishState().equals(deleted));
     }
@@ -297,21 +298,6 @@ public class StateManager {
         }
     }
 
-
-    /**
-     * Permits possibilities of no-condition in table.
-     * @return always true
-     */
-
-    public boolean alwaysTrue() {
-        return true;
-    }
-
-
-    /*
-    AREA METODI --CHANGE--
-     */
-
     /**
      * Change priority in one specific line.
      * @param startState is start state.
@@ -322,7 +308,9 @@ public class StateManager {
 
     public void changePriority(State startState, State finishState, HashMap<Method,Boolean> conditions, int newPriority){
 
-        searchUnique(startState,finishState,conditions).setPriority(newPriority);
+        Line line = searchUnique(startState,finishState,conditions);
+        if(line!=null)
+            line.setPriority(newPriority);
     }
 
     /**
@@ -335,7 +323,9 @@ public class StateManager {
 
     public void changeConditions(State startState, State finishState, HashMap<Method,Boolean> oldConditions , HashMap<Method,Boolean> newConditions){
 
-        searchUnique(startState,finishState,oldConditions).setConditions(newConditions);
+        Line line = searchUnique(startState,finishState,oldConditions);
+        if(line!=null)
+            line.setConditions(newConditions);
     }
 
     /**
@@ -348,17 +338,21 @@ public class StateManager {
 
     public void changeFinishState(State startState, State oldFinishState, HashMap<Method,Boolean> conditions, State newFinishState){
 
-        searchUnique(startState,oldFinishState,conditions).setFinishState(newFinishState);
+        Line line = searchUnique(startState,oldFinishState,conditions);
+        if(line!=null)
+            line.setFinishState(newFinishState);
     }
 
     public void changeStates(State newState, State oldState){
-        List<Line> foundFinishState;
-        substituteStartState(newState,oldState);
-        for(List<Line> lineList : table.values()) {
-            foundFinishState = searchFinishState(lineList, oldState);
-            if(foundFinishState!=null) {
-                substituteStates(foundFinishState, newState);
-                foundFinishState=null;
+        if(newState!=null && stateHashMap.containsKey(oldState.toString())){
+            List<Line> foundFinishState;
+            substituteStartState(newState,oldState);
+            for(List<Line> lineList : table.values()) {
+                foundFinishState = searchFinishState(lineList, oldState);
+                if (foundFinishState != null) {
+                    substituteStates(foundFinishState, newState);
+                    foundFinishState = null;
+                }
             }
         }
     }
@@ -369,10 +363,11 @@ public class StateManager {
     }
 
     private void substituteStartState(State newState, State oldState){
-        for(State state: table.keySet()){
-            if(state.equals(oldState))
-                state = newState;  //non so se funzioni
-        }
+        stateHashMap.put(newState.toString(), newState);
+        List<Line> lineList = table.get(oldState);
+        table.put(newState, lineList);
+
+        table.remove(oldState);
     }
 
     /**
@@ -384,62 +379,59 @@ public class StateManager {
      */
 
     private Line searchUnique(State startState, State finishState, HashMap<Method,Boolean> conditions){
+        List<Line> unique = null;
         List<Line> lineList = table.get(startState);
-        List<Line> sameFinishState = searchFinishState(lineList, finishState);
-        List<Line> unique = searchForCondition(sameFinishState,conditions);
+        if(lineList!=null) {
+            List<Line> sameFinishState = searchFinishState(lineList, finishState);
+            if(sameFinishState!=null)
+                unique = searchForCondition(sameFinishState, conditions);
+        }
 
-        return unique.get(0);
+        if(unique!=null)
+            return unique.get(0);
+        else return null;
     }
-
-    /*
-    AREA METODO --SET NEXT STATE
-     */
 
     /**
      * Sets next state depending by conditions.
      * If control generates exception, condition is considered wrong and it will be removed.
      * @param obRef is class in which are invoked method to control conditions
      */
-
     public void setNextState(Object obRef) throws IOException {
         sortAllTable();
         List<Line> stateLines = table.get(current_state);
+        Iterator<Line> iterator = stateLines.iterator();
 
 
-        for (Line line : stateLines) {
-            try {
+        while(iterator.hasNext()){
+            Line line = iterator.next();
+            try{
                 if (line.controlCondition(obRef)) {
                     current_state = line.getFinishState();
                     break;
                 }
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                removeSpecifiedCondition(current_state, line.getFinishState(), line.getConditions());
+            } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
+                iterator.remove();
+                
             }
         }
-        System.out.println("Il player è: " + current_state.getPlayer());
-        System.out.println("Il prossimos stato è: " +current_state.toString());
-
         current_state.onStateTransition();
-
     }
-
-
-    /*
-    AREA METODO -- SORT FOR PRIORITY
-     */
 
     public void sortAllTable(){
         for(List<Line> lineList: table.values())
             sortForPriority(lineList);
     }
+
     /**
      * Sorts for priority this given list.
      * @param listToOrder is list to order.
      */
     public void sortForPriority(List<Line> listToOrder){
-        Comparator<Line> comparator = comparatorLine();
-
-        listToOrder.sort(comparator);
+        if(listToOrder!=null) {
+            Comparator<Line> comparator = comparatorLine();
+            listToOrder.sort(comparator);
+        }
     }
 
     /**

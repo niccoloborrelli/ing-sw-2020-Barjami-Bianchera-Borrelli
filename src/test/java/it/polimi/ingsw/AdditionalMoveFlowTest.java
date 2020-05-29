@@ -25,7 +25,7 @@ class AdditionalMoveFlowTest {
         worker2.setWorkerSpace(islandBoard.getSpace(4,4));
         islandBoard.getSpace(4,4).setOccupator(worker2);
 
-        worker1.setChosen(true);
+        worker1.setMovedThisTurn(true);
         worker1.setLastSpaceOccupied(islandBoard.getSpace(1,1));
         AdditionalMoveFlow additionalMoveFlow = new AdditionalMoveFlow();
         player.getActionsToPerform().remove("move");
@@ -54,14 +54,16 @@ class AdditionalMoveFlowTest {
         islandBoard.getSpace(1,0).setOccupator(worker1);
         islandBoard.getSpace(0,1).setHasDome(true);
 
-        worker2.setChosen(true);
+        worker2.setMovedThisTurn(true);
         worker2.setLastSpaceOccupied(islandBoard.getSpace(1,1));
         AdditionalMoveFlow additionalMoveFlow = new AdditionalMoveFlow();
         player.getActionsToPerform().remove("move");
+        System.out.println(player.getActionsToPerform());
         if(additionalMoveFlow.isUsable(player))
             additionalMoveFlow.changeFlow(player);
         else
             System.out.println("AdditionalMove not possible");
+        System.out.println(player.getActionsToPerform());
         assertEquals(1, player.getActionsToPerform().size());
 
     }

@@ -87,8 +87,10 @@ public class TurnManager {
     }
 
     private void setEndGame(){
-        for(Player player: players)
+        for(Player player: players) {
             player.setInGame(false);
+            player.getStateManager().setCurrent_state(new EndGameState(player));
+        }
     }
 
     /**
@@ -138,7 +140,6 @@ public class TurnManager {
         if(alive == 1) {
             winner.setHasWon(true);
             setEndGame();
-            //notifyWin();
             return true;
         }
         return false;

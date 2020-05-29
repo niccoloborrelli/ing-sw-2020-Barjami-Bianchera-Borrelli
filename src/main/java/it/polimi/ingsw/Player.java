@@ -286,8 +286,6 @@ public class Player implements Observed{
     }
 
     public boolean isChallenger(){
-        if(this.equals(stateManager.getTurnManager().getPlayers().get(0)))
-            System.out.println("è il challenger");
         return this.equals(stateManager.getTurnManager().getPlayers().get(0));
     }
 
