@@ -6,8 +6,8 @@ import static it.polimi.ingsw.Field.ANSI_RESET;
 
 public class CommunicationSentences {
 
-    private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one" +
-            "insert ";
+    private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one " +
+            "insert";
     private static final String welcomeToSantorini = "Welcome to Santorini.\nGods sanctioned you as chosen one.\n" +
             "Only one of you could dominate Santorini.\nI hope it will be you.";
     private static final String colorSent = "You have to choose color with which your worker impregnate themselves.\n" +
@@ -22,17 +22,17 @@ public class CommunicationSentences {
     private static final String activateSent2 = "Now, it's your choice. Do you want to use your God power?";
     private static final String activateSent3 = "Be careful. God power could be a double-edge sword.";
     private static final String formToActivatePower = "If you want to activate it insert";
-    private static final String godChoiceSent1 = "Choose carefully your Gods. Decide between: ";
-    private static final String godSetSent1 = "you're the challnger. You has the power to decide which Gods would be involved " +
+    private static final String godChoiceSent1 = " Choose carefully your Gods. Decide between: ";
+    private static final String godSetSent1 = " you're the challenger. You have the power to decide which Gods would be involved " +
             "in this battle. In change of this possibility, you will receive the not-chosen God.";
     public static final String nameSent = "You have to choose your name";
     private static final String otherwise = "otherwise";
-    private static final String moved = "moved in space ";
-    private static final String built = "built in space ";
+    private static final String moved = " moved in space ";
+    private static final String built = " built in space ";
     private static final String MOVE = "move";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
     public static final String lost = "You lost! Your God lashes out in rage. Run away while you can";
-    private static final String actionSent1_1 = "Choose carefully. Decide who would ";
+    private static final String actionSent1_1 = " Choose carefully. Decide who would ";
     private static final String actionSent1_2 = ". Worker can do it in these places\n";
     private static final String actionSent2_1 = "Worker can ";
     private static final String actionSent2_2 = "in these places\n";
@@ -133,13 +133,17 @@ public class CommunicationSentences {
     }
 
     private static String buildAvailablePhrase(String prefix, String phrase, String specification, String worker, List<HashMap<String, String>> hashMapList){
-        String beginOfPhrase = prefix +  insertWorker(phrase + specification + ".", worker);
+        String beginOfPhrase = prefix +  insertWorker(phrase + specification + actionSentences.get(actionIndex), worker);
         String endOfPhrase = findSpaces(hashMapList);
+        if(actionIndex<actionSentences.size()-1)
+            actionIndex++;
+        else
+            actionIndex=0;
         return beginOfPhrase + "\n" + endOfPhrase;
     }
 
     private static String insertWorker(String content, String number){
-        int index = content.lastIndexOf("worker");
+        int index = content.lastIndexOf("Worker");
         return content.substring(0, index) + " " + number + " " + content.substring(index+1);
     }
 

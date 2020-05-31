@@ -19,7 +19,7 @@ public class TurnManager {
         allowedColors.add("red");
         allowedColors.add("purple");
         allowedColors.add("white");
-        allowedColors.add("gray");
+        allowedColors.add("grey");
         allowedColors.add("cyan");
         notAllowedNames = new ArrayList<>();
         players = new ArrayList<>();

@@ -70,7 +70,11 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public boolean isUsable(Player player) {
         if(beforeMove){
+            for(Worker w: player.getWorkers())
+                w.setCantBuild(false);
             CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
+            for(Worker w: player.getWorkers())
+                w.setCantBuild(true);
             return playerCanBuild(player);
         }
 

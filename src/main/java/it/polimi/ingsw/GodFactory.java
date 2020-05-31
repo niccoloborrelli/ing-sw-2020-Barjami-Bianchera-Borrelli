@@ -174,7 +174,9 @@ public class GodFactory {
         State endTurnState=stateManager.getState(ENDTURN);
         Class cl = Class.forName(CLASSNAME1);
         Method m = cl.getDeclaredMethod(INGAME);
+        System.out.println("IL NOME DEL METODO " + m.getName());
         stateManager.addNewFinishSpace(endTurnState,activationState,m,true,2);
         stateManager.addNewFinishSpace(activationState,readyForActionState,m,true,3);
+        stateManager.sortAllTable();
     }
 }

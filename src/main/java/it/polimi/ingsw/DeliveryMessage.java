@@ -219,18 +219,13 @@ public class DeliveryMessage {
 
         int code = findCode(doc);
         String specification = findSpecification(doc);
-        System.out.println(specification);
         String playerName = findPlayerAttribute(doc, NAME);
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
-        System.out.println("Il codice è: " +code);
-        System.out.println("La specification è: " +specification);
 
         if (code == 0) {
-            System.out.println("sendToInterface");
             sendToInterface(specification, playerName, playerColor);
         } else if (code == 1) {
-            System.out.println("DecodePossibleChoice");
             decodePossibleChoice(doc, specification, playerName, playerColor);
         } else if (code == 2) {
             decodeUpdate(doc, specification, playerName, playerColor);
@@ -281,7 +276,12 @@ public class DeliveryMessage {
      * @param playerColor is player's color.
      */
     private void decodePossibleChoice(Document doc, String specification, String playerName, String playerColor){
-        List<String> stringList = findListToPrint(doc);
+        String search;
+        if(specification.equals("power") || specification.equals("preLobby"))
+            search = INT;
+        else
+            search = STRING;
+        List<String> stringList = findListToPrint(doc, search);
         List<HashMap<String, String>> hashMapList = findHashMapToPrint(doc);
         String worker = findInsideWorker(doc);
 
@@ -318,10 +318,10 @@ public class DeliveryMessage {
      * @return string list found.
      */
 
-    private List<String> findListToPrint(Document document) {
+    private List<String> findListToPrint(Document document, String type) {
         List<String> stringList = new ArrayList<>();
         Element el = insideField(document, MESSAGE);
-        addMultipleContentToList(stringList, el, INT);
+        addMultipleContentToList(stringList, el, type);
         return stringList;
     }
 

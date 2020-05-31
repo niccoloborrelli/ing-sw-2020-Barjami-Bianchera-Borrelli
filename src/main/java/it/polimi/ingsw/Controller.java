@@ -474,8 +474,7 @@ public class Controller{
         switch (code) {
             case UPDATE_TO_PRINT:
                 message = buildUpdateToPrintMessage();
-                System.out.println("Sono dentro update_To_print");
-                codeCommunication = findCommunication(specification);
+                codeCommunication = findCommunication(lastChange.specification);
                 break;
             case UPDATE_CHOICE:
                 message = buildUpdateChoiceMessage(lastChange);
@@ -544,6 +543,7 @@ public class Controller{
         StringBuilder message = new StringBuilder();
         StringBuilder insideMessage = generateIntList(message, dataOutput.getIntegerList());
         StringBuilder spaceList = generateSpaceList(insideMessage, dataOutput.getListSpace());
+        StringBuilder stringList = generateStringList(spaceList, dataOutput.getStringList());
 
         return generateField(spaceList.toString(), MESSAGE);
     }
@@ -559,6 +559,14 @@ public class Controller{
         if(integerList!=null) {
             for (Integer i : integerList)
                 message.append(generateField(String.valueOf(i), INT));
+        }
+        return message;
+    }
+
+    private StringBuilder generateStringList(StringBuilder message, List<String> stringList){
+        if(stringList != null){
+            for(String s: stringList)
+                message.append(generateField(s, STRING));
         }
         return message;
     }
@@ -675,7 +683,7 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        Parser parser=new Parser(new File("C:\\Users\\nikob\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation();
     }
 
@@ -700,7 +708,7 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\nikob\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();

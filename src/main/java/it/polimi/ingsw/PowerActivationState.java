@@ -44,7 +44,9 @@ public class PowerActivationState extends State {
     @Override
     public void onStateTransition() throws IOException {
         boolean usable=flowPower.isUsable(player);
+        System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         if(!usable){
+            System.out.println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
             player.setPowerNotUsable(true);
             player.getStateManager().setNextState(player);
         }

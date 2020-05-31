@@ -13,7 +13,7 @@ public class ColorSettingState extends State {
         boolean colorSetted=false;
         String input=visitor.visit(this);
         TurnManager turnManager=player.getStateManager().getTurnManager();
-        synchronized (turnManager){
+        synchronized (player.getStateManager().getTurnManager()){
             if(turnManager.getAllowedColors().contains(input)) {
                 turnManager.setColor(player, input);
                 player.getStateManager().setNextState(player);
@@ -34,7 +34,7 @@ public class ColorSettingState extends State {
         LastChange colorsExpected = new LastChange();
         colorsExpected.setCode(1);
         colorsExpected.setSpecification(COLORMESSAGE);
-        synchronized (turnManager) {
+        synchronized (player.getStateManager().getTurnManager()) {
             List<String> allowedColors = turnManager.getAllowedColors();
             colorsExpected.setStringList(allowedColors);
             player.notify(colorsExpected);

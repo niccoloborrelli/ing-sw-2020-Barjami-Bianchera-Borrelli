@@ -203,8 +203,10 @@ public class Field {
                 break;
             case "name":
                 data = nameSent;
+                break;
             case "workerSetting":
                 data = SET_UP;
+                break;
         }
 
         System.out.println(data);
@@ -221,12 +223,14 @@ public class Field {
                 break;
             case "color":
                 data = getColorPhrase(stringList, playerName);
+                System.out.println("ENTRATO IN COLOR PHRASE");
                 break;
             case "godChoice":
                 data = getGodChoicePhrase(stringList, playerName, playerColor);
+                break;
             case "godSet":
                 data = getGodSetPhrase(stringList, playerName, playerColor);
-
+                break;
 
         }
         System.out.println(data);
@@ -237,8 +241,10 @@ public class Field {
         switch (specification) {
             case "move":
                 viewMove(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
+                break;
             case "build":
                 viewBuild(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3));
+                break;
         }
     }
 
