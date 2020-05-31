@@ -44,7 +44,7 @@ public class HandlerHub {
 
     public void callController(Handler handler, String message){
         Controller controller = findControllerFromHandler(handler);
-        controller.giveInput(message);
+        controller.giveInputToModel(message);
     }
 
     public void updateEndGame(String message){
@@ -68,9 +68,9 @@ public class HandlerHub {
         }else if(typeCommunication == 1) {
             Handler handler = handlerControllerHashMap.get(controller);
             handler.communicate(message);
-        }else{
+        }else if(typeCommunication == 2){
             for (Handler handler : handlerControllerHashMap.values()) {
-                if(!handler.equals(handlerControllerHashMap.get(controller)))
+                if (!handler.equals(handlerControllerHashMap.get(controller)))
                     handler.communicate(message);
             }
         }

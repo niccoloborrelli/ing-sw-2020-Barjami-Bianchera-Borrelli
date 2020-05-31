@@ -2,13 +2,14 @@ package it.polimi.ingsw;
 
 import java.util.List;
 
-public class DataOutput {
+public class LastChange {
     List<Space> listSpace;
     List<Integer> integerList;
+    List<String> stringList;
     Worker worker;
     Space space;
     int code;
-    String string;
+    String specification;
 
     public Worker getWorker() {
         return worker;
@@ -50,11 +51,19 @@ public class DataOutput {
         this.code = code;
     }
 
-    public String getString() {
-        return string;
+    public String getSpecification() {
+        return specification;
     }
 
-    public void setString(String string) {
-        this.string = string;
+    public void setSpecification(String specification) {
+        this.specification = specification;
+    }
+
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
     }
 }

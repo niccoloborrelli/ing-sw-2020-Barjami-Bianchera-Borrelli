@@ -7,14 +7,14 @@ import java.util.List;
 public abstract class State {
     private static final String move="move";
     private static final String build="build";
-
+    private static final String ERRORSPECIFICATION = "error";
+    List<String> allowedInputs;
     Player player;
+
     /**
      * Context passes itself through the state constructor. This may help a
      * state to fetch some useful context data if needed.
      */
-    List<String> allowedInputs;
-
     State(Player player) {
         this.player = player;
         allowedInputs=new ArrayList<String>();
@@ -26,7 +26,7 @@ public abstract class State {
 
     /**
      * a method invoked when the state gets an input to change and the evolve the FSM state
-     * @param input the input wich produce a change in the state of the fsm
+     * @param visitor is an element of visitor pattern from which the state will get the input
      * @throws IOException
      */
     public void onInput(Visitor visitor) throws IOException {
@@ -34,7 +34,7 @@ public abstract class State {
     }
 
     /**
-     * a method to be invoked everytime the player enters this state
+     * a method to be invoked every time the player enters this state
      */
     public abstract void onStateTransition() throws IOException;
 
@@ -47,5 +47,12 @@ public abstract class State {
 
     public void setAllowedInputs(List<String> allowedInputs) {
         this.allowedInputs = allowedInputs;
+    }
+
+    public void uselessInputNotify(){
+        LastChange uselessInput = new LastChange();
+        uselessInput.setCode(0);
+        uselessInput.setSpecification(ERRORSPECIFICATION);
+        player.notify(uselessInput);
     }
 }

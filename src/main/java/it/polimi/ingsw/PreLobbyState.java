@@ -8,7 +8,8 @@ public class PreLobbyState extends State{
     private List<Integer> allowedInts;
     private LobbyManager lobbyManager;
     private boolean enteredGame;
-
+    private static final int MINNUMBEROFPLAYERS=2;
+    private static final int MAXNUMBEROFPLAYERS=3;
     PreLobbyState(Player player, LobbyManager lobbyManager) {
         super(player);
         this.lobbyManager = lobbyManager;
@@ -22,18 +23,27 @@ public class PreLobbyState extends State{
             lobbyManager.addPlayer(player,input);
             enteredGame=true;
         }
-        else
-            player.notify(1);
+        else {
+            uselessInputNotify();
+            }
     }
 
     @Override
     public void onStateTransition() throws IOException {
-        allowedInts.add(2);
-        allowedInts.add(3);
-        for (Integer i:allowedInts) {
-            allowedInputs.add(""+i);
-        }
-        player.notify(7);
+        for(int i=MINNUMBEROFPLAYERS;i<=MAXNUMBEROFPLAYERS;i++)
+            allowedInts.add(i);
+
+        notifyAcceptableInputs();
     }
 
+    /**
+     * method that notifies the input from which this state can evolve
+     */
+    private void notifyAcceptableInputs(){
+        LastChange powerAllowedInputs = new LastChange();
+        powerAllowedInputs.setCode(1);
+        powerAllowedInputs.setSpecification("preLobby");
+        powerAllowedInputs.setIntegerList(allowedInts);
+        player.notify(powerAllowedInputs);
+    }
 }

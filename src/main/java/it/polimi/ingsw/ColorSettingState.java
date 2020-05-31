@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ColorSettingState extends State {
     private static final String COLORMESSAGE="color";
@@ -20,14 +21,24 @@ public class ColorSettingState extends State {
                 colorSetted=true;
             }
         }
-        if(!colorSetted)
-            player.notify(1);
+        if(!colorSetted) {
+            System.out.println("Inviato da color");
+            uselessInputNotify();
+        }
     }
 
 
     @Override
     public void onStateTransition() {
-        player.notify(COLORMESSAGE);
+        TurnManager turnManager=player.getStateManager().getTurnManager();
+        LastChange colorsExpected = new LastChange();
+        colorsExpected.setCode(1);
+        colorsExpected.setSpecification(COLORMESSAGE);
+        synchronized (turnManager) {
+            List<String> allowedColors = turnManager.getAllowedColors();
+            colorsExpected.setStringList(allowedColors);
+            player.notify(colorsExpected);
+        }
     }
 
     public String toString(){

@@ -44,8 +44,13 @@ public class DeliveryMessage {
     private static final String LEVEL = "level";
     private static final String COLOR = "color";
     private static final String DOME = "dome";
+    private static final String SPECIFICATION = "specification";
+    private static final String MOVE = "move";
+    private static final String BUILD = "build";
+    private static final String PLAYER = "player";
+    private static final String NAME = "name";
+    private static final String ENDGAME = "endgame";
     private static final int FIRST_CHILD = 0;
-    private static final String ENDGAME = "Game is finished. Press quit to exit";
 
 
     private boolean graphicInterface;
@@ -59,24 +64,24 @@ public class DeliveryMessage {
 
     /**
      * Traduces input e sends it to net manager.
+     *
      * @param input is input received.
      */
-    
-    public void send(String input){
+
+    public void send(String input) {
         int code = decodeInput(input);
         String cd = generateField(String.valueOf(code), CODE);
         String message;
 
-        if(code==1) {
+        if (code == 1) {
             message = buildActionMessage(input);
-        }
-        else if (code==2)
+        } else if (code == 2)
             message = buildIntMessage(input);
         else
             message = buildStringMessage(input);
 
         String coveredMessage = generateField(message, MESSAGE);
-        String data =  generateField(cd + coveredMessage, DATA);
+        String data = generateField(cd + coveredMessage, DATA);
 
         netHandler.sendMessage(PREFIX + data);
     }
@@ -84,15 +89,16 @@ public class DeliveryMessage {
 
     /**
      * Decodes type of message.
+     *
      * @param input is input received.
      * @return code that represents type of message.
      */
-    private int decodeInput(String input){
+    private int decodeInput(String input) {
         int code = 0;
 
-        if(isItWorkerAction(input))
-            code =1;
-        else if(isItInt(input))
+        if (isItWorkerAction(input))
+            code = 1;
+        else if (isItInt(input))
             code = 2;
 
         return code;
@@ -101,13 +107,14 @@ public class DeliveryMessage {
 
     /**
      * Determines if input represents a worker's action.
+     *
      * @param input is input received.
      * @return true if it is, otherwise false.
      */
 
-    private boolean isItWorkerAction(String input){
-        if(input.contains(ACTION) && input.contains(SPECIAL_CHAR1) && input.contains(SPECIAL_CHAR2)){
-            if(input.substring(FIRST_INDEX,SECOND_INDEX).equals(ACTION) && input.indexOf(ACTION) < input.indexOf(SPECIAL_CHAR1) && input.indexOf(ACTION) <  input.indexOf(SPECIAL_CHAR2)){
+    private boolean isItWorkerAction(String input) {
+        if (input.contains(ACTION) && input.contains(SPECIAL_CHAR1) && input.contains(SPECIAL_CHAR2)) {
+            if (input.substring(FIRST_INDEX, SECOND_INDEX).equals(ACTION) && input.indexOf(ACTION) < input.indexOf(SPECIAL_CHAR1) && input.indexOf(ACTION) < input.indexOf(SPECIAL_CHAR2)) {
                 return input.indexOf(SPECIAL_CHAR1) < input.indexOf(SPECIAL_CHAR2) - MINIMUM_LENGTH_INT && input.indexOf(SPECIAL_CHAR2) < input.length() - MINIMUM_LENGTH_INT;
             }
         }
@@ -116,14 +123,15 @@ public class DeliveryMessage {
 
     /**
      * Determines if input represents an int.
+     *
      * @param input is input received.
      * @return true if it is, otherwise false.
      */
 
-    private boolean isItInt(String input){
-        try{
+    private boolean isItInt(String input) {
+        try {
             Integer.parseInt(input);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
         return true;
@@ -131,60 +139,65 @@ public class DeliveryMessage {
 
     /**
      * Builds action's message according to rules of communication.
+     *
      * @param input is input received.
      * @return message codified.
      */
 
-    private String buildActionMessage(String input){
-        String workerNumb = input.substring(input.indexOf(ACTION)+1, input.indexOf(SPECIAL_CHAR1));
+    private String buildActionMessage(String input) {
+        String workerNumb = input.substring(input.indexOf(ACTION) + 1, input.indexOf(SPECIAL_CHAR1));
         String worker = generateField(workerNumb, WORKER);
-        String space = buildSpace(input.substring(input.indexOf(SPECIAL_CHAR1) +1));
+        String space = buildSpace(input.substring(input.indexOf(SPECIAL_CHAR1) + 1));
 
-        return generateField(worker + space, MESSAGE) ;
+        return generateField(worker + space, MESSAGE);
 
     }
 
     /**
      * Build space's message according to rules of communication.
+     *
      * @param input is input received.
      * @return message codified.
      */
 
-    private String buildSpace(String input){
+    private String buildSpace(String input) {
         String row = input.substring(FIRST_INDEX, input.indexOf(SPECIAL_CHAR2));
         String column = input.substring(input.indexOf(SPECIAL_CHAR2) + 1);
 
         String coverRow = generateField(row, ROW);
         String coverColumn = generateField(column, COLUMN);
 
-        return generateField(coverRow+coverColumn, SPACE);
+        return generateField(coverRow + coverColumn, SPACE);
     }
 
     /**
      * Builds int's message according to rules of communication.
+     *
      * @param input is input received.
      * @return int's string codified.
      */
 
-    private String buildIntMessage(String input){
+    private String buildIntMessage(String input) {
 
         return generateField(input, INT);
     }
 
     /**
      * Builds string's message according to rules of communication.
+     *
      * @param input is input received.
      * @return string codified.
      */
 
-    private String buildStringMessage(String input){
+    private String buildStringMessage(String input) {
         return generateField(input, STRING);
     }
 
     /**
      * Covers content string according to XML rules creating a field passed.
+     *
      * @param content is string covered.
-     * @param field is field that cover content.
+     * @param field   is field that cover content.
      * @return content covered with field.
      */
 
@@ -196,68 +209,225 @@ public class DeliveryMessage {
     }
 
 
-    public void receive(String message){
-        List<Integer> listOfParameters = null;
+    /**
+     * Parse message received and send it to client interface.
+     * @param message is message received.
+     */
+
+    public void receive(String message) {
         Document doc = buildDocument(message);
 
-        int code = findCode(message, doc);
+        int code = findCode(doc);
+        String specification = findSpecification(doc);
+        System.out.println(specification);
+        String playerName = findPlayerAttribute(doc, NAME);
+        String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
-        if(code ==0) { //da stampare
-            String data = parseMessToPrint(message);
-            sendToInterface(data);
-        }else if(code==2){
-            HashMap<String, String> data = parseListSpace(message);
-            String worker = parseWorker(message);
-            sendToInterface(data, worker);
-        }else if(code==3) { //si potrebbero unire le update
-            listOfParameters = parseUpdate(message, true);
-            String color = parseColor(message);
-            sendToInterface(listOfParameters, color);
-        }else if (code==4){
-            listOfParameters = parseUpdate(message, false);
-            sendToInterface(listOfParameters);
+        System.out.println("Il codice è: " +code);
+        System.out.println("La specification è: " +specification);
+
+        if (code == 0) {
+            System.out.println("sendToInterface");
+            sendToInterface(specification, playerName, playerColor);
+        } else if (code == 1) {
+            System.out.println("DecodePossibleChoice");
+            decodePossibleChoice(doc, specification, playerName, playerColor);
+        } else if (code == 2) {
+            decodeUpdate(doc, specification, playerName, playerColor);
         }
 
     }
 
-    private void sendToInterface(String message){
-        if(!graphicInterface)
-            field.printData(message);
+    /**
+     * Finds field inside player's part of string.
+     * @param doc is document containing information.
+     * @param field is field searched
+     * @return content of field in player's part.
+     */
+
+    private String findPlayerAttribute(Document doc, String field) {
+        Element el = insideField(doc, PLAYER);
+        if (el != null) {
+            NodeList nodeList = el.getElementsByTagName(field);
+            Node node = nodeList.item(FIRST_CHILD);
+            if(node!=null && node.getNodeType() == Node.ELEMENT_NODE){
+                return node.getTextContent();
+            }
+        }
+        return null;
     }
 
-    private void sendToInterface(List<Integer> integerList){
-        if(!graphicInterface){
-            field.viewBuild(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3));
+    /**
+     * Finds specification part in document.
+     * @param doc is document containing specification.
+     * @return specification's content.
+     */
+
+    private String findSpecification(Document doc) {
+        String specification = null;
+        Element el = insideField(doc, SPECIFICATION);
+        if (el != null) {
+            specification = el.getTextContent();
+        }
+
+        return specification;
+    }
+
+    /**
+     * Decodes and sends to interface string containing possible choices.
+     * @param doc contains information.
+     * @param specification specifies type of message.
+     * @param playerName is player's name.
+     * @param playerColor is player's color.
+     */
+    private void decodePossibleChoice(Document doc, String specification, String playerName, String playerColor){
+        List<String> stringList = findListToPrint(doc);
+        List<HashMap<String, String>> hashMapList = findHashMapToPrint(doc);
+        String worker = findInsideWorker(doc);
+
+        if(stringList.size()!=0)
+            sendToInterface(stringList, specification, playerName, playerColor);
+        else
+            sendToInterface(worker, hashMapList, specification, playerName, playerColor);
+    }
+
+    /**
+     * Finds information inside worker's field.
+     * @param document contains information.
+     * @return content of worker's field.
+     */
+
+    private String findInsideWorker(Document document){
+        Element el = insideField(document, MESSAGE);
+        String worker = null;
+        String content = null;
+        NodeList nodeList = el.getElementsByTagName(WORKER);
+        Node node = nodeList.item(0);
+
+        if(node!=null && node.getNodeType()==Node.ELEMENT_NODE){
+            content = node.getTextContent();
+        }
+        worker = content;
+
+        return worker;
+    }
+
+    /**
+     * Finds string list to send to interface.
+     * @param document contains list.
+     * @return string list found.
+     */
+
+    private List<String> findListToPrint(Document document) {
+        List<String> stringList = new ArrayList<>();
+        Element el = insideField(document, MESSAGE);
+        addMultipleContentToList(stringList, el, INT);
+        return stringList;
+    }
+
+    /**
+     * Finds list of hash map containing space's information.
+     * @param doc contains information.
+     * @return list of hash map found.
+     */
+
+    private List<HashMap<String, String>> findHashMapToPrint(Document doc){
+        List<String> parameters = new ArrayList<>();
+        List<HashMap<String, String>> hashMapList = new ArrayList<>();
+        Element el = insideField(doc, MESSAGE);
+        parameters.add(ROW);
+        parameters.add(COLUMN);
+        addMultipleDoubleParametersToList(hashMapList, el, SPACE, parameters);
+
+        return hashMapList;
+    }
+
+    /**
+     * Adds to list information found in a node list.
+     * @param stringList is list in which will be added information.
+     * @param element contains field's name searched.
+     * @param name is field's name searched.
+     */
+
+    private void addMultipleContentToList(List<String> stringList, Element element, String name) {
+        NodeList nodeList = element.getElementsByTagName(name);
+        if (nodeList != null) {
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE)
+                    stringList.add(node.getTextContent());
+            }
         }
     }
 
-    private void sendToInterface(List<Integer> integerList, String color){
-        if(!graphicInterface){
-            field.viewMove(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), color);
+    /**
+     * Adds information to list of hash map from a node list containing double information for each node.
+     * @param hashMapList is list of hash map to fill.
+     * @param el is element containing information.
+     * @param name is name of field.
+     * @param parameters is parameters searched.
+     */
+
+    private void addMultipleDoubleParametersToList(List<HashMap<String, String>> hashMapList, Element el, String name, List<String> parameters) {
+        NodeList nodeList = el.getElementsByTagName(name);
+        if (nodeList != null) {
+            for (int i = FIRST_INDEX; i < nodeList.getLength(); i++) {
+                addParametersToHashMap(nodeList.item(i), hashMapList, parameters);
+            }
         }
     }
 
-    private void sendToInterface(HashMap<String, String> hashMap, String worker){
-        if(!graphicInterface){
-            field.printData(hashMap, worker);
+    /**
+     *
+     * @param node
+     * @param hashMapList
+     * @param parameters
+     */
+
+    private void addParametersToHashMap(Node node, List<HashMap<String, String>> hashMapList, List<String> parameters){
+        String firstParameters;
+        String secondParameters;
+        HashMap<String, String> stringHashMap = new HashMap<>();
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element element = (Element) node;
+            firstParameters = findFirstTextContent(element, parameters.get(FIRST_INDEX));
+            secondParameters = findFirstTextContent(element, parameters.get(SECOND_INDEX));
+            stringHashMap.put(firstParameters, secondParameters);
+            hashMapList.add(stringHashMap);
         }
     }
 
-    private List<Integer> parseUpdate(String message, boolean type){
+    private String findFirstTextContent(Element element, String parameters){
+        NodeList nodeList1 = element.getElementsByTagName(parameters);
+        Node node1 = nodeList1.item(FIRST_CHILD);
+        if (node1!=null && node1.getNodeType() == Node.ELEMENT_NODE) {
+            return node1.getTextContent();
+        }
+        return null;
+    }
+
+
+    private void decodeUpdate(Document document, String specification,  String playerName, String playerColor){
+        List<Integer> integerList = parseUpdate(document, specification);
+        sendToInterface( specification, integerList, playerName, playerColor);
+
+    }
+
+
+    private List<Integer> parseUpdate(Document document, String specification){
         List<Integer> integerList = new ArrayList<>();
 
-        if(type){
-            parseMovement(integerList,message);
-        }else
-            parseBuilding(integerList, message);
+        if(specification.equals(MOVE)){
+            parseMovement(integerList, document);
+        }else if(specification.equals(BUILD))
+            parseBuilding(integerList, document);
 
         return integerList;
 
     }
 
-    private void parseMovement(List<Integer> integerList, String message){
-        Document doc = buildDocument(message);
-        Element el = insideMessage(doc);
+    private void parseMovement(List<Integer> integerList, Document document){
+        Element el = insideField(document, MESSAGE);
 
         addTargetCoordinate(integerList, el, SPACE, ROW);
         addTargetCoordinate(integerList, el, SPACE, COLUMN);
@@ -265,9 +435,8 @@ public class DeliveryMessage {
         addTargetCoordinate(integerList, el, WORKER, COLUMN);
     }
 
-    private void parseBuilding(List<Integer> integerList, String message){
-        Document doc = buildDocument(message);
-        Element el = insideMessage(doc);
+    private void parseBuilding(List<Integer> integerList, Document document){
+        Element el = insideField(document, MESSAGE);
 
         addTargetCoordinate(integerList, el, SPACE, ROW);
         addTargetCoordinate(integerList, el, SPACE, COLUMN);
@@ -301,46 +470,23 @@ public class DeliveryMessage {
         return null;
     }
 
-    private String parseMessToPrint(String message){
-        Document doc = buildDocument(message);
-        Element el = insideMessage(doc);
-
-        return parseMessage(el);
-    }
-
-    private String parseMessage(Element element){
-
-        return element.getTextContent();
-    }
-
-    private String parseColor(String message){
-        String color = null;
-        Document doc = buildDocument(message);
-        Element el = insideMessage(doc);
-
-        Element element = findTarget(el, COLOR);
-
-        if(element!=null) {
-            String codeColor = element.getTextContent();
-            color = getCodeColor(codeColor);
-        }
-        return color;
-    }
-
     private String getCodeColor(String color){
-        switch (color){
-            case "1":
-                return ANSI_RED.escape();
-            case "2":
-                return ANSI_PURPLE.escape();
-            case "3":
-                return ANSI_WHITE.escape();
-            case "4":
-                return ANSI_CYAN.escape();
-            case "5":
-                return ANSI_GREY.escape();
+        if(color!=null) {
+            switch (color) {
+                case "red":
+                    return ANSI_RED.escape();
+                case "purple":
+                    return ANSI_PURPLE.escape();
+                case "white":
+                    return ANSI_WHITE.escape();
+                case "cyan":
+                    return ANSI_CYAN.escape();
+                case "grey":
+                    return ANSI_GREY.escape();
+            }
+            return "invalidColor";
         }
-        return "0";
+        return "invalidColor";
     }
 
     /**
@@ -350,13 +496,13 @@ public class DeliveryMessage {
      * @return element containing lists of information.
      */
 
-    private Element insideMessage(Document document) {
+    private Element insideField(Document document, String field) {
         Element element = null;
 
         if (document != null) {
-            NodeList nodeList = document.getElementsByTagName(MESSAGE);
+            NodeList nodeList = document.getElementsByTagName(field);
             Node node = nodeList.item(FIRST_CHILD);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node!=null && node.getNodeType() == Node.ELEMENT_NODE) {
                 element = (Element) node;
 
             }
@@ -370,7 +516,7 @@ public class DeliveryMessage {
             netHandler.getSocket().close();
             netHandler.setEndGame(true);
             if(!graphicInterface)
-                sendToInterface(ENDGAME);
+                sendToInterface(ENDGAME, null, null);
         }catch(IOException e) {
             e.printStackTrace();
         }
@@ -399,14 +545,7 @@ public class DeliveryMessage {
         return null;
     }
 
-    /**
-     * Finds and traduces code in message.
-     *
-     * @param message is message containing code.
-     * @return code if valid, otherwise an invalid integer.
-     */
-
-    private int findCode(String message, Document doc) {
+    private int findCode(Document doc) {
         int code = INVALID_CODE;
         if (doc != null) {
             NodeList nodeList = doc.getElementsByTagName(CODE);
@@ -424,60 +563,24 @@ public class DeliveryMessage {
         return code;
     }
 
-    private HashMap<String, String> parseListSpace(String message){
-        HashMap<String, String> spaces = new HashMap<>();
-        Document doc = buildDocument(message);
-        Element el = insideMessage(doc);
-
-        parseSpaces(spaces, el);
-
-        return spaces;
+    private void sendToInterface(String specification, String playerName, String playerColor){
+        if(!graphicInterface)
+            field.printParticularSentence(specification, playerName, playerColor);
     }
 
-    private void parseSpaces(HashMap<String, String> spaceList, Element el){
-        Element element;
-        NodeList nodeList = el.getElementsByTagName(SPACE);
-        for(int i=0; i<nodeList.getLength(); i++){
-            if(nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                element = (Element) nodeList.item(i);
-                String row = parseCoordinate(element, ROW);
-                String column = parseCoordinate(element, COLUMN);
-                if(row!=null && column!=null)
-                    spaceList.put(row, column);
-            }
-        }
+    private void sendToInterface(List<String> stringList, String specification, String playerName, String playerColor){
+        if(!graphicInterface)
+            field.printChoices(stringList, specification, playerName, playerColor);
     }
 
-    private String parseCoordinate(Element element, String target){
-        NodeList nodeList = element.getElementsByTagName(target);
-        Node node = nodeList.item(0);
-        if(node!=null && node.getNodeType()==Node.ELEMENT_NODE)
-            return node.getTextContent();
-        return  null;
+    private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
+        if(!graphicInterface)
+            field.printChoices(worker, hashMapList, specification, playerName, playerColor);
     }
 
-    private String parseWorker(String message){
-        Document document = buildDocument(message);
-        Element el = insideMessage(document);
-        String worker = null;
-        String content = null;
-        NodeList nodeList = el.getElementsByTagName(WORKER);
-        Node node = nodeList.item(0);
-
-        if(node!=null && node.getNodeType()==Node.ELEMENT_NODE){
-            content = node.getTextContent();
-        }
-
-        worker = content;
-        //if(content!=null)
-          //  worker = addOneToString(content);
-        return worker;
-    }
-
-    private String addOneToString(String content){
-        int number = Integer.parseInt(content);
-        number++;
-        return String.valueOf(number);
+    public void sendToInterface(String specification, List<Integer> integerList, String playerName, String playerColor){
+        if(!graphicInterface)
+            field.updateGameField(integerList, specification, playerName, playerColor);
     }
 
     public void startReading(){

@@ -7,6 +7,7 @@ import java.util.List;
 public class PowerActivationState extends State {
 
     private FlowChanger flowPower;
+    private static final String POWERACTIVATION="power";
 
     /**
      * flow power is the power actionable by this class
@@ -35,8 +36,9 @@ public class PowerActivationState extends State {
             }
             player.getStateManager().setNextState(player);
         }
-        else
-            player.notify(1);
+        else {
+            uselessInputNotify();
+        }
     }
 
     @Override
@@ -46,10 +48,25 @@ public class PowerActivationState extends State {
             player.setPowerNotUsable(true);
             player.getStateManager().setNextState(player);
         }
-        player.notify(0);
+        else
+            notifyAcceptableInputs();
     }
 
     public String toString(){
         return "PowerActivationState";
+    }
+
+    /**
+     * method that notifies the input from which this state can evolve
+     */
+    private void notifyAcceptableInputs(){
+        List<Integer> allowedInt=new ArrayList<Integer>();
+        allowedInt.add(0);
+        allowedInt.add(1);
+        LastChange powerAllowedInputs = new LastChange();
+        powerAllowedInputs.setCode(1);
+        powerAllowedInputs.setSpecification(POWERACTIVATION);
+        powerAllowedInputs.setIntegerList(allowedInt);
+        player.notify(powerAllowedInputs);
     }
 }

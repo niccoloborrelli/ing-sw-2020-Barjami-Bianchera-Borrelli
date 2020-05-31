@@ -53,19 +53,19 @@ public class TurnManager {
     public void setColor(Player player, String color){
         switch (color){
             case "red":
-                player.setPlayerColor(ANSI_RED.escape());
+                player.setPlayerColor("red");
                 break;
             case "purple":
-                player.setPlayerColor(ANSI_PURPLE.escape());
+                player.setPlayerColor("purple");
                 break;
             case "white":
-                player.setPlayerColor(ANSI_WHITE.escape());
+                player.setPlayerColor("white");
                 break;
             case "cyan":
-                player.setPlayerColor(ANSI_CYAN.escape());
+                player.setPlayerColor("cyan");
                 break;
-            case "gray":
-                player.setPlayerColor(ANSI_GREY.escape());
+            case "grey":
+                player.setPlayerColor("grey");
                 break;
         }
     }

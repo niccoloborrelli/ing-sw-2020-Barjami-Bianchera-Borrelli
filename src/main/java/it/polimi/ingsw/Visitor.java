@@ -1,16 +1,16 @@
 package it.polimi.ingsw;
 
 public class Visitor {
-    private SpaceInput spaceInput;
+    private WorkerSpaceCouple workerSpaceCouple;
     private String stringInput;
     private int intInput;
 
     public Visitor(){
-        spaceInput = new SpaceInput();
+        workerSpaceCouple = new WorkerSpaceCouple();
     }
 
-    public SpaceInput visit(ReadyForActionState readyForAction){
-        return this.spaceInput;
+    public WorkerSpaceCouple visit(ReadyForActionState readyForAction){
+        return this.workerSpaceCouple;
     }
     public int visit(PowerActivationState powerActivationState){
         return this.intInput;
@@ -27,6 +27,7 @@ public class Visitor {
     public String visit(GodChoice godChoice){
         return this.stringInput;
     }
+    public int visit(EndTurnState endTurnState) { return 0; }
 
     public int getIntInput() {
         return intInput;
@@ -36,12 +37,12 @@ public class Visitor {
         this.intInput = intInput;
     }
 
-    public SpaceInput getSpaceInput() {
-        return spaceInput;
+    public WorkerSpaceCouple getSpaceInput() {
+        return workerSpaceCouple;
     }
 
-    public void setSpaceInput(SpaceInput spaceInput) {
-        this.spaceInput = spaceInput;
+    public void setWorkerSpaceCouple(WorkerSpaceCouple workerSpaceCouple) {
+        this.workerSpaceCouple = workerSpaceCouple;
     }
 
     public String getStringInput() {
@@ -56,8 +57,9 @@ public class Visitor {
         return this.intInput;
     }
 
-    public SpaceInput visit(WorkerSettingState workerSettingState){
-        return this.spaceInput;
+    public WorkerSpaceCouple visit(WorkerSettingState workerSettingState){
+        return this.workerSpaceCouple;
     }
+
 }
 

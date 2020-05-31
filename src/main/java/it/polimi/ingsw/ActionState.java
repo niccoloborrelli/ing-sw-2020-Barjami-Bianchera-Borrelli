@@ -16,7 +16,7 @@ public class ActionState extends AbstractActionState {
 
     @Override
     public void onStateTransition() throws IOException {
-        SpaceInput input=player.getLastReceivedInput();
+        WorkerSpaceCouple input=player.getLastReceivedInput();
         String action=player.getActionsToPerform().get(firstIndex);
         this.actingWorker=input.getWorker();
         this.spaceToAct=input.getSpace();
@@ -26,20 +26,21 @@ public class ActionState extends AbstractActionState {
             input.setSpace(actingWorker.getWorkerSpace());
             move(actingWorker, spaceToAct);
             actingWorker.setMovedThisTurn(true);
-            player.notify(input,action);
+            notifyActionPerformed(input,action);
+
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
-                player.notify(5);
+                notifyWin();
             if(player.isInGame())
                 player.getStateManager().setNextState(player);
         }
         else if(action.equals(actionType2)){
             input.setSpace(spaceToAct);
             build(actingWorker, spaceToAct);
-            player.notify(input,action);
+            notifyActionPerformed(input,action);
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
-                player.notify(5);
+                notifyWin();
             if(player.isInGame())
                 player.getStateManager().setNextState(player);
         }
@@ -122,4 +123,5 @@ public class ActionState extends AbstractActionState {
     public String toString(){
         return "ActionState";
     }
+
 }

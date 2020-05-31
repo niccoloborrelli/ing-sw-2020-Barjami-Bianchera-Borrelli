@@ -51,7 +51,7 @@ public class Line {
      * @throws InvocationTargetException if method generate a Runtime Exception
      */
 
-    public boolean controlCondition(Object classID) throws InvocationTargetException, IllegalAccessException {
+    public boolean controlCondition(Object classID) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
         boolean result = true;
         boolean expectedValue;
         Object o = null;

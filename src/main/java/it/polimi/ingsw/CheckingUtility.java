@@ -120,12 +120,10 @@ public class CheckingUtility {
                 removeSpecifiedMove(spaceList, worker.getWorkerSpace().getLevel(), space);
                 removeDueToMoveFlag(spaceList, worker, space);
             }else if(code == CODE_BUILD) {
+                addSpecifiedBuild(spaceList,worker);
                 removeDueToBuildFlag(spaceList, worker, space);
             }
         }
-
-        if(code==CODE_BUILD)
-            addSpecifiedBuild(spaceList,worker);
 
         return spaceList;
     }

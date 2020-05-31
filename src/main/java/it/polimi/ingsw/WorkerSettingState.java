@@ -8,28 +8,29 @@ public class WorkerSettingState extends State {
     private final int STARTINGNUMBER=0;
     private final int ROWS=4;
     private final int COLUMNS=4;
-    private List<SpaceInput> spaceInputList;
+    private List<WorkerSpaceCouple> workerSpaceCoupleList;
 
 
     WorkerSettingState(Player player) {
         super(player);
-        spaceInputList=new ArrayList<SpaceInput>();
+        workerSpaceCoupleList =new ArrayList<WorkerSpaceCouple>();
     }
 
     public void onInput(Visitor visitor) throws IOException {
-        SpaceInput input=visitor.visit(this);
+        WorkerSpaceCouple input = visitor.visit(this);
         if(inputAcceptable(input)){
-            spaceInputList.remove(input);
+            workerSpaceCoupleList.remove(input);
             Worker worker=input.getWorker();
             setSpaceIfPossible(worker, input);
         }
-        else
-            player.notify(1);
+        else{
+            uselessInputNotify();
+        }
 
         if(allWorkerOccupied()) {
             player.getStateManager().setNextState(player);
         }else {
-            player.notify(8);
+            notifySetUp();
         }
     }
 
@@ -38,16 +39,22 @@ public class WorkerSettingState extends State {
         for (Worker worker:player.getWorkers()) {
             addWorkerAvailableSpaces(worker);
         }
-        player.notify(8);
+        notifySetUp();
     }
 
-    private void setSpaceIfPossible(Worker worker, SpaceInput input){
+    private void setSpaceIfPossible(Worker worker, WorkerSpaceCouple input){
         if(worker.getWorkerSpace()==null){
             settingSpaceWorker(worker, input);
             removeFromInput(worker,input.getSpace());;
-            player.notify(input,"move");
-        }else
-            player.notify(1);
+            LastChange workerPlacedChange = new LastChange();
+            workerPlacedChange.setCode(2);
+            workerPlacedChange.setSpecification("move");
+            workerPlacedChange.setWorker(input.getWorker());
+            workerPlacedChange.setSpace(input.getSpace());
+            player.notify(workerPlacedChange);
+        }else{
+            uselessInputNotify();
+        }
     }
 
     private boolean allWorkerOccupied(){
@@ -63,7 +70,7 @@ public class WorkerSettingState extends State {
         removeSpaceFromInput(space);
     }
 
-    private void settingSpaceWorker(Worker worker, SpaceInput input){
+    private void settingSpaceWorker(Worker worker, WorkerSpaceCouple input){
         Space space=input.getSpace();
         worker.setWorkerSpace(space);
         space.setOccupator(worker);
@@ -73,25 +80,25 @@ public class WorkerSettingState extends State {
         for(int i=STARTINGNUMBER;i<=ROWS;i++){
             for(int j=STARTINGNUMBER;j<=COLUMNS;j++){
                 if(player.getIslandBoard().getSpace(i,j).getOccupator()==null){
-                    spaceInputList.add(new SpaceInput(worker,player.getIslandBoard().getSpace(i,j)));
+                    workerSpaceCoupleList.add(new WorkerSpaceCouple(worker,player.getIslandBoard().getSpace(i,j)));
                 }
             }
         }
     }
 
     public void removeSpaceFromInput(Space space){
-        for(int i=STARTINGNUMBER;i<spaceInputList.size();i++){
-            if(spaceInputList.get(i).getSpace().equals(space)) {
-                spaceInputList.remove(i);
+        for(int i = STARTINGNUMBER; i< workerSpaceCoupleList.size(); i++){
+            if(workerSpaceCoupleList.get(i).getSpace().equals(space)) {
+                workerSpaceCoupleList.remove(i);
                 i--;
             }
         }
     }
 
     public void removeWorkerFromInput(Worker worker){
-        for(int i=STARTINGNUMBER;i<spaceInputList.size();i++){
-            if(spaceInputList.get(i).getWorker().equals(worker)) {
-                spaceInputList.remove(i);
+        for(int i = STARTINGNUMBER; i< workerSpaceCoupleList.size(); i++){
+            if(workerSpaceCoupleList.get(i).getWorker().equals(worker)) {
+                workerSpaceCoupleList.remove(i);
                 i--;
             }
         }
@@ -102,11 +109,18 @@ public class WorkerSettingState extends State {
     }
 
 
-    public boolean inputAcceptable(SpaceInput spaceInput){
-        for (SpaceInput temp:spaceInputList) {
-            if(temp.getSpace()==spaceInput.getSpace()&&temp.getWorker()==spaceInput.getWorker())
+    public boolean inputAcceptable(WorkerSpaceCouple workerSpaceCouple){
+        for (WorkerSpaceCouple temp: workerSpaceCoupleList) {
+            if(temp.getSpace()== workerSpaceCouple.getSpace()&&temp.getWorker()== workerSpaceCouple.getWorker())
                 return true;
         }
         return false;
+    }
+
+    private void notifySetUp(){
+        LastChange settingWorker = new LastChange();
+        settingWorker.setCode(0);
+        settingWorker.setSpecification("workerSetting");
+        player.notify(settingWorker);
     }
 }

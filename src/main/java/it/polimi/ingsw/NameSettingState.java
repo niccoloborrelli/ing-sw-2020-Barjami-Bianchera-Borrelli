@@ -24,8 +24,10 @@ public class NameSettingState extends State {
                 nameSetted=true;
             }
         }
-        if(nameSetted==false)
-            player.notify(1);
+        if(!nameSetted) {
+            System.out.println("Inviato da Name");
+            uselessInputNotify();
+        }
     }
 
     @Override
@@ -35,10 +37,17 @@ public class NameSettingState extends State {
         } catch (IOException | SAXException | ParserConfigurationException e) {
             e.printStackTrace();
         }
-        player.notify(MESSAGENAME);
+        nameNotify();
     }
 
     public String toString(){
         return "NameSettingState";
+    }
+
+    private void nameNotify(){
+        LastChange inputExpected = new LastChange();
+        inputExpected.setCode(0);
+        inputExpected.setSpecification(MESSAGENAME);
+        player.notify(inputExpected);
     }
 }

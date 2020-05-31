@@ -1,17 +1,13 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReadyForActionState extends State {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
-    private static final int workerInInput = 1;
-    private static final int rowInInput = 2;
-    private static final int columnInInput = 3;
-    private List <SpaceInput> allowedSpaces;
+    private List <WorkerSpaceCouple> allowedSpaces;
 
     ReadyForActionState(Player player) {
         super(player);
@@ -24,13 +20,14 @@ public class ReadyForActionState extends State {
      */
     @Override
     public void onInput(Visitor visitor) throws IOException {
-        SpaceInput input=visitor.visit(this);
+        WorkerSpaceCouple input=visitor.visit(this);
         if(inputAcceptable(input)){
             player.setLastReceivedInput(input);
             player.getStateManager().setNextState(player);
         }
-        else
-            player.notify(1);
+        else {
+            uselessInputNotify();
+        }
     }
 
     @Override
@@ -44,12 +41,15 @@ public class ReadyForActionState extends State {
         hasLost = checkForLosing(possibleAction);
         if(hasLost) {
             player.setInGame(false);
-            player.notify(3);
+            LastChange lastChange = new LastChange();
+            lastChange.setCode(3);
+            lastChange.setSpecification("lose");
+            player.notify(lastChange);
             player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
         }
         else {
+            notifyInputs();
             setAllowedSpaces();
-            player.notify(allowedSpaces);
         }
     }
 
@@ -58,15 +58,15 @@ public class ReadyForActionState extends State {
      */
     private void setAllowedSpaces() {
         String action=player.getActionsToPerform().get(0);
-        List<SpaceInput> allowed=new ArrayList<SpaceInput>();
+        List<WorkerSpaceCouple> allowed=new ArrayList<WorkerSpaceCouple>();
         for(Worker tempWorker:player.getWorkers()){
             if(action.equals(actionType1)){
                 for(Space sp:tempWorker.getPossibleMovements())
-                    allowed.add(new SpaceInput(tempWorker,sp));
+                    allowed.add(new WorkerSpaceCouple(tempWorker,sp));
             }
             else if(action.equals(actionType2)){
                 for(Space sp:tempWorker.getPossibleBuilding())
-                    allowed.add(new SpaceInput(tempWorker,sp));
+                    allowed.add(new WorkerSpaceCouple(tempWorker,sp));
             }
         }
         allowedSpaces=allowed;
@@ -92,15 +92,36 @@ public class ReadyForActionState extends State {
     }
 
 
-    public boolean inputAcceptable(SpaceInput spaceInput){
-        for (SpaceInput temp:allowedSpaces) {
-            if(temp.getSpace()==spaceInput.getSpace() && temp.getWorker()==spaceInput.getWorker())
+    /**
+     * controls if the input received from the visitor is acceptable
+     * @param workerSpaceCouple is the input received from the visitor
+     * @return
+     */
+    public boolean inputAcceptable(WorkerSpaceCouple workerSpaceCouple){
+        for (WorkerSpaceCouple temp:allowedSpaces) {
+            if(temp.getSpace()== workerSpaceCouple.getSpace() && temp.getWorker()== workerSpaceCouple.getWorker())
                 return true;
         }
         return false;
     }
 
-    public List<SpaceInput> getAllowedSpaces() {
-        return allowedSpaces;
+    /**
+     * this methods notifies the controller for the input this state expects
+     */
+    private void notifyInputs(){
+        String action=player.getActionsToPerform().get(0);
+        for(Worker tempWorker: player.getWorkers()){
+            LastChange workerActionsNotify=new LastChange();
+            workerActionsNotify.setWorker(tempWorker);
+            workerActionsNotify.setSpecification(action);
+            workerActionsNotify.setCode(1);
+            if(action.equals(actionType1)){
+                workerActionsNotify.setListSpace(tempWorker.getPossibleMovements());
+            }
+            else if(action.equals(actionType2)){
+                workerActionsNotify.setListSpace(tempWorker.getPossibleBuilding());
+            }
+            player.notify(workerActionsNotify);
+        }
     }
 }

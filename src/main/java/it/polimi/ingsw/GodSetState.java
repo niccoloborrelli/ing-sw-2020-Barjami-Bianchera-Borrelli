@@ -9,6 +9,7 @@ public class GodSetState extends State {
     private int numberOfGodsReceived;
     private int numberOfGodsRequired;
     private TurnManager turnManager;
+    private static final String GODSETSPECIFICATION="godSet";
 
     GodSetState(Player player) {
         super(player);
@@ -23,8 +24,9 @@ public class GodSetState extends State {
             allowedInputs.remove(input);
             numberOfGodsReceived++;
         }
-        else
-            player.notify(1);
+        else {
+            uselessInputNotify();
+        }
 
         if(numberOfGodsReceived==numberOfGodsRequired) {
             player.getStateManager().setNextState(player);
@@ -34,9 +36,9 @@ public class GodSetState extends State {
     @Override
     public void onStateTransition() {
         player.getController().createGodMap();
-        player.notify(6);
-        Set allGodsNames= player.getController().getGodMap().keySet();
-        setAllowedInputs(new ArrayList<String>(allGodsNames));
+        List<String> allGodsNames= new ArrayList<String>(player.getController().getGodMap().keySet());
+        setAllowedInputs(allGodsNames);
+        notifyAllowedInputs(allGodsNames);
         turnManager=player.getStateManager().getTurnManager();
         numberOfGodsReceived=0;
         numberOfGodsRequired=player.getStateManager().getTurnManager().getPlayers().size();
@@ -44,5 +46,13 @@ public class GodSetState extends State {
 
     public String toString(){
         return "GodSetState";
+    }
+
+    private void notifyAllowedInputs(List <String> allGodsNames){
+        LastChange godSetExpectedInput = new LastChange();
+        godSetExpectedInput.setCode(1);
+        godSetExpectedInput.setStringList(allGodsNames);
+        godSetExpectedInput.setSpecification(GODSETSPECIFICATION);
+        player.notify(godSetExpectedInput);
     }
 }

@@ -1,9 +1,11 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
+import java.util.List;
 
 public class GodChoice extends State {
     private TurnManager turnManager;
+    private static final String GODSPECIFICATION="godChoice";
 
     GodChoice(Player player) {
         super(player);
@@ -15,7 +17,6 @@ public class GodChoice extends State {
         if(getAllowedInputs().contains(input)){
             player.setPlayerGod(input);
             turnManager.removeGod(input);
-            System.out.println("Ha scelto: " + input);
             try {
                 player.getController().decoratePlayer(player);
             }
@@ -25,7 +26,7 @@ public class GodChoice extends State {
             player.getStateManager().setNextState(player);
         }
         else
-            player.notify(1);
+            uselessInputNotify();
     }
 
     @Override
@@ -33,23 +34,30 @@ public class GodChoice extends State {
 
         turnManager = player.getStateManager().getTurnManager();
         if(turnManager.getAvailableGods().size()==1) {
-            System.out.println("Ha forzatamanete scelto: " + turnManager.getAvailableGods().get(0));
             player.setPlayerGod(turnManager.getAvailableGods().get(0));
             turnManager.getAvailableGods().remove(player.getPlayerGod());
             try {
                 player.getController().decoratePlayer(player);
                 player.getStateManager().setNextState(player);
-                //player.getStateManager().setNextState(player);
+                player.getStateManager().setNextState(player);
             } catch (IOException | NoSuchMethodException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }else{
-            player.notifyLeft(turnManager.getAvailableGods());
+            notifyLeft(turnManager.getAvailableGods());
             setAllowedInputs(turnManager.getAvailableGods());
         }
     }
 
     public String toString(){
         return "GodChoiceState";
+    }
+
+    private void notifyLeft(List<String> availableGods){
+        LastChange inputExpected = new LastChange();
+        inputExpected.setCode(1);
+        inputExpected.setSpecification(GODSPECIFICATION);
+        inputExpected.setStringList(availableGods);
+        player.notify(inputExpected);
     }
 }

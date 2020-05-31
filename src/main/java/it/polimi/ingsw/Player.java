@@ -13,7 +13,7 @@ public class Player implements Observed{
     private WinConditionAB winCondition;
     private List<String> actionsToPerform;
     private StateManager stateManager;
-    private SpaceInput lastReceivedInput;
+    private WorkerSpaceCouple lastReceivedInput;
     private IslandBoard islandBoard;
 
     private static final int NUMBEROFWORKERS=2;
@@ -106,11 +106,11 @@ public class Player implements Observed{
         return actionsToPerform;
     }
 
-    public SpaceInput getLastReceivedInput() {
+    public WorkerSpaceCouple getLastReceivedInput() {
         return lastReceivedInput;
     }
 
-    public void setLastReceivedInput(SpaceInput lastReceivedInput) {
+    public void setLastReceivedInput(WorkerSpaceCouple lastReceivedInput) {
         this.lastReceivedInput = lastReceivedInput;
     }
 
@@ -221,28 +221,8 @@ public class Player implements Observed{
     }
 
     @Override
-    public void notify(SpaceInput spaceInput, String action) {
-        controller.update(spaceInput,action);
-    }
-
-    @Override
-    public void notify(int code) {
-        controller.update(code);
-    }
-
-    @Override
-    public void notify(String string){
-        controller.update(string);
-    }
-
-    @Override
-    public void notify(List <SpaceInput> spaceInputList){
-        controller.update(spaceInputList);
-    }
-
-    @Override
-    public void notifyLeft(List<String> strings){
-        controller.updateLeft(strings);
+    public void notify(LastChange lastChange){
+        controller.update(lastChange);
     }
 
     public boolean isDomeEveryWhere() {

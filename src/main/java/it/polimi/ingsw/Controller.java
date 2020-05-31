@@ -13,30 +13,44 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import static it.polimi.ingsw.Color.*;
 
 public class Controller{
 
     private static final int STRING_RECEIVING = 0;
     private static final int SPACE_RECEIVING = 1;
     private static final int INT_RECEIVING = 2;
+
+    private static final int UPDATE_TO_PRINT = 0;
+    private static final int UPDATE_CHOICE = 1;
+    private static final int UPDATE_GAME_FIELD = 2;
+
     private static final int FIRST_CHILD = 0;
-    private static final int INVALID_COORDINATE = -1;
+    private static final int INVALID_VALUE = -1;
     private static final int INVALID_CODE = -1;
-    private static final int PRINT = 0;
-    private static final int UPDATE_AVAILABLE_SPACE = 2;
-    private static final int UPDATE_MOVEMENT = 3;
-    private static final int UPDATE_BUILDING = 4;
+    private static final int INT_IF_BOOLEAN_TRUE = 1;
+    private static final int INT_IF_BOOLEAN_FALSE = 0;
+
     private static final int BROADCAST = 0;
     private static final int SINGLE_COMMUNICATION = 1;
     private static final int ALL_NOT_ME = 2;
+
+    private static final String CYAN = "cyan";
+    private static final String GREY = "grey";
+    private static final String RED = "red";
+    private static final String PURPLE = "purple";
+    private static final String WHITE="white";
+    private static final String INVALID_COLOR = "none";
+
+    private static final String ERROR = "error";
+    private static final String ENDTURN = "endTurn";
+    private static final String ENDGAME = "endGame";
+
     private static final String BEGIN_FIELD = "<";
     private static final String END = ">";
     private static final String END_FIELD = "</";
+
     private static final String WORKER = "worker";
     private static final String ROW = "row";
     private static final String COLUMN = "column";
@@ -51,16 +65,10 @@ public class Controller{
     private static final String BUILD = "build";
     private static final String COLOR = "color";
     private static final String DOME = "dome";
-    private static final String ENDTURN = "Turn completed. Good job";
-    private static final String ENDGAME = "Game is finished. Press quit to exit.";
-    private static final String WINNER = "Congratulations! You won.";
-    private static final String LOSER = "I'm sorry, you lost.";
-    private static final String POWER_ACTIVATION = "Do you want to use yor God power? Insert 1 if you want, 0 otherwise";
-    private static final String LOBBY_CHOICE = "How many players do you want to play with? Insert 2 or 3";
-    private static final String CHOICE = "You have to choose ";
-    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
-            "Second _ is the row of space and third _ is the column";
-    private static final String ERROR = "You wrote an invalid input";
+    private static final String PLAYER = "player";
+    private static final String NAME = "name";
+    private static final String WORKERSETTING = "workerSetting";
+    private static final String SPECIFICATION = "specification";
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 
@@ -71,6 +79,10 @@ public class Controller{
 
     public Controller() {
         visitor = new Visitor();
+    }
+
+    public Visitor getVisitor() {
+        return visitor;
     }
 
     public HashMap<String, List<String>> getGodMap() {
@@ -91,15 +103,15 @@ public class Controller{
      *
      * @param message is string receveid.
      */
-    public void giveInput(String message) {
-        resetVisitor(visitor);
+    public void giveInputToModel(String message) {
+        resetAttributeVisitor(visitor);
         int code = findCode(message);
 
         if (code == STRING_RECEIVING) {
-            String operation = parseString(message);
+            String operation = findString(message);
             visitor.setStringInput(operation);
         } else if (code == SPACE_RECEIVING) {
-            HashMap<Worker, Space> workerSpaceHashMap = parseSpace(message);
+            HashMap<Worker, Space> workerSpaceHashMap = convertInSpaceAndWorker(message);
             setSpaceInput(workerSpaceHashMap);
         } else if (code == INT_RECEIVING) {
             int value = parseItemInt(message);
@@ -110,21 +122,31 @@ public class Controller{
         }catch (IOException ignored){}
     }
 
+    /**
+     * Sets the last worker and the last space in a determined attribute of visitor that contains both.
+     * @param workerSpaceHashMap contains the worker and space to put into visitor.
+     */
+
     private void setSpaceInput(HashMap<Worker, Space> workerSpaceHashMap){
         Worker temp = null;
         Space spazio = null;
-        SpaceInput spaceInput = new SpaceInput();
+
         for(Worker worker: workerSpaceHashMap.keySet())
             temp = worker;
 
         for(Space space: workerSpaceHashMap.values())
             spazio = space;
-        spaceInput.setSpace(spazio);
-        spaceInput.setWorker(temp);
-        visitor.setSpaceInput(spaceInput);
+
+        visitor.getSpaceInput().setSpace(spazio);
+        visitor.getSpaceInput().setWorker(temp);
     }
 
-    private void resetVisitor(Visitor visitor){
+    /**
+     * Resets with invalid value all visitor's attribute.
+     * @param visitor contains attributes to reset.
+     */
+
+    private void resetAttributeVisitor(Visitor visitor){
         visitor.setIntInput(INVALID_CODE);
         visitor.setStringInput(null);
         visitor.getSpaceInput().setSpace(null);
@@ -132,27 +154,26 @@ public class Controller{
     }
 
     /**
-     * Find and convert information from message to Worker and Space.
-     *
-     * @param message
+     * Finds and converts information from message to Worker and Space.
+     * @param message contains information to find and convert.
      * @return the couple of worker and space chosen in message.
      * If there are no specified in message, it returns an invalid space or invalid worker.
      */
 
-    private HashMap<Worker, Space> parseSpace(String message) {
+    private HashMap<Worker, Space> convertInSpaceAndWorker(String message) {
         HashMap<Worker, Space> workerSpaceHashMap = new HashMap<>();
         String numberInString;
         Space space;
         Worker worker;
 
-        numberInString = parseOnSingular(message, WORKER);
-        worker = parseWorker(numberInString);
+        numberInString = findStringContentPart(message, WORKER);
+        worker = parseInWorker(numberInString);
 
         if (worker != null) {
-            space = parseOnSpace(message);
+            space = convertInSpace(message);
             workerSpaceHashMap.put(worker, space);
         } else
-            workerSpaceHashMap.put(new Worker(), new Space(INVALID_COORDINATE, INVALID_COORDINATE));
+            workerSpaceHashMap.put(new Worker(), new Space(INVALID_VALUE, INVALID_VALUE));
 
         return workerSpaceHashMap;
     }
@@ -160,38 +181,52 @@ public class Controller{
     /**
      * Finds space information in message and convert it in a existing space (if possibile).
      * Otherwise, it creates an invalid space.
-     *
      * @param message is messagge receveid.
      * @return corresponding space from board if coordinates are valid, otherwise an invalid space.
      */
 
-    private Space parseOnSpace(String message) {
+    private Space convertInSpace(String message) {
         Space space = null;
-        String rowInString;
-        String columnInString;
         int row;
         int column;
 
-        Document doc = buildDocument(message);
-        Element element = insideMessage(doc);
-        Element el = multipleAttributes(element);
+        Element element = elementInsideMessage(message);
+        Element el = throughOneLevelNode(element);
 
         if (el != null) {
-            rowInString = findTarget(el, ROW);
-            columnInString = findTarget(el, COLUMN);
-
-            row = parseValue(rowInString);
-            column = parseValue(columnInString);
-
+            row = findAndParseToInt(el, ROW);
+            column = findAndParseToInt(el, COLUMN);
             space = player.getIslandBoard().getSpace(row, column);
         }
 
         if (space == null)
-            space = new Space(INVALID_COORDINATE, INVALID_COORDINATE);
+            space = new Space(INVALID_VALUE, INVALID_VALUE);
 
         return space;
+    }
 
+    /**
+     * Finds target in the element and converts it in an integer number.
+     * @param el is element in which method will search.
+     * @param target is string to find.
+     * @return the integer value of target, otherwise an invalid code.
+     */
 
+    private int findAndParseToInt(Element el, String target){
+        String targetInString = findTarget(el, target);
+        return parseToInt(targetInString);
+    }
+
+    /**
+     * Returns DOM element inside the string passed.
+     * @param message is string in which it will be searched.
+     * @return DOM element inside the string passed
+     */
+
+    private Element elementInsideMessage(String message){
+        Document doc = buildDocument(message);
+        Element element = insideMessage(doc);
+        return element;
     }
 
     /**
@@ -209,37 +244,32 @@ public class Controller{
             Node node = nodeList.item(FIRST_CHILD);
             if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                //if (!node.hasChildNodes())
                     coord = element.getTextContent();
             }
         }
-
         return coord;
-
     }
 
     /**
      * Parse value in integer value if contains only numbers.
-     *
      * @param value is value to parser
-     * @return this integer value (if possible), otherwise null.
+     * @return this integer value (if possible), otherwise an invalid value;.
      */
 
-    private int parseValue(String value) {
+    private int parseToInt(String value) {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException | NullPointerException e) {
-            return INVALID_COORDINATE;
+            return INVALID_VALUE;
         }
     }
 
     /**
      * Go through one level of node.
-     *
      * @param element is start element.
      * @return element in the next level of node.
      */
-    private Element multipleAttributes(Element element) {
+    private Element throughOneLevelNode(Element element) {
         Element el = null;
         NodeList nodeSpaces = element.getElementsByTagName(SPACE);
         if (nodeSpaces != null) {
@@ -248,18 +278,16 @@ public class Controller{
                 el = (Element) spaceNode;
             }
         }
-
         return el;
     }
 
     /**
      * Converts information of string in a object Worker.
-     *
      * @param numberInString is information to convert.
      * @return worker of game if exists, otherwise a new worker.
      */
 
-    private Worker parseWorker(String numberInString) {
+    private Worker parseInWorker(String numberInString) {
         Worker worker = null;
         int number;
 
@@ -274,19 +302,17 @@ public class Controller{
                 worker = new Worker();
             }
         }
-
         return worker;
     }
 
     /**
-     * Finds part of string with of information required.
-     *
+     * Finds content of string with the information required.
      * @param message    is message to analyze.
      * @param researched is information required.
      * @return part of string with information required if it exists, otherwise null.
      */
 
-    private String parseOnSingular(String message, String researched) {
+    private String findStringContentPart(String message, String researched) {
         Document doc = buildDocument(message);
         String text = null;
 
@@ -313,16 +339,13 @@ public class Controller{
             Node node = nodeList.item(FIRST_CHILD);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 element = (Element) node;
-
             }
         }
-
         return element;
     }
 
     /**
-     * Finds and converts information from message to a integer value
-     *
+     * Finds and converts information from message to a integer value.
      * @param message
      * @return
      */
@@ -331,9 +354,9 @@ public class Controller{
         int value = -1;
         String valueInString;
 
-        valueInString = parseOnSingular(message, INT);
+        valueInString = findStringContentPart(message, INT);
 
-        value = parseValue(valueInString);
+        value = parseToInt(valueInString);
 
         return value;
     }
@@ -345,9 +368,9 @@ public class Controller{
      * @return information.
      */
 
-    private String parseString(String message) {
+    private String findString(String message) {
 
-        return parseOnSingular(message, STRING);
+        return findStringContentPart(message, STRING);
     }
 
     /**
@@ -378,10 +401,10 @@ public class Controller{
 
     /**
      * Build document DOM from a string.
-     *
      * @param message is message on which this document is built.
      * @return document created.
      */
+
     private Document buildDocument(String message) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;
@@ -398,192 +421,219 @@ public class Controller{
         return null;
     }
 
-    public void update(SpaceInput spaceInput, String action){
-        if(action.equals(MOVE))
-            updateMovement(spaceInput.getWorker(), spaceInput.getSpace());
-        else if(action.equals(BUILD))
-            updateBuilding(spaceInput.getSpace());
+    /**
+     * Converts int and covers it with the field.
+     * @param content is what it will be converted.
+     * @param field is field that covers string.
+     * @return string that represents int, covered with field.
+     */
+
+    private String intToCoveredString(int content, String field){
+        String contentString = String.valueOf(content);
+        return generateField(contentString, field);
     }
 
-    private void updateMovement(Worker worker, Space space) {
-        String workerTranslation = generateStringWorker(worker);
-        String spaceTranslation = generateStringSpace(space, SPACE);
-
-        String code = insertCode(UPDATE_MOVEMENT);
-
-        String message = generateField(workerTranslation + spaceTranslation, MESSAGE);
-
-        String data = generateField(code + message, DATA);
-
-        handlerHub.sendData(PREFIX + data, this, BROADCAST);
+    /**
+     * Converts a boolean in a int.
+     * @param value is boolean converted.
+     * @return value that represents the true of boolean, otherwise another boolean that represents boolean false.
+     */
+    private int convertBooleanToInt(boolean value){
+        return value ? INT_IF_BOOLEAN_TRUE : INT_IF_BOOLEAN_FALSE;
     }
 
-    private void updateBuilding(Space space) {
-        String code = insertCode(UPDATE_BUILDING);
-        String row = String.valueOf(space.getRow());
-        String column = String.valueOf(space.getColumn());
-        String level = String.valueOf(space.getLevel());
-        String dome = String.valueOf(space.HasDome());
-        String rowPart = generateField(row, ROW);
-        String columnPart = generateField(column, COLUMN);
-        String levelPart = generateField(level, LEVEL);
-        String domePart = generateField(dome, DOME);
-        String spacePart = generateField(rowPart + columnPart + levelPart + domePart, SPACE);
-        String message = generateField(spacePart, MESSAGE);
-        String data = generateField(code + message, DATA);
-        handlerHub.sendData(PREFIX + data, this, BROADCAST);
-    }
 
-    public void update(List<SpaceInput> spaceInputs){
-        for(Worker w: player.getWorkers()) {
-            String code = insertCode(UPDATE_AVAILABLE_SPACE);
-            String spacesWorker = buildAvailableSpace(w, spaceInputs);
-            String message = generateField(spacesWorker, MESSAGE);
-            String data = generateField(code + message, DATA);
-            handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-        }
-    }
+    /**
+     * Adds to list all spaces linked with the worker.
+     * @param spaceList contains list of spaces linked with the worker.
+     * @param worker is worker linked to spaces.
+     * @param spaceInputList contains the couples of worker and space.
+     */
 
-    public String buildAvailableSpace(Worker worker, List<SpaceInput> spaceInputList){
-        List<Space> spaces = new ArrayList<>();
+    private void addSpacesLinkedWithWorker(List<Space> spaceList, Worker worker, List<SpaceInput> spaceInputList){
         for(SpaceInput spaceInput: spaceInputList){
             if(spaceInput.getWorker().equals(worker))
-                spaces.add(spaceInput.getSpace());
+                spaceList.add(spaceInput.getSpace());
+        }
+    }
+
+
+    /**
+     * Creates message that represents the change of model.
+     * Communicates also what type of connection it requires.
+     */
+
+    public void update(LastChange lastChange){
+        String message = "";
+        int code = lastChange.getCode();
+        String codeInString = insertCode(code);
+        String specification = generateField(lastChange.getSpecification(), SPECIFICATION);
+        String playerString = createPlayerString(player);
+        int codeCommunication = INVALID_VALUE;
+
+        switch (code) {
+            case UPDATE_TO_PRINT:
+                message = buildUpdateToPrintMessage();
+                System.out.println("Sono dentro update_To_print");
+                codeCommunication = findCommunication(specification);
+                break;
+            case UPDATE_CHOICE:
+                message = buildUpdateChoiceMessage(lastChange);
+                codeCommunication = SINGLE_COMMUNICATION;
+                break;
+            case UPDATE_GAME_FIELD:
+                message = buildUpdateGameFieldMessage(lastChange);
+                codeCommunication = BROADCAST;
+                break;
         }
 
-        String numberOfWorker = generateField(String.valueOf(player.getWorkers().indexOf(worker)), WORKER);
-        String spaceList = createSpaceList(spaces);
-
-        if(spaceList.length()>0)
-            return numberOfWorker+spaceList;
-        return numberOfWorker;
-
+        String data = generateField(codeInString+ playerString + specification+message, DATA);
+        System.out.println(data);
+        System.out.println("Il codice di comunicazione è: " + codeCommunication );
+        handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
-    private String createSpaceList(List<Space> spaceList) {
-        StringBuilder mess = new StringBuilder();
-        for (Space space : spaceList) {
-            mess.append(generateStringSpace(space, SPACE));
+    /**
+     * Creates a XML string that contains player's name and color.
+     * @param player is the player that makes the change.
+     * @return XML string that contains player's name and color.
+     */
+
+
+    private String createPlayerString(Player player){
+        String color = player.getPlayerColor();
+        String name = player.getPlayerName();
+
+        String colorCovered = generateField(color, COLOR);
+        String nameCovered = generateField(name, NAME);
+
+        return generateField(nameCovered+colorCovered, PLAYER);
+    }
+
+    /**
+     * Creates a XMl empty message.
+     * @return a XML empty message.
+     */
+
+    private String buildUpdateToPrintMessage(){
+        return generateField("", MESSAGE);
+    }
+
+    /**
+     * Finds code of communication that need string.
+     * @param string contains information about type of connection.
+     * @return code of communication.
+     */
+
+    private int findCommunication(String string){
+        System.out.println("Sono dentro findCommunication");
+        if(string.equals(ERROR) || string.equals(ENDTURN) || string.equals(NAME) || string.equals(WORKERSETTING))
+                return SINGLE_COMMUNICATION;
+        else if(string.equals(ENDGAME))
+                return BROADCAST;
+        return INVALID_CODE;
+    }
+
+    /**
+     * Builds a XML string that contains available inputs accepted by model.
+     * @param dataOutput contains lists of acceptable parameters.
+     * @return a XML string that contains available inputs accepted by model.
+     */
+
+    private String buildUpdateChoiceMessage(LastChange dataOutput){
+        StringBuilder message = new StringBuilder();
+        StringBuilder insideMessage = generateIntList(message, dataOutput.getIntegerList());
+        StringBuilder spaceList = generateSpaceList(insideMessage, dataOutput.getListSpace());
+
+        return generateField(spaceList.toString(), MESSAGE);
+    }
+
+    /**
+     * Generates a string that represents an integer list.
+     * @param message is StringBuilder that would build string.
+     * @param integerList is integer list.
+     * @return StringBuilder that contains list.
+     */
+
+    private StringBuilder generateIntList(StringBuilder message, List<Integer> integerList){
+        if(integerList!=null) {
+            for (Integer i : integerList)
+                message.append(generateField(String.valueOf(i), INT));
         }
-
-        return mess.toString();
-
+        return message;
     }
 
-    public void update(String haveToChose){
-        String data = dataOnlyToPrint(CHOICE + haveToChose);
+    /**
+     * Generates a string that represents a space list.
+     * @param message is StringBuilder that would build string.
+     * @param spaceList is space list.
+     * @return StringBuilder that contains list.
+     */
 
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-
+    private StringBuilder generateSpaceList(StringBuilder message, List<Space> spaceList){
+        if(spaceList!=null) {
+            for (Space space : spaceList)
+                message.append(generateStringSpace(space, SPACE));
+        }
+        return message;
     }
 
-    public void updateGods(){
-        String data = "";
-        for(String s: godMap.keySet())
-            data = data + s + "\n";
-        String mess = dataOnlyToPrint(data);
-        handlerHub.sendData(PREFIX + mess, this, SINGLE_COMMUNICATION);
+    /**
+     * Builds a XML string that represents change according to an action.
+     * @param dataOutput contains information about change and action.
+     * @return a XML string that represents change according to an action.
+     */
+
+    private String buildUpdateGameFieldMessage(LastChange dataOutput){
+        String data = null;
+        String causeOfChange = dataOutput.getSpecification();
+
+        switch (causeOfChange){
+            case MOVE:
+                data = updateMovement(dataOutput.getWorker(), dataOutput.getSpace());
+                break;
+            case BUILD:
+                data = updateBuilding(dataOutput.getSpace());
+        }
+        return data;
     }
 
-    public void update(int code){
-        if(code==0)
-            updateActivationPower();
-        else if(code==1)
-            updateError();
-        else if(code==2)
-            updateEndTurn();
-        else if(code==3)
-            updateLost();
-        else if(code==4)
-            updateWon();
-        else if(code==5)
-            updateEndGame();
-        else if(code==6)
-            updateGods();
-        else if(code==7)
-            updateLobby();
-        else if (code==8)
-            updateSetUp();
+    /**
+     * Builds a XML string that represent change due to a move action.
+     * @param worker is worker that moved.
+     * @param oldSpace is space in which worker is before movement.
+     * @return a XML string that represent change due to a move action.
+     */
+
+    private String updateMovement(Worker worker, Space oldSpace) {
+        String workerTranslation = generateStringSpace(worker.getWorkerSpace(), WORKER);
+        String spaceTranslation = generateStringSpace(oldSpace, SPACE);
+
+        return generateField(workerTranslation + spaceTranslation, MESSAGE);
     }
 
-    private void updateSetUp(){
-        String data = dataOnlyToPrint(SET_UP);
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
+    /**
+     * Builds a XML string that represent change due to a build action.
+     * @param space is space in which a worker built.
+     * @return a XML string that represent change due to a build action.
+     */
+
+    private String updateBuilding(Space space) {
+        String rowPart = intToCoveredString(space.getRow(), ROW);
+        String columnPart = intToCoveredString(space.getColumn(), COLUMN);
+        String levelPart = intToCoveredString(space.getLevel(), LEVEL);
+        String domePart = intToCoveredString(convertBooleanToInt(space.HasDome()), DOME);
+
+        String spacePart = generateField(rowPart + columnPart + levelPart + domePart, SPACE);
+        return generateField(spacePart, MESSAGE);
     }
 
-    private void updateLobby(){
-        String data = dataOnlyToPrint(LOBBY_CHOICE);
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-    }
-
-    public void updateLeft(List<String> stringList){
-        String data = "";
-        for(String s: stringList)
-            data = data +  s + "\n";
-        String mess = dataOnlyToPrint(data);
-        handlerHub.sendData(PREFIX + mess, this, SINGLE_COMMUNICATION);
-
-    }
-
-    private void updateError(){
-        String data = dataOnlyToPrint(ERROR);
-
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-    }
-
-    private void updateEndTurn() {
-        String data = dataOnlyToPrint(ENDTURN);
-
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-    }
-
-    private void updateEndGame() {
-        String data = dataOnlyToPrint(ENDGAME);
-
-        handlerHub.sendData(PREFIX + data, this, BROADCAST);
-    }
-
-    private void updateActivationPower() {
-        String data = dataOnlyToPrint(POWER_ACTIVATION);
-
-        handlerHub.sendData(PREFIX + data, this, SINGLE_COMMUNICATION);
-    }
-
-    private void updateWon() {
-        String dataWin = dataOnlyToPrint(WINNER);
-        String dataLose = dataOnlyToPrint(LOSER);
-
-        handlerHub.sendData(PREFIX + dataWin, this, SINGLE_COMMUNICATION);
-        handlerHub.sendData(PREFIX + dataLose, this, ALL_NOT_ME);
-    }
-
-    private void updateLost() {
-        String dataLose = dataOnlyToPrint(LOSER);
-
-        handlerHub.sendData(PREFIX + dataLose, this, SINGLE_COMMUNICATION);
-    }
-
-    private String generateStringWorker(Worker worker) {
-        String workerSpace = generateStringSpace(worker.getWorkerSpace(), WORKER);
-        String valueOfColor = getCodeColor(worker.getWorkerPlayer().getPlayerColor());
-        String color = generateField(valueOfColor, COLOR);
-
-        return color +  generateField(workerSpace, WORKER);
-    }
-
-    private String getCodeColor(String color){
-        if(color.equals(ANSI_RED.escape()))
-            return "1";
-        else if (color.equals(ANSI_PURPLE.escape()))
-            return "2";
-        else if(color.equals(ANSI_WHITE.escape()))
-            return "3";
-        else if(color.equals(ANSI_CYAN.escape()))
-            return "4";
-        else if(color.equals(ANSI_GREY.escape()))
-            return "5";
-        return "0";
-    }
+    /**
+     * Generates a string that represents a space.
+     * @param space is space that will be represented.
+     * @param field is XML field that contains space.
+     * @return a string that represents a space.
+     */
 
     private String generateStringSpace(Space space, String field) {
         String row = String.valueOf(space.getRow());
@@ -595,6 +645,13 @@ public class Controller{
         return generateField(rowPart + columnPart, field);
     }
 
+    /**
+     * Covers a content with XMl field.
+     * @param content is content to cover.
+     * @param field is field that cover content.
+     * @return content covered with field according to XML.
+     */
+
     private String generateField(String content, String field) {
         String begin = BEGIN_FIELD + field + END;
         String end = END_FIELD + field + END;
@@ -602,23 +659,32 @@ public class Controller{
         return begin + content + end;
     }
 
+    /**
+     * Converts to a string and creates a XMl string that contains a code.
+     * @param code is code to convert and cover.
+     * @return a XML string that represent code.
+     */
+
     private String insertCode(int code) {
         String codeString = String.valueOf(code);
-
         return generateField(codeString, CODE);
     }
 
-    private String dataOnlyToPrint(String mess) {
-        String code = insertCode(PRINT);
-        String message = generateField(mess, MESSAGE);
 
-        return generateField(code + message, DATA);
-    }
-
+    /**
+     * Parses and creates god map.
+     */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\nikob\\Desktop\\Gods.txt"));
+        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation();
     }
+
+    /**
+     * Decorates player  according to god map.
+     * @param playerToDecorate is player to decorate.
+     * @throws NoSuchMethodException
+     * @throws ClassNotFoundException
+     */
 
     public void decoratePlayer(Player playerToDecorate) throws NoSuchMethodException, ClassNotFoundException {
         GodFactory godFactory=new GodFactory();
@@ -626,8 +692,15 @@ public class Controller{
         godFactory.decoratePlayer(godMap,playerToDecorate);
     }
 
+    /**
+     * Create the base flux table.
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     */
+
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\nikob\\Desktop\\table.txt"),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();

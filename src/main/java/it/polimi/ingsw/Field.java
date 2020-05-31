@@ -1,8 +1,10 @@
 package it.polimi.ingsw;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.CommunicationSentences.*;
 import static it.polimi.ingsw.DefinedValues.*;
 
 public class Field {
@@ -32,11 +34,12 @@ public class Field {
     /**
      * The constructor methods initializes a field with all level 0
      */
-    public Field(){
+    public Field() {
         loadEmpty();
+        createAll();
     }
 
-    private void loadEmpty(){
+    private void loadEmpty() {
         blankSpaces();
         outsideNumbers();
         firstMargins();
@@ -63,15 +66,16 @@ public class Field {
 
     /**
      * This method prints the build on screen
-     * @param row is the space built row
-     * @param column is the space built column
-     * @param level is the level to build
+     *
+     * @param row     is the space built row
+     * @param column  is the space built column
+     * @param level   is the level to build
      * @param hasDome is true if a dome is built
      */
-    public void viewBuild(int row, int column, int level, int hasDome){
+    public void viewBuild(int row, int column, int level, int hasDome) {
         row = 2 * row + 2;
         column = 4 * column + 4;
-        if(hasDome == 1)
+        if (hasDome == 1)
             field[row][column] = ANSI_BLUE.escape() + "C";
         else
             field[row][column] = ANSI_BLUE.escape() + level;
@@ -80,13 +84,14 @@ public class Field {
 
     /**
      * This method prints the move on screen
-     * @param oldRow is the start space row
+     *
+     * @param oldRow    is the start space row
      * @param oldColumn is the start space column
-     * @param newRow is the finish space row
+     * @param newRow    is the finish space row
      * @param newColumn is the finish space column
-     * @param color is the color player
+     * @param color     is the color player
      */
-    public void viewMove(int oldRow, int oldColumn, int newRow, int newColumn, String color){
+    public void viewMove(int oldRow, int oldColumn, int newRow, int newColumn, String color) {
         oldRow = 2 * oldRow + 2;
         oldColumn = 4 * oldColumn + 2;
         newRow = 2 * newRow + 2;
@@ -99,12 +104,13 @@ public class Field {
 
     /**
      * This method prints the starting position of a worker on screen
-     * @param row is the start space row
+     *
+     * @param row    is the start space row
      * @param column is the start space column
      */
-    public void viewSetup(int row, int column, String color){
+    public void viewSetup(int row, int column, String color) {
         row = 2 * row + 2;
-        column = 4* column + 2;
+        column = 4 * column + 2;
 
         field[row][column] = color + "W";
         plot();
@@ -112,95 +118,139 @@ public class Field {
 
     /**
      * This method removes a worker from the field
-     * @param row is the row of the worker to remove
+     *
+     * @param row    is the row of the worker to remove
      * @param column is the column of the worker to remove
      */
-    public void viewRemoveWorker(int row, int column){
+    public void viewRemoveWorker(int row, int column) {
         row = 2 * row + 2;
         column = 4 * column + 2;
 
         field[row][column] = " ";
     }
 
-    private void blankSpaces(){
-        for(int row = MINROW; row < ROW_CLI; row++)
-            for(int column = MINCOLUMN; column < COLUMN_CLI; column++)
+    private void blankSpaces() {
+        for (int row = MINROW; row < ROW_CLI; row++)
+            for (int column = MINCOLUMN; column < COLUMN_CLI; column++)
                 field[row][column] = " ";
     }
 
-    private void outsideNumbers(){
-        for(int i = 2, number = 0; i < ROW_CLI - 1; i = i + 2, number++)
+    private void outsideNumbers() {
+        for (int i = 2, number = 0; i < ROW_CLI - 1; i = i + 2, number++)
             field[i][MINCOLUMN] = number + " ";
         field[MINROW][3] = "  0  ";
-        for(int j = 7, number = 1; j < COLUMN_CLI; j = j + 4, number++)
+        for (int j = 7, number = 1; j < COLUMN_CLI; j = j + 4, number++)
             field[MINROW][j] = " " + number + "  ";
     }
 
-    private void firstMargins(){
+    private void firstMargins() {
         field[FIRST_ROW_CLI][FIRST_COLUMN_CLI] = " ┌";
-        for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
             field[FIRST_ROW_CLI][j] = "┬";
         field[FIRST_ROW_CLI][COLUMN_CLI - 1] = "┐";
     }
 
-    private void horizontalMargins(){
-        for(int i = FIRST_ROW_CLI; i < ROW_CLI; i = i + 2)
-            for(int j = 2; j < COLUMN_CLI - 1; j++){
-                if(j % 4 != 1)
+    private void horizontalMargins() {
+        for (int i = FIRST_ROW_CLI; i < ROW_CLI; i = i + 2)
+            for (int j = 2; j < COLUMN_CLI - 1; j++) {
+                if (j % 4 != 1)
                     field[i][j] = "--";
             }
     }
 
-    private void middleMargins(){
-        for(int i = 3; i < ROW_CLI - 2; i = i + 2) {
+    private void middleMargins() {
+        for (int i = 3; i < ROW_CLI - 2; i = i + 2) {
             field[i][FIRST_COLUMN_CLI] = " ├";
-            for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+            for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
                 field[i][j] = "+";
             field[i][COLUMN_CLI - 1] = "┤";
         }
     }
 
-    private void finalMargins(){
+    private void finalMargins() {
         field[ROW_CLI - 1][FIRST_COLUMN_CLI] = " └";
-        for(int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
             field[ROW_CLI - 1][j] = "┴";
         field[ROW_CLI - 1][COLUMN_CLI - 1] = "┘";
     }
 
-    private void verticalMargins(){
-        for(int i = 2; i < ROW_CLI - 1 ; i = i + 2)
-            for(int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + 4)
+    private void verticalMargins() {
+        for (int i = 2; i < ROW_CLI - 1; i = i + 2)
+            for (int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + 4)
                 field[i][j] = "│   ";
     }
 
-    private void startingLevels(){
-        for(int i = 2; i < ROW_CLI - 1 ; i = i + 2)
-            for(int j = 4; j < COLUMN_CLI - 1; j = j + 4)
+    private void startingLevels() {
+        for (int i = 2; i < ROW_CLI - 1; i = i + 2)
+            for (int j = 4; j < COLUMN_CLI - 1; j = j + 4)
                 field[i][j] = ANSI_BLUE.escape() + "0";
     }
 
-    public void printData(String message){
-        System.out.println(message);
+    public void printParticularSentence(String specification, String playerName, String playerColor) {
+        String data = null;
+        switch (specification) {
+            case "endTurn":
+                data = getEndTurnPhrase(playerName, playerColor);
+                break;
+            case "error":
+                data = getErrorPhrase();
+                break;
+            case "won":
+                data = won;
+                break;
+            case "lost":
+                data = lost;
+                break;
+            case "name":
+                data = nameSent;
+            case "workerSetting":
+                data = SET_UP;
+        }
+
+        System.out.println(data);
     }
 
-    public void printData(HashMap<String,String> hashMap, String worker){
-        String workerConv = SET_UP + "\n" + WORKER + worker + ACTION;
-        String spaces = findSpaces(hashMap);
+    public void printChoices(List<String> stringList, String specification, String playerName, String playerColor) {
+        String data = null;
+        switch (specification) {
+            case "power":
+                data = getActivationPhrase(stringList,playerName, playerColor);
+                break;
+            case "preLobby":
+                data = getPreLobbyPhrase(stringList);
+                break;
+            case "color":
+                data = getColorPhrase(stringList, playerName);
+                break;
+            case "godChoice":
+                data = getGodChoicePhrase(stringList, playerName, playerColor);
+            case "godSet":
+                data = getGodSetPhrase(stringList, playerName, playerColor);
 
-        System.out.println(workerConv + spaces + "\n");
+
+        }
+        System.out.println(data);
     }
 
-    public String findSpaces(HashMap<String,String> hashMap){
-        StringBuilder spaces = new StringBuilder();
-        if(hashMap.size()>0) {
-            for (String row : hashMap.keySet()){
-                String column = hashMap.get(row);
-                String data = "[" + row + "," + column + "] ";
-                spaces.append(data);
-            }
-            return spaces.toString();
-        }else
-            return NONE;
+    public void updateGameField(List<Integer> integerList, String specification, String playerName, String playerColor) {
+        System.out.println(updateField(integerList.get(2), integerList.get(3), playerName, playerColor, specification));
+        switch (specification) {
+            case "move":
+                viewMove(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
+            case "build":
+                viewBuild(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3));
+        }
+    }
 
+    public void printChoices(String worker, List<HashMap<String, String>> hashMap, String specification, String playerName, String playerColor){
+        String data = null;
+        switch (specification){
+            case "move":
+            case "build":
+                data =getActionPhrase(worker, hashMap, specification, playerName, playerColor);
+                break;
+        }
+        System.out.println(SET_UP + "\n" + data);
     }
 }
+
