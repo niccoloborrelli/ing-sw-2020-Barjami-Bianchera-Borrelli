@@ -54,10 +54,10 @@ public class GodChoice extends State {
     }
 
     private void notifyLeft(List<String> availableGods){
-        LastChange inputExpected = new LastChange();
+        LastChange inputExpected = player.getLastChange();
         inputExpected.setCode(1);
         inputExpected.setSpecification(GODSPECIFICATION);
         inputExpected.setStringList(availableGods);
-        player.notify(inputExpected);
+        player.notifyController();
     }
 }

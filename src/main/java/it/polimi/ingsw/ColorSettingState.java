@@ -31,13 +31,13 @@ public class ColorSettingState extends State {
     @Override
     public void onStateTransition() {
         TurnManager turnManager=player.getStateManager().getTurnManager();
-        LastChange colorsExpected = new LastChange();
+        LastChange colorsExpected = player.getLastChange();
         colorsExpected.setCode(1);
         colorsExpected.setSpecification(COLORMESSAGE);
         synchronized (player.getStateManager().getTurnManager()) {
             List<String> allowedColors = turnManager.getAllowedColors();
             colorsExpected.setStringList(allowedColors);
-            player.notify(colorsExpected);
+            player.notifyController();
         }
     }
 

@@ -40,10 +40,10 @@ public class PreLobbyState extends State{
      * method that notifies the input from which this state can evolve
      */
     private void notifyAcceptableInputs(){
-        LastChange powerAllowedInputs = new LastChange();
+        LastChange powerAllowedInputs =player.getLastChange();
         powerAllowedInputs.setCode(1);
         powerAllowedInputs.setSpecification("preLobby");
         powerAllowedInputs.setIntegerList(allowedInts);
-        player.notify(powerAllowedInputs);
+        player.notifyController();
     }
 }

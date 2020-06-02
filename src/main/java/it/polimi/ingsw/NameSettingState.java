@@ -45,9 +45,9 @@ public class NameSettingState extends State {
     }
 
     private void nameNotify(){
-        LastChange inputExpected = new LastChange();
+        LastChange inputExpected = player.getLastChange();
         inputExpected.setCode(0);
         inputExpected.setSpecification(MESSAGENAME);
-        player.notify(inputExpected);
+        player.notifyController();
     }
 }

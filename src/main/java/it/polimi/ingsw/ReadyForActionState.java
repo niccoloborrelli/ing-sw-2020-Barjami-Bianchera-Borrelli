@@ -41,10 +41,10 @@ public class ReadyForActionState extends State {
         hasLost = checkForLosing(possibleAction);
         if(hasLost) {
             player.setInGame(false);
-            LastChange lastChange = new LastChange();
+            LastChange lastChange = player.getLastChange();
             lastChange.setCode(3);
             lastChange.setSpecification("lose");
-            player.notify(lastChange);
+            player.notifyController();
             player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
         }
         else {
@@ -111,7 +111,7 @@ public class ReadyForActionState extends State {
     private void notifyInputs(){
         String action=player.getActionsToPerform().get(0);
         for(Worker tempWorker: player.getWorkers()){
-            LastChange workerActionsNotify=new LastChange();
+            LastChange workerActionsNotify=player.getLastChange();;
             workerActionsNotify.setWorker(tempWorker);
             workerActionsNotify.setSpecification(action);
             workerActionsNotify.setCode(1);
@@ -121,7 +121,7 @@ public class ReadyForActionState extends State {
             else if(action.equals(actionType2)){
                 workerActionsNotify.setListSpace(tempWorker.getPossibleBuilding());
             }
-            player.notify(workerActionsNotify);
+            player.notifyController();
         }
     }
 }

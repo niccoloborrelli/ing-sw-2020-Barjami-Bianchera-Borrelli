@@ -36,10 +36,10 @@ public class EndTurnState extends State {
     }
 
     private void notifyTurnFinished(){
-        LastChange finishedTurn = new LastChange();
+        LastChange finishedTurn = player.getLastChange();
         finishedTurn.setCode(0);
         finishedTurn.setSpecification(ENDTURNSPECIFICATION);
-        player.notify(finishedTurn);
+        player.notifyController();
     }
 
     public String toString(){

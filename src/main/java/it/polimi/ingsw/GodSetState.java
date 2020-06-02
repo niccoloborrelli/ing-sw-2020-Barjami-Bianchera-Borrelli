@@ -49,10 +49,10 @@ public class GodSetState extends State {
     }
 
     private void notifyAllowedInputs(List <String> allGodsNames){
-        LastChange godSetExpectedInput = new LastChange();
+        LastChange godSetExpectedInput = player.getLastChange();
         godSetExpectedInput.setCode(1);
         godSetExpectedInput.setStringList(allGodsNames);
         godSetExpectedInput.setSpecification(GODSETSPECIFICATION);
-        player.notify(godSetExpectedInput);
+        player.notifyController();
     }
 }

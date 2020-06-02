@@ -15,6 +15,7 @@ public class Player implements Observed{
     private StateManager stateManager;
     private WorkerSpaceCouple lastReceivedInput;
     private IslandBoard islandBoard;
+    private LastChange lastChange;
 
     private static final int NUMBEROFWORKERS=2;
     private boolean powerActivated;
@@ -29,11 +30,13 @@ public class Player implements Observed{
     private boolean notHigherNoMove;
     private boolean notMustMoveUp;
 
+
     private Controller controller;
 
     public Player(){
         this.workers = new ArrayList<Worker>();
         this.inGame = true;
+        lastChange=new LastChange();
         actionsToPerform=new LinkedList<String>();
         cantSwap=true;
         cantPush=true;
@@ -227,6 +230,10 @@ public class Player implements Observed{
         controller.update(lastChange);
     }
 
+    public void notifyController(){
+        controller.update();
+    }
+
     public boolean isDomeEveryWhere() {
         return domeEveryWhere;
     }
@@ -313,4 +320,9 @@ public class Player implements Observed{
     public void setNotMustMoveUp(boolean notMustMoveUp) {
         this.notMustMoveUp = notMustMoveUp;
     }
+
+    public LastChange getLastChange() {
+        return lastChange;
+    }
+
 }

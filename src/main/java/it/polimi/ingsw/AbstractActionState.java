@@ -19,13 +19,13 @@ public abstract class AbstractActionState extends State {
         actionPerformed.setSpecification(action);
         actionPerformed.setSpace(wsc.getSpace());
         actionPerformed.setWorker(wsc.getWorker());
-        //player.notify(actionPerformed);
+        player.notifyController();
     }
 
     public void notifyWin(){
-        LastChange winChange = new LastChange();
+        LastChange winChange = player.getLastChange();
         winChange.setCode(3);
         winChange.setSpecification(WINSPECIFICATION);
-        //player.notify(winChange);
+        player.notifyController();
     }
 }

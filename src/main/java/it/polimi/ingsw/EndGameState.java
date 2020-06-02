@@ -10,9 +10,9 @@ public class EndGameState extends State {
 
     @Override
     public void onStateTransition() throws IOException {
-        LastChange uselessInput = new LastChange();
+        LastChange uselessInput = player.getLastChange();
         uselessInput.setCode(3);
         uselessInput.setSpecification("endGame");
-        player.notify(uselessInput);
+        player.notifyController();
     }
 }

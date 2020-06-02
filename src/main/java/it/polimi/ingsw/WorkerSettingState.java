@@ -48,12 +48,12 @@ public class WorkerSettingState extends State {
         if(worker.getWorkerSpace()==null){
             settingSpaceWorker(worker, input);
             removeFromInput(worker,input.getSpace());;
-            LastChange workerPlacedChange = new LastChange();
+            LastChange workerPlacedChange = player.getLastChange();
             workerPlacedChange.setCode(2);
             workerPlacedChange.setSpecification("move");
             workerPlacedChange.setWorker(input.getWorker());
             workerPlacedChange.setSpace(input.getSpace());
-            player.notify(workerPlacedChange);
+            player.notifyController();
         }else{
             uselessInputNotify();
         }
@@ -120,9 +120,9 @@ public class WorkerSettingState extends State {
     }
 
     private void notifySetUp(){
-        LastChange settingWorker = new LastChange();
+        LastChange settingWorker = player.getLastChange();
         settingWorker.setCode(0);
         settingWorker.setSpecification("workerSetting");
-        player.notify(settingWorker);
+        player.notifyController();
     }
 }

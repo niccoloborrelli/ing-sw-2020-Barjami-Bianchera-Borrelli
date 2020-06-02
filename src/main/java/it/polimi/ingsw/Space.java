@@ -58,4 +58,7 @@ public class Space {
         this.level = level;
     }
 
+    public String toString(){
+        return "Row: "+row+"- Column: "+column;
+    }
 }

@@ -65,10 +65,10 @@ public class PowerActivationState extends State {
         List<Integer> allowedInt=new ArrayList<Integer>();
         allowedInt.add(0);
         allowedInt.add(1);
-        LastChange powerAllowedInputs = new LastChange();
+        LastChange powerAllowedInputs = player.getLastChange();
         powerAllowedInputs.setCode(1);
         powerAllowedInputs.setSpecification(POWERACTIVATION);
         powerAllowedInputs.setIntegerList(allowedInt);
-        player.notify(powerAllowedInputs);
+        player.notifyController();
     }
 }

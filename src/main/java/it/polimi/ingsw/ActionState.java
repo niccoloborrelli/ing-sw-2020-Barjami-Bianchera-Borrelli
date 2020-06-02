@@ -17,40 +17,52 @@ public class ActionState extends AbstractActionState {
     @Override
     public void onStateTransition() throws IOException {
         WorkerSpaceCouple input=player.getLastReceivedInput();
+        actingSetting(input);
+        for(Worker tempWorker:player.getWorkers())
+            tempWorker.clearLists();
+        concreteActing(input);
+    }
+
+    private void actingSetting(WorkerSpaceCouple input){
         action=player.getActionsToPerform().get(firstIndex);
         this.actingWorker=input.getWorker();
         this.spaceToAct=input.getSpace();
         this.startingSpace=actingWorker.getWorkerSpace();
-        for(Worker tempWorker:player.getWorkers())
-            tempWorker.clearLists();
+    }
 
-        if(spaceToAct.getOccupator()==null&&action.equals(actionType1)) {
-            input.setSpace(actingWorker.getWorkerSpace());
-            move(actingWorker, spaceToAct);
-            actingWorker.setMovedThisTurn(true);
-            notifyActionPerformed(input,action);
-            player.getStateManager().getTurnManager().checkWin();
-            if(player.isHasWon())
-                notifyWin();
-            if(player.isInGame()){
-                for(Worker tempWorker:player.getWorkers())
-                    tempWorker.clearLists();
-                player.getStateManager().setNextState(player);
-            }
-        }
-        else if(action.equals(actionType2)){
-            input.setSpace(spaceToAct);
-            build(actingWorker, spaceToAct);
-            notifyActionPerformed(input,action);
-            player.getStateManager().getTurnManager().checkWin();
-            if(player.isHasWon())
-                notifyWin();
-            if(player.isInGame()) {
-                player.getStateManager().setNextState(player);
-            }
+    private void concreteActing(WorkerSpaceCouple input) throws IOException {
+        if(spaceToAct.getOccupator()==null&&action.equals(actionType1))
+            movingAction(input);
+        else if(action.equals(actionType2))
+            buildingAction(input);
+    }
+
+    private void movingAction(WorkerSpaceCouple input) throws IOException {
+        input.setSpace(actingWorker.getWorkerSpace());
+        move(actingWorker, spaceToAct);
+        actingWorker.setMovedThisTurn(true);
+        notifyActionPerformed(input,action);
+        player.getStateManager().getTurnManager().checkWin();
+        if(player.isHasWon())
+            notifyWin();
+        if(player.isInGame()){
+            for(Worker tempWorker:player.getWorkers())
+                tempWorker.clearLists();
+            player.getStateManager().setNextState(player);
         }
     }
 
+    private void buildingAction(WorkerSpaceCouple input) throws IOException {
+        input.setSpace(spaceToAct);
+        build(actingWorker, spaceToAct);
+        notifyActionPerformed(input,action);
+        player.getStateManager().getTurnManager().checkWin();
+        if(player.isHasWon())
+            notifyWin();
+        if(player.isInGame()) {
+            player.getStateManager().setNextState(player);
+        }
+    }
     /**
      * This method implements the base move
      * @param movingWorker is the worker that moves

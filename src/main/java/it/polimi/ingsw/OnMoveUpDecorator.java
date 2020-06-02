@@ -19,9 +19,11 @@ public class OnMoveUpDecorator extends ActionStateDecorator {
     @Override
     public void onStateTransition() throws IOException {
         decorated.onStateTransition();
-        String action=player.getActionsToPerform().get(0);
-        if(action.equals(ACTIONTYPE1)&&decorated.getSpaceToAct().getLevel()>decorated.getStartingSpace().getLevel()) //attivo gli effetti di oneMoveUp se il livello in cui si agisce e' superiore
+        String action=decorated.getAction();
+        if(action.equals(ACTIONTYPE1)&&decorated.getSpaceToAct().getLevel()>decorated.getStartingSpace().getLevel()) { //attivo gli effetti di oneMoveUp se il livello in cui si agisce e' superiore
             ability();
+            System.out.println("entraa");
+        }
     }
 
     private void ability(){
