@@ -407,6 +407,7 @@ public class StateManager {
             Line line = iterator.next();
             try{
                 if (line.controlCondition(obRef)) {
+                    System.out.println("Il vecchio stato è:" + current_state);
                     current_state = line.getFinishState();
                     break;
                 }
@@ -415,6 +416,7 @@ public class StateManager {
                 
             }
         }
+        System.out.println("Il nuovo stato è: " +current_state.toString());
         current_state.onStateTransition();
     }
 

@@ -69,11 +69,13 @@ public class GodFactory {
         }
 
         if(effects.contains("IfHigherNoMove")){
-
+            player.getIslandBoard().setHigherNoMove(true);
+            player.setNotHigherNoMove(true);
         }
 
         if(effects.contains("MustMoveUp")) {
-
+            player.getIslandBoard().setMustMoveUp(true);
+            player.setNotMustMoveUp(true);
         }
 
         if(effects.contains("BuildUnderYou")){

@@ -9,7 +9,7 @@ public class ActionState extends AbstractActionState {
     private Worker actingWorker;
     private Space spaceToAct;
     private Space startingSpace;
-
+    private String action;
     ActionState(Player player) {
         super(player);
     }
@@ -17,22 +17,26 @@ public class ActionState extends AbstractActionState {
     @Override
     public void onStateTransition() throws IOException {
         WorkerSpaceCouple input=player.getLastReceivedInput();
-        String action=player.getActionsToPerform().get(firstIndex);
+        action=player.getActionsToPerform().get(firstIndex);
         this.actingWorker=input.getWorker();
         this.spaceToAct=input.getSpace();
         this.startingSpace=actingWorker.getWorkerSpace();
+        for(Worker tempWorker:player.getWorkers())
+            tempWorker.clearLists();
 
         if(spaceToAct.getOccupator()==null&&action.equals(actionType1)) {
             input.setSpace(actingWorker.getWorkerSpace());
             move(actingWorker, spaceToAct);
             actingWorker.setMovedThisTurn(true);
             notifyActionPerformed(input,action);
-
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
                 notifyWin();
-            if(player.isInGame())
+            if(player.isInGame()){
+                for(Worker tempWorker:player.getWorkers())
+                    tempWorker.clearLists();
                 player.getStateManager().setNextState(player);
+            }
         }
         else if(action.equals(actionType2)){
             input.setSpace(spaceToAct);
@@ -41,8 +45,9 @@ public class ActionState extends AbstractActionState {
             player.getStateManager().getTurnManager().checkWin();
             if(player.isHasWon())
                 notifyWin();
-            if(player.isInGame())
+            if(player.isInGame()) {
                 player.getStateManager().setNextState(player);
+            }
         }
     }
 
@@ -74,6 +79,7 @@ public class ActionState extends AbstractActionState {
     private void build(Worker buildingWorker,Space finishSpace){
         player.removeAction();
         buildingWorker.setCantMove(false);
+
         upgradeLevel(finishSpace, buildingWorker);
         setOtherWorkers(buildingWorker);
         buildingWorker.setLastSpaceBuilt(finishSpace);
@@ -84,8 +90,16 @@ public class ActionState extends AbstractActionState {
      * @param buildSpace is the space where the level is going to change
      */
     private void upgradeLevel(Space buildSpace,Worker worker){
-        buildSpace.setLevel(buildSpace.getLevel() + 1);
-        domeBuilding(buildSpace);
+        if(buildSpace.getLevel()==3)
+            worker.setMustBuildDome(true);
+
+        if(!worker.isMustBuildDome())
+            buildSpace.setLevel(buildSpace.getLevel() + 1);
+
+        domeBuilding(buildSpace,worker.isMustBuildDome());
+
+        for(Worker wtemp:player.getWorkers())
+            wtemp.setMustBuildDome(false);
     }
 
     /**
@@ -93,8 +107,8 @@ public class ActionState extends AbstractActionState {
      * the space level is 4
      * @param buildSpace is the space to control
      */
-    private void domeBuilding(Space buildSpace){
-        if (buildSpace.getLevel() == 4)
+    private void domeBuilding(Space buildSpace,boolean mustBuildDome){
+        if (mustBuildDome)
             buildSpace.setHasDome(true);
     }
 
@@ -124,4 +138,8 @@ public class ActionState extends AbstractActionState {
         return "ActionState";
     }
 
+    @Override
+    public String getAction() {
+        return action;
+    }
 }

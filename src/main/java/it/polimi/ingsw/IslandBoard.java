@@ -11,6 +11,9 @@ Attenzione con areWorkersInGame perchè va settato a true ogni inizio turno
 public  class  IslandBoard {
     private Space[][] spaces;
     private static final int dim=5;
+    private boolean higherNoMove;
+    private boolean mustMoveUp;
+
     /**
      * IslandBoard constructor that initialize a 5x5 array of space
      */
@@ -31,6 +34,22 @@ public  class  IslandBoard {
             return spaces[row][column];
         else
             return null;
+    }
+
+    public boolean isHigherNoMove() {
+        return higherNoMove;
+    }
+
+    public void setHigherNoMove(boolean higherNoMove) {
+        this.higherNoMove = higherNoMove;
+    }
+
+    public boolean isMustMoveUp() {
+        return mustMoveUp;
+    }
+
+    public void setMustMoveUp(boolean mustMoveUp) {
+        this.mustMoveUp = mustMoveUp;
     }
 }
 

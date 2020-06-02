@@ -12,7 +12,7 @@ class FieldTest {
         Field field = new Field();
         field.viewSetup(1,3, Color.ANSI_RED.escape());
         sleep(1000);
-        field.viewMove(1,3,2,3, Color.ANSI_RED.escape());
+        field.viewMove("A", 1,3,2,3, Color.ANSI_RED.escape());
         sleep(1000);
         field.viewSetup(2,2, Color.ANSI_WHITE.escape());
         sleep(1000);

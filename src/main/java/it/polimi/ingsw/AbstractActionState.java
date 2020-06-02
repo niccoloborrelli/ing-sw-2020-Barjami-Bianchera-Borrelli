@@ -12,20 +12,20 @@ public abstract class AbstractActionState extends State {
     public abstract Worker getActingWorker();
     public abstract Space getSpaceToAct();
     public abstract Space getStartingSpace();
-
+    public abstract String getAction();
     public void notifyActionPerformed(WorkerSpaceCouple wsc,String action){
         LastChange actionPerformed = new LastChange();
         actionPerformed.setCode(2);
         actionPerformed.setSpecification(action);
         actionPerformed.setSpace(wsc.getSpace());
         actionPerformed.setWorker(wsc.getWorker());
-        player.notify(actionPerformed);
+        //player.notify(actionPerformed);
     }
 
     public void notifyWin(){
         LastChange winChange = new LastChange();
         winChange.setCode(3);
         winChange.setSpecification(WINSPECIFICATION);
-        player.notify(winChange);
+        //player.notify(winChange);
     }
 }

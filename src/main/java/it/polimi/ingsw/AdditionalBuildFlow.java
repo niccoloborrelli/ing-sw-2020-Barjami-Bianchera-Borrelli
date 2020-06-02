@@ -11,6 +11,8 @@ public class AdditionalBuildFlow extends FlowChanger {
     private static final String PERIMETERSPACE = "perimeterSpace";
     private static final String MOVEUP = "moveUp";
     private static final String DOME = "dome";
+    private static final String FALSE = "false";
+    private static final String TRUE = "true";
     /*
     Your worker may build one additional time, but not in the same space
     DEMETER
@@ -70,12 +72,10 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public boolean isUsable(Player player) {
         if(beforeMove){
-            for(Worker w: player.getWorkers())
-                w.setCantBuild(false);
+            setPlayerCantBuild(player, FALSE);
             CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType2);
-            for(Worker w: player.getWorkers())
-                w.setCantBuild(true);
-            return playerCanBuild(player);
+            setPlayerCantBuild(player, TRUE);
+            return playerCanBuildAndNotGoUp(player);
         }
 
         Worker workerChosen = getWorkerChosen(player);
@@ -110,14 +110,29 @@ public class AdditionalBuildFlow extends FlowChanger {
             worker.setCantBuildDome(true);
     }
 
-    private boolean playerCanBuild(Player player){
-        return (player.getWorkers().get(0).getPossibleBuilding().size() > 0 ||
-                player.getWorkers().get(1).getPossibleBuilding().size() > 0);
+    private boolean playerCanBuildAndNotGoUp(Player player){
+        CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType1);
+        List<Space> movement0 = new ArrayList<>(player.getWorkers().get(0).getPossibleMovements());
+        movement0.removeIf(space -> space.getLevel() > player.getWorkers().get(0).getWorkerSpace().getLevel());
+        List<Space> movement1 = new ArrayList<>(player.getWorkers().get(1).getPossibleMovements());
+        movement1.removeIf(space -> space.getLevel() > player.getWorkers().get(1).getWorkerSpace().getLevel());
+
+        return ((player.getWorkers().get(0).getPossibleBuilding().size() > 0 && movement0.size() > 0) ||
+                (player.getWorkers().get(1).getPossibleBuilding().size() > 0 && movement1.size() > 0));
     }
 
     private void setFlagBeforeMove(Player player){
         for (Worker w: player.getWorkers())
             w.setCantMoveUp(true);
+    }
+
+    private void setPlayerCantBuild(Player player, String type){
+        for(Worker w: player.getWorkers()) {
+            if(type.equals(TRUE))
+                w.setCantBuild(true);
+            else if(type.equals(FALSE))
+                w.setCantBuild(false);
+            }
     }
 
 }

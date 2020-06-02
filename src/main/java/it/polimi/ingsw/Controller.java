@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class Controller{
 
     private static final int STRING_RECEIVING = 0;
@@ -25,6 +26,7 @@ public class Controller{
     private static final int UPDATE_TO_PRINT = 0;
     private static final int UPDATE_CHOICE = 1;
     private static final int UPDATE_GAME_FIELD = 2;
+    private static final int UPDATE_ENDGAME = 3;
 
     private static final int FIRST_CHILD = 0;
     private static final int INVALID_VALUE = -1;
@@ -67,6 +69,8 @@ public class Controller{
     private static final String DOME = "dome";
     private static final String PLAYER = "player";
     private static final String NAME = "name";
+    private static final String CHAR = "char";
+    private static final String LOSE = "lose";
     private static final String WORKERSETTING = "workerSetting";
     private static final String SPECIFICATION = "specification";
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -443,53 +447,55 @@ public class Controller{
     }
 
 
-    /**
-     * Adds to list all spaces linked with the worker.
-     * @param spaceList contains list of spaces linked with the worker.
-     * @param worker is worker linked to spaces.
-     * @param spaceInputList contains the couples of worker and space.
-     */
+    public void update(LastChange lastChange){
+        String data = buildUpdate(lastChange);
+        int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        handlerHub.sendData(PREFIX + data, this, codeCommunication);
+    }
 
-    private void addSpacesLinkedWithWorker(List<Space> spaceList, Worker worker, List<SpaceInput> spaceInputList){
-        for(SpaceInput spaceInput: spaceInputList){
-            if(spaceInput.getWorker().equals(worker))
-                spaceList.add(spaceInput.getSpace());
+    public int howToCommunicate(int code, LastChange lastChange){
+        int codeCommunication = INVALID_VALUE;
+
+        switch (code) {
+            case UPDATE_TO_PRINT:
+                codeCommunication = findCommunication(lastChange.specification);
+                break;
+            case UPDATE_CHOICE:
+            case UPDATE_ENDGAME:
+                codeCommunication = SINGLE_COMMUNICATION;
+                break;
+            case UPDATE_GAME_FIELD:
+                codeCommunication = BROADCAST;
+                break; 
         }
+
+        return codeCommunication;
     }
 
 
-    /**
-     * Creates message that represents the change of model.
-     * Communicates also what type of connection it requires.
-     */
-
-    public void update(LastChange lastChange){
+    public String buildUpdate(LastChange lastChange){
         String message = "";
         int code = lastChange.getCode();
         String codeInString = insertCode(code);
         String specification = generateField(lastChange.getSpecification(), SPECIFICATION);
         String playerString = createPlayerString(player);
-        int codeCommunication = INVALID_VALUE;
 
         switch (code) {
             case UPDATE_TO_PRINT:
                 message = buildUpdateToPrintMessage();
-                codeCommunication = findCommunication(lastChange.specification);
                 break;
             case UPDATE_CHOICE:
                 message = buildUpdateChoiceMessage(lastChange);
-                codeCommunication = SINGLE_COMMUNICATION;
                 break;
             case UPDATE_GAME_FIELD:
                 message = buildUpdateGameFieldMessage(lastChange);
-                codeCommunication = BROADCAST;
                 break;
+            case UPDATE_ENDGAME:
+                sendLostToOthers(codeInString, playerString);
         }
 
-        String data = generateField(codeInString+ playerString + specification+message, DATA);
-        System.out.println(data);
-        System.out.println("Il codice di comunicazione è: " + codeCommunication );
-        handlerHub.sendData(PREFIX + data, this, codeCommunication);
+        return generateField(codeInString+ playerString + specification+message, DATA);
+
     }
 
     /**
@@ -525,7 +531,6 @@ public class Controller{
      */
 
     private int findCommunication(String string){
-        System.out.println("Sono dentro findCommunication");
         if(string.equals(ERROR) || string.equals(ENDTURN) || string.equals(NAME) || string.equals(WORKERSETTING))
                 return SINGLE_COMMUNICATION;
         else if(string.equals(ENDGAME))
@@ -541,11 +546,27 @@ public class Controller{
 
     private String buildUpdateChoiceMessage(LastChange dataOutput){
         StringBuilder message = new StringBuilder();
+        message.append(generateField(generateWorker(dataOutput.getWorker()), WORKER));
         StringBuilder insideMessage = generateIntList(message, dataOutput.getIntegerList());
         StringBuilder spaceList = generateSpaceList(insideMessage, dataOutput.getListSpace());
         StringBuilder stringList = generateStringList(spaceList, dataOutput.getStringList());
 
-        return generateField(spaceList.toString(), MESSAGE);
+        return generateField(stringList.toString(), MESSAGE);
+    }
+
+    private String generateWorker(Worker worker){
+        int numberOfWorker = player.getWorkers().indexOf(worker);
+        String letterOfWorker = convertIntToLetter(numberOfWorker);
+
+        return generateField(letterOfWorker, CHAR);
+    }
+
+    private String convertIntToLetter(int number){
+        if(number==0)
+            return "A";
+        else if(number==1)
+            return "B";
+        return "C";
     }
 
     /**
@@ -581,7 +602,7 @@ public class Controller{
     private StringBuilder generateSpaceList(StringBuilder message, List<Space> spaceList){
         if(spaceList!=null) {
             for (Space space : spaceList)
-                message.append(generateStringSpace(space, SPACE));
+                message.append(generateStringSpace("",space, SPACE));
         }
         return message;
     }
@@ -614,8 +635,9 @@ public class Controller{
      */
 
     private String updateMovement(Worker worker, Space oldSpace) {
-        String workerTranslation = generateStringSpace(worker.getWorkerSpace(), WORKER);
-        String spaceTranslation = generateStringSpace(oldSpace, SPACE);
+        String charOfWorker = convertIntToLetter(player.getWorkers().indexOf(worker));
+        String workerTranslation = generateStringSpace(generateField(charOfWorker, CHAR), worker.getWorkerSpace(), WORKER);
+        String spaceTranslation = generateStringSpace("", oldSpace, SPACE);
 
         return generateField(workerTranslation + spaceTranslation, MESSAGE);
     }
@@ -643,14 +665,21 @@ public class Controller{
      * @return a string that represents a space.
      */
 
-    private String generateStringSpace(Space space, String field) {
+    private String generateStringSpace(String otherParameters, Space space, String field) {
         String row = String.valueOf(space.getRow());
         String column = String.valueOf(space.getColumn());
 
         String rowPart = generateField(row, ROW);
         String columnPart = generateField(column, COLUMN);
 
-        return generateField(rowPart + columnPart, field);
+        return generateField(otherParameters + rowPart + columnPart, field);
+    }
+
+    private void sendLostToOthers(String code, String player){
+        String message = generateField("", MESSAGE);
+        String specification = generateField(LOSE, SPECIFICATION);
+        String data = generateField(code + player + specification + message, DATA);
+        handlerHub.sendData(data, this, ALL_NOT_ME);
     }
 
     /**
@@ -683,7 +712,7 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\nikob\\Desktop\\Gods.txt"));
+        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation();
     }
 
@@ -708,7 +737,7 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\nikob\\Desktop\\table.txt"),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();

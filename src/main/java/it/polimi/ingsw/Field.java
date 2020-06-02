@@ -12,12 +12,6 @@ public class Field {
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
     private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
             "Second _ is the row of space and third _ is the column";
-    private static final String WORKER = "Worker n.";
-    private static final String ACTION = " can do an action in these spaces: \n";
-    private static final String SPACE = "Space n.";
-    private static final String ROW = "row: ";
-    private static final String COLUMN = "column: ";
-    private static final String NONE = "None";
     public static final String ANSI_RESET = "\u001B[0m";
 
 
@@ -91,14 +85,14 @@ public class Field {
      * @param newColumn is the finish space column
      * @param color     is the color player
      */
-    public void viewMove(int oldRow, int oldColumn, int newRow, int newColumn, String color) {
+    public void viewMove(String worker, int oldRow, int oldColumn, int newRow, int newColumn, String color) {
         oldRow = 2 * oldRow + 2;
         oldColumn = 4 * oldColumn + 2;
         newRow = 2 * newRow + 2;
         newColumn = 4 * newColumn + 2;
 
         field[oldRow][oldColumn] = " ";
-        field[newRow][newColumn] = color + "W";
+        field[newRow][newColumn] = color + worker;
         plot();
     }
 
@@ -195,10 +189,10 @@ public class Field {
             case "error":
                 data = getErrorPhrase();
                 break;
-            case "won":
+            case "win":
                 data = won;
                 break;
-            case "lost":
+            case "lose":
                 data = lost;
                 break;
             case "name":
@@ -206,6 +200,9 @@ public class Field {
                 break;
             case "workerSetting":
                 data = SET_UP;
+                break;
+            case "endGame":
+                data = endGame;
                 break;
         }
 
@@ -223,7 +220,6 @@ public class Field {
                 break;
             case "color":
                 data = getColorPhrase(stringList, playerName);
-                System.out.println("ENTRATO IN COLOR PHRASE");
                 break;
             case "godChoice":
                 data = getGodChoicePhrase(stringList, playerName, playerColor);
@@ -236,11 +232,11 @@ public class Field {
         System.out.println(data);
     }
 
-    public void updateGameField(List<Integer> integerList, String specification, String playerName, String playerColor) {
+    public void updateGameField(String worker, List<Integer> integerList, String specification, String playerName, String playerColor) {
         System.out.println(updateField(integerList.get(2), integerList.get(3), playerName, playerColor, specification));
         switch (specification) {
             case "move":
-                viewMove(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
+                viewMove(worker, integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
                 break;
             case "build":
                 viewBuild(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3));
@@ -256,7 +252,6 @@ public class Field {
                 data =getActionPhrase(worker, hashMap, specification, playerName, playerColor);
                 break;
         }
-        System.out.println(SET_UP + "\n" + data);
     }
 }
 

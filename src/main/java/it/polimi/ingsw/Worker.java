@@ -22,7 +22,7 @@ public class Worker {
     private boolean cantBuildPerimeter;
     private boolean cantBuildDome;
     private boolean cantBuildUnder;
-
+    private boolean mustBuildDome;
 
     public Worker() {
         cantMoveUp=false;
@@ -53,6 +53,11 @@ public class Worker {
         cantBuildPerimeter=false;
         cantBuildFirstSpace=false;
         cantMoveFirstSpace=false;
+        mustBuildDome=false;
+        clearLists();
+    }
+
+    public void clearLists(){
         possibleBuilding.clear();
         possibleMovements.clear();
     }
@@ -210,6 +215,14 @@ public class Worker {
 
     public String toString(){
         return workerPlayer.getPlayerName() + workerPlayer.getWorkers().indexOf(this);
+    }
+
+    public boolean isMustBuildDome() {
+        return mustBuildDome;
+    }
+
+    public void setMustBuildDome(boolean mustBuildDome) {
+        this.mustBuildDome = mustBuildDome;
     }
 }
 

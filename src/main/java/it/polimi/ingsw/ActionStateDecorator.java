@@ -22,6 +22,10 @@ public abstract class ActionStateDecorator extends AbstractActionState {
         return decorated.getStartingSpace();
     }
 
+    public String getAction(){
+        return decorated.getAction();
+    }
+
     public String toString(){
         return decorated.toString();
     }

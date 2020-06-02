@@ -49,13 +49,15 @@ public class DeliveryMessage {
     private static final String BUILD = "build";
     private static final String PLAYER = "player";
     private static final String NAME = "name";
-    private static final String ENDGAME = "endgame";
+    private static final String ENDGAME = "endGame";
+    private static final String CHAR = "char";
     private static final int FIRST_CHILD = 0;
 
 
     private boolean graphicInterface;
     private Field field;
     private NetHandler netHandler;
+
 
     public DeliveryMessage(Socket sc) throws IOException {
         field = new Field();
@@ -229,6 +231,14 @@ public class DeliveryMessage {
             decodePossibleChoice(doc, specification, playerName, playerColor);
         } else if (code == 2) {
             decodeUpdate(doc, specification, playerName, playerColor);
+        } else if(code==3){
+            sendToInterface(specification, playerName, playerColor);
+            netHandler.setEndGame(true);
+            try {
+                netHandler.getSocket().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -304,12 +314,19 @@ public class DeliveryMessage {
         NodeList nodeList = el.getElementsByTagName(WORKER);
         Node node = nodeList.item(0);
 
+
         if(node!=null && node.getNodeType()==Node.ELEMENT_NODE){
-            content = node.getTextContent();
+            Element elem = (Element) node;
+            Element element =  findTarget(elem, CHAR);
+            content = contentElement(element);
         }
         worker = content;
 
         return worker;
+    }
+
+    private String contentElement(Element el){
+        return el.getTextContent();
     }
 
     /**
@@ -409,8 +426,19 @@ public class DeliveryMessage {
 
     private void decodeUpdate(Document document, String specification,  String playerName, String playerColor){
         List<Integer> integerList = parseUpdate(document, specification);
-        sendToInterface( specification, integerList, playerName, playerColor);
+        String worker = parseWorker(document);
+        sendToInterface(worker, specification, integerList, playerName, playerColor);
 
+    }
+
+    private String parseWorker(Document document){
+        Element el = insideField(document, MESSAGE);
+        Element work = findTarget(el, WORKER);
+        if(work!=null) {
+            Element charWorker = findTarget(work, CHAR);
+            return charWorker.getTextContent();
+        }
+        return null;
     }
 
 
@@ -578,9 +606,9 @@ public class DeliveryMessage {
             field.printChoices(worker, hashMapList, specification, playerName, playerColor);
     }
 
-    public void sendToInterface(String specification, List<Integer> integerList, String playerName, String playerColor){
+    public void sendToInterface(String worker, String specification, List<Integer> integerList, String playerName, String playerColor){
         if(!graphicInterface)
-            field.updateGameField(integerList, specification, playerName, playerColor);
+            field.updateGameField(worker, integerList, specification, playerName, playerColor);
     }
 
     public void startReading(){

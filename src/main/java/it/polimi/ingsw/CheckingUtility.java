@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.DIM;
+
 public class CheckingUtility {
 
     private static final int CODE_MOVE = 0;
@@ -61,6 +63,8 @@ public class CheckingUtility {
             else if(needMovement == CODE_BUILD)
                 worker.getPossibleBuilding().addAll(restriction(worker,islandBoard,needMovement));
         }
+        if(needMovement == CODE_MOVE)
+            islandBoardRestriction(player);
     }
 
     /**
@@ -221,6 +225,7 @@ public class CheckingUtility {
                 cantMoveDOWN(spaceList, worker.getWorkerSpace().getLevel(), space);
             if (worker.isCantMoveFirstSpace())
                 cantMoveFirstSpace(spaceList,space,worker.getLastSpaceOccupied());
+
         }
     }
 
@@ -353,6 +358,64 @@ public class CheckingUtility {
     private static void cantBuildPerimeter(List<Space> spaceList, Space space){
         if(space.getRow()==LOWEST_ROW || space.getColumn()==LOWEST_COLUMN || space.getRow() == BIGGEST_ROW || space.getColumn()==BIGGEST_COLUMN) {
             spaceList.remove(space);
+        }
+    }
+
+    private static void islandBoardRestriction(Player player){
+        if(player.getIslandBoard().isMustMoveUp() && !player.isNotMustMoveUp()){
+            if(workersCanGoUp(player))
+                removeLowerSpace(player);
+        }
+        if(player.getIslandBoard().isHigherNoMove() && !player.isNotHigherNoMove()){
+            int highestLevel = getWorkerHighestLevel(player.getIslandBoard());
+            int workerHighest = workerAtHighestLevel(player.getIslandBoard(), highestLevel);
+            if(workerHighest == 1)
+                removeSpaceHighestLevel(player, highestLevel);
+        }
+    }
+
+    private static int getWorkerHighestLevel(IslandBoard islandBoard){
+        int highestLevel = 0;
+        for(int i = 0; i < DIM; i++)
+            for(int j = 0; j < DIM; j++){
+                if(islandBoard.getSpace(i, j).getOccupator() != null)
+                    if(islandBoard.getSpace(i, j).getLevel() > highestLevel)
+                        highestLevel = islandBoard.getSpace(i, j).getLevel();
+            }
+        return highestLevel;
+    }
+
+    private static int workerAtHighestLevel(IslandBoard islandBoard, int highestLevel){
+        int workerAtHighestLevel = 0;
+        for(int i = 0; i < DIM; i++)
+            for(int j = 0; j < DIM; j++){
+                if(islandBoard.getSpace(i, j).getOccupator() != null)
+                    if(islandBoard.getSpace(i, j).getLevel() == highestLevel)
+                        workerAtHighestLevel++;
+            }
+        return workerAtHighestLevel;
+    }
+
+    private static void removeSpaceHighestLevel(Player player, int highestLevel){
+        for(Worker w: player.getWorkers())
+            if(w.getWorkerSpace().getLevel() == highestLevel)
+                w.getPossibleMovements().clear();
+    }
+
+    private static boolean workersCanGoUp(Player player){
+        for(Worker w: player.getWorkers()){
+            int initialLevel = w.getWorkerSpace().getLevel();
+            for(Space space: w.getPossibleMovements())
+                if(space.getLevel() > initialLevel)
+                    return true;
+        }
+        return false;
+    }
+
+    private static void removeLowerSpace(Player player){
+        for(Worker w: player.getWorkers()) {
+            int startLevel = w.getWorkerSpace().getLevel();
+            w.getPossibleMovements().removeIf(space -> space.getLevel() <= startLevel);
         }
     }
 

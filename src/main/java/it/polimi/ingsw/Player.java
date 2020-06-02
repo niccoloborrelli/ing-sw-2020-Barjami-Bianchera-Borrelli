@@ -26,6 +26,8 @@ public class Player implements Observed{
     private boolean powerUsed;
     private boolean domeEveryWhere;
     private boolean hasWon;
+    private boolean notHigherNoMove;
+    private boolean notMustMoveUp;
 
     private Controller controller;
 
@@ -294,5 +296,21 @@ public class Player implements Observed{
 
     public boolean isChallengerWorkerSet(){
         return stateManager.getTurnManager().getPlayers().get(0).getWorkers().get(0).getWorkerSpace()!=null;
+    }
+
+    public boolean isNotHigherNoMove() {
+        return notHigherNoMove;
+    }
+
+    public void setNotHigherNoMove(boolean notHigherNoMove) {
+        this.notHigherNoMove = notHigherNoMove;
+    }
+
+    public boolean isNotMustMoveUp() {
+        return notMustMoveUp;
+    }
+
+    public void setNotMustMoveUp(boolean notMustMoveUp) {
+        this.notMustMoveUp = notMustMoveUp;
     }
 }

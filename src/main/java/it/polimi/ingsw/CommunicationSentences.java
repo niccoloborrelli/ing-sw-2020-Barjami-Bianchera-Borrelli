@@ -7,35 +7,41 @@ import static it.polimi.ingsw.Field.ANSI_RESET;
 public class CommunicationSentences {
 
     private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one " +
-            "insert";
+            "insert ";
     private static final String welcomeToSantorini = "Welcome to Santorini.\nGods sanctioned you as chosen one.\n" +
             "Only one of you could dominate Santorini.\nI hope it will be you.";
-    private static final String colorSent = "You have to choose color with which your worker impregnate themselves.\n" +
+    private static final String colorSent = "You have to choose color with which your workers paint themselves.\n" +
             "From your decision, your worker will have that color. Those are available: \n";
+    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
+            "Second _ is the row of space and third _ is the column\n";
+    private static int set_upIndex;
+    public static final String endGame = "Somebody crashed. You're gonna be disconnected. Press any button.";
     private static final String endSent1 = ", good job! Your turn is finished. Look at your enemies to understand their strategy.";
     private static final String endSent2 = ", well done! Now you can rest.";
-    private static final String endSent3 = ", your turn ended. Who knows if your enemies will fall in your trap";
+    private static final String endSent3 = ", your turn ended. Who knows if your enemies will fall in your trap.";
     private static final String errorSent1 = "You wrote an invalid input. Try again";
     private static final String errorSent2 = "Be careful. A minimum error could ruin your strategy";
     private static final String errorSent3 = "Come on. You're the boss. You can't make a mistake like this";
     private static final String activateSent1 = "God gave you his power. You can use it!";
     private static final String activateSent2 = "Now, it's your choice. Do you want to use your God power?";
     private static final String activateSent3 = "Be careful. God power could be a double-edge sword.";
-    private static final String formToActivatePower = "If you want to activate it insert";
-    private static final String godChoiceSent1 = " Choose carefully your Gods. Decide between: ";
+    private static final String formToActivatePower = "If you want to activate it insert ";
+    private static final String godChoiceSent1 = " choose carefully your Gods. Decide between: ";
     private static final String godSetSent1 = " you're the challenger. You have the power to decide which Gods would be involved " +
-            "in this battle. In change of this possibility, you will receive the not-chosen God.";
+            "in this battle. In change of this possibility, you will receive the not-chosen God.\n" +
+            "Pick them from those:";
     public static final String nameSent = "You have to choose your name";
-    private static final String otherwise = "otherwise";
+    private static final String otherwise = "otherwise ";
     private static final String moved = " moved in space ";
     private static final String built = " built in space ";
     private static final String MOVE = "move";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
     public static final String lost = "You lost! Your God lashes out in rage. Run away while you can";
     private static final String actionSent1_1 = " Choose carefully. Decide who would ";
-    private static final String actionSent1_2 = ". Worker can do it in these places\n";
-    private static final String actionSent2_1 = "Worker can ";
-    private static final String actionSent2_2 = "in these places\n";
+    private static final String actionSent1_2 = ", worker can do it in these places:";
+    private static final String actionSent2_1 = ", worker can ";
+    private static final String actionSent2_2 = " in these places:";
+    private static final String godChosen1 = " chose you. ";
     private static List<String> actionSentences;
     private static int actionIndex;
     private static List<String> endTurnSentences;
@@ -45,62 +51,57 @@ public class CommunicationSentences {
     private static List<String> errorSentence;
     private static int errorIndex;
 
+
     public static String getEndTurnPhrase(String playerName, String playerColor){
         String prefix = playerColor + playerName + ANSI_RESET;
         String phrase = endTurnSentences.get(endTurnIndex);
-        if(endTurnIndex<endTurnSentences.size()-1)
-            endTurnIndex++;
-        else
-            endTurnIndex=0;
 
-        return prefix + " " + phrase;
+        endTurnIndex = addIndexOfList(endTurnSentences, endTurnIndex);
+
+        return prefix + phrase;
     }
 
     public static String getErrorPhrase(){
         String phrase = errorSentence.get(errorIndex);
-        if(errorIndex<errorSentence.size()-1)
-            errorIndex++;
-        else
-            errorIndex=0;
 
+        errorIndex = addIndexOfList(errorSentence,errorIndex);
         return phrase;
     }
 
     public static String getActivationPhrase(List<String> stringList, String playerName, String playerColor){
         String phrase = activationPowerSentence.get(activationIndex);
         activationIndex++;
-        String choiceSent = formToActivatePower + buildChoiceSent(stringList, otherwise);
+        String choiceSent = formToActivatePower + buildChoiceSent(stringList, otherwise, ",");
         String prefix = playerColor + playerName + ANSI_RESET;
 
-        if(activationIndex<activationPowerSentence.size()-1)
-            activationIndex++;
-        else
-            activationIndex=0;
+        activationIndex = addIndexOfList(activationPowerSentence, activationIndex);
 
         return prefix + ". " + phrase + choiceSent;
     }
 
     public static String getPreLobbyPhrase(List<String> stringList){
-        return welcomeToSantorini + preLobbySent +  buildChoiceSent(stringList, otherwise);
+        return welcomeToSantorini + preLobbySent +  buildChoiceSent(stringList, otherwise, ",");
     }
 
     public static String getColorPhrase(List<String> stringList, String playerName){
-        return colorSent + buildChoiceSent(stringList, otherwise);
+        return colorSent + buildChoiceSent(stringList, otherwise, ",");
     }
 
     public static String getGodChoicePhrase(List<String> stringList, String playerName, String playerColor){
         String prefix = playerColor + playerName + ANSI_RESET;
-        return prefix + "," + godChoiceSent1 + "\n" + buildChoiceSent(stringList, "\n");
+        if(stringList.size()>1)
+            return prefix + "," + godChoiceSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
+        else return prefix + ", "  + stringList.get(0) + godChosen1;
     }
 
     public static String getGodSetPhrase(List<String> stringList, String playerName, String playerColor){
         String prefix = playerColor + playerName + ANSI_RESET;
-        return prefix + "," + godSetSent1 + "\n" + buildChoiceSent(stringList, "\n");
+        return prefix + "," + godSetSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
     }
 
-    private static String buildChoiceSent(List<String> stringList, String conjunction){
+    private static String buildChoiceSent(List<String> stringList, String conjunction, String punctuation){
         if(stringList.size()<=2)
-            return " " + stringList.get(0) + ", " + conjunction + " " + stringList.get(1);
+            return stringList.get(0) + punctuation + conjunction + stringList.get(1);
         else{
             StringBuilder stringBuilder = new StringBuilder();
             for (String s : stringList)
@@ -113,21 +114,18 @@ public class CommunicationSentences {
         String sentence;
         String prefix = playerColor + playerName + ANSI_RESET;
         if(specification.equals(MOVE)){
-            sentence = moved + "[" + newRow + "]"+"["+newColumn+"]";
+            sentence = moved + "[" + newRow +","+newColumn+"]";
         }else
-            sentence = built + "[" + newRow + "]"+"["+newColumn+"]";
+            sentence = built + "[" + newRow + ","+newColumn+"]";
 
         return prefix + sentence;
     }
 
     public static String getActionPhrase(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor) {
         String phrase = actionSentences.get(actionIndex);
-        String prefix = playerColor + playerName + ANSI_RESET;
+        String prefix = SET_UP + playerColor + playerName + ANSI_RESET;
 
-        if(actionIndex<actionSentences.size()-1)
-            actionIndex++;
-        else
-            actionIndex=0;
+        actionIndex = addIndexOfList(actionSentences, actionIndex);
 
         return buildAvailablePhrase(prefix, phrase, specification, worker, hashMapList);
     }
@@ -135,16 +133,15 @@ public class CommunicationSentences {
     private static String buildAvailablePhrase(String prefix, String phrase, String specification, String worker, List<HashMap<String, String>> hashMapList){
         String beginOfPhrase = prefix +  insertWorker(phrase + specification + actionSentences.get(actionIndex), worker);
         String endOfPhrase = findSpaces(hashMapList);
-        if(actionIndex<actionSentences.size()-1)
-            actionIndex++;
-        else
-            actionIndex=0;
+
+        actionIndex = addIndexOfList(actionSentences, actionIndex);
+
         return beginOfPhrase + "\n" + endOfPhrase;
     }
 
     private static String insertWorker(String content, String number){
-        int index = content.lastIndexOf("Worker");
-        return content.substring(0, index) + " " + number + " " + content.substring(index+1);
+        int index = content.lastIndexOf("worker");
+        return content.substring(0, index+6) + " " + number  + content.substring(index+6);
     }
 
     private static String findSpaces(List<HashMap<String, String>> hashMapList){
@@ -152,7 +149,7 @@ public class CommunicationSentences {
         StringBuilder s = new StringBuilder();
         hashMapList.sort(comparator);
         for(HashMap<String, String> hashMap: hashMapList){
-            s.append("[").append(lastString(hashMap, true)).append("]").append("[").append(lastString(hashMap, false)).append("] ");
+            s.append("[").append(lastString(hashMap, true)).append(",").append(lastString(hashMap, false)).append("] ");
         }
         return s.toString();
     }
@@ -225,6 +222,7 @@ public class CommunicationSentences {
     }
 
     private static void createBaseActionSentence(){
+        set_upIndex = 0;
         actionIndex = 0;
         actionSentences = new ArrayList<>();
         actionSentences.add(actionSent1_1);
@@ -233,4 +231,12 @@ public class CommunicationSentences {
         actionSentences.add(actionSent2_2);
     }
 
+    private static int addIndexOfList(List<String> stringList, int index){
+        if(index<stringList.size()-1)
+            index++;
+        else
+            index=0;
+
+        return index;
+    }
 }

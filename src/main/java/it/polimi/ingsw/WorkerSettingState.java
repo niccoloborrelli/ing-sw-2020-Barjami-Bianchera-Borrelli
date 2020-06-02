@@ -17,7 +17,9 @@ public class WorkerSettingState extends State {
     }
 
     public void onInput(Visitor visitor) throws IOException {
+        System.out.println("Sono dentro Worker Setting State");
         WorkerSpaceCouple input = visitor.visit(this);
+        System.out.println(inputAcceptable(input));
         if(inputAcceptable(input)){
             workerSpaceCoupleList.remove(input);
             Worker worker=input.getWorker();

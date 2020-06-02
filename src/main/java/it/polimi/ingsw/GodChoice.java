@@ -34,11 +34,11 @@ public class GodChoice extends State {
 
         turnManager = player.getStateManager().getTurnManager();
         if(turnManager.getAvailableGods().size()==1) {
+            notifyLeft(turnManager.getAvailableGods());
             player.setPlayerGod(turnManager.getAvailableGods().get(0));
             turnManager.getAvailableGods().remove(player.getPlayerGod());
             try {
                 player.getController().decoratePlayer(player);
-                player.getStateManager().setNextState(player);
                 player.getStateManager().setNextState(player);
             } catch (IOException | NoSuchMethodException | ClassNotFoundException e) {
                 e.printStackTrace();

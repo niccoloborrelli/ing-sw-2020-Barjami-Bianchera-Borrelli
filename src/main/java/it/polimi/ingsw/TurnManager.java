@@ -100,22 +100,19 @@ public class TurnManager {
     public void setNextPlayer(Player player){
         Player nextPlayer;
         if(allPlayerWait()) {
+            System.out.println("Tutti stanno aspettando");
             int pos = players.indexOf(player);
             if (pos == players.size() - 1) {
                 nextPlayer = players.get(0);
-                try {
-                    nextPlayer.getStateManager().setNextState(nextPlayer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-            else {
+            else
                 nextPlayer = players.get(pos + 1);
-                try {
-                    nextPlayer.getStateManager().setNextState(nextPlayer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+            try {
+                System.out.println("Turno del prossimo giocatore");
+                nextPlayer.getStateManager().setNextState(nextPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -2,14 +2,12 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class HandlerHub {
 
     private HashMap<Controller, Handler> handlerControllerHashMap;
-    private static final String endMessage = "<data><code>0</code><message>Somebody disconnected from server! Game is nullified</message></data>"; // DA CAMBIARE
+    private static final String endMessage = "<data><code>3</code><player></player><specification>endGame</specification><message></message></data>"; // DA CAMBIARE
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 
@@ -33,8 +31,8 @@ public class HandlerHub {
             try {
                 if(!leftHandler.equals(handler))
                     leftHandler.communicate(PREFIX + endMessage);
-                handler.setEndGame(true);
-                leftHandler.getSc().close(); //oppure attendere il messaggio di quit?
+                leftHandler.setEndGame(true);
+                leftHandler.getSc().close();
             } catch (IOException ignored) {
             }
 
