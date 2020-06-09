@@ -125,11 +125,12 @@ class ControllerTest {
                 LastChange lastChange = new LastChange();
                 lastChange.setSpecification("endTurn");
                 lastChange.setCode(0);
+                player.setLastChange(lastChange);
 
                 controller.setPlayer(player);
                 controller.setHandlerHub(handlerHub);
 
-                controller.update(lastChange);
+                controller.update();
                 serverSocket.close();
 
             } catch (IOException e) {
@@ -185,7 +186,9 @@ class ControllerTest {
                 lastChange.setWorker(player.getWorkers().get(0));
                 lastChange.setIntegerList(integerList);
 
-                controller.update(lastChange);
+                player.setLastChange(lastChange);
+
+                controller.update();
                 serverSocket.close();
 
             } catch (IOException e) {

@@ -53,6 +53,10 @@ public class Player implements Observed{
         winCondition = new BaseWinCondition();
     }
 
+    public void setLastChange(LastChange lastChange) {
+        this.lastChange = lastChange;
+    }
+
     /**
      * calls the onInput of the state in wich the player is set
      * @param visitor the input wich will make the state of player change
@@ -227,7 +231,7 @@ public class Player implements Observed{
 
     @Override
     public void notify(LastChange lastChange){
-        controller.update(lastChange);
+        controller.update();
     }
 
     public void notifyController(){

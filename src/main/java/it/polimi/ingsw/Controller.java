@@ -447,7 +447,8 @@ public class Controller{
     }
 
 
-    public void update(LastChange lastChange){
+    public void update(){
+        LastChange lastChange = player.getLastChange();
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
