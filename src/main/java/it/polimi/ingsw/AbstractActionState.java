@@ -13,12 +13,14 @@ public abstract class AbstractActionState extends State {
     public abstract Space getSpaceToAct();
     public abstract Space getStartingSpace();
     public abstract String getAction();
+
     public void notifyActionPerformed(WorkerSpaceCouple wsc,String action){
-        LastChange actionPerformed = new LastChange();
+        LastChange actionPerformed = player.getLastChange();
         actionPerformed.setCode(2);
         actionPerformed.setSpecification(action);
         actionPerformed.setSpace(wsc.getSpace());
         actionPerformed.setWorker(wsc.getWorker());
+
         player.notifyController();
     }
 

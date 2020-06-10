@@ -228,6 +228,7 @@ public class DeliveryMessage {
         if (code == 0) {
             sendToInterface(specification, playerName, playerColor);
         } else if (code == 1) {
+            System.out.println("DECODE POSSIBLE CHOICE ->");
             decodePossibleChoice(doc, specification, playerName, playerColor);
         } else if (code == 2) {
             decodeUpdate(doc, specification, playerName, playerColor);

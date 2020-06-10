@@ -231,7 +231,7 @@ public class Player implements Observed{
 
     @Override
     public void notify(LastChange lastChange){
-        controller.update();
+        controller.update(lastChange);
     }
 
     public void notifyController(){

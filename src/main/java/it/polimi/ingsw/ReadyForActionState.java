@@ -111,7 +111,7 @@ public class ReadyForActionState extends State {
     private void notifyInputs(){
         String action=player.getActionsToPerform().get(0);
         for(Worker tempWorker: player.getWorkers()){
-            LastChange workerActionsNotify=player.getLastChange();;
+            LastChange workerActionsNotify=player.getLastChange();
             workerActionsNotify.setWorker(tempWorker);
             workerActionsNotify.setSpecification(action);
             workerActionsNotify.setCode(1);

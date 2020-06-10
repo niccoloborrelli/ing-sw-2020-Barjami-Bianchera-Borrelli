@@ -454,6 +454,12 @@ public class Controller{
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
+    public void update(LastChange lastChange){
+        String data = buildUpdate(lastChange);
+        int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        handlerHub.sendData(PREFIX + data, this, codeCommunication);
+    }
+
     public int howToCommunicate(int code, LastChange lastChange){
         int codeCommunication = INVALID_VALUE;
 
@@ -463,6 +469,7 @@ public class Controller{
                 break;
             case UPDATE_CHOICE:
             case UPDATE_ENDGAME:
+                System.out.println("UPDATE_ENDGAME");
                 codeCommunication = SINGLE_COMMUNICATION;
                 break;
             case UPDATE_GAME_FIELD:
@@ -479,6 +486,7 @@ public class Controller{
         int code = lastChange.getCode();
         String codeInString = insertCode(code);
         String specification = generateField(lastChange.getSpecification(), SPECIFICATION);
+        System.out.println(specification);
         String playerString = createPlayerString(player);
 
         switch (code) {
@@ -487,6 +495,7 @@ public class Controller{
                 break;
             case UPDATE_CHOICE:
                 message = buildUpdateChoiceMessage(lastChange);
+                System.out.println("UPDATE_CHOICE");
                 break;
             case UPDATE_GAME_FIELD:
                 message = buildUpdateGameFieldMessage(lastChange);
@@ -601,6 +610,7 @@ public class Controller{
      */
 
     private StringBuilder generateSpaceList(StringBuilder message, List<Space> spaceList){
+
         if(spaceList!=null) {
             for (Space space : spaceList)
                 message.append(generateStringSpace("",space, SPACE));
@@ -713,7 +723,7 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        Parser parser=new Parser(new File("C:\\Users\\nikob\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation();
     }
 
@@ -738,7 +748,7 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\nikob\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();
