@@ -199,7 +199,7 @@ class StateManagerTest {
 
         State action = stateManager.getStateHashMap().get("ActionState");
         State endTurn = stateManager.getStateHashMap().get("EndTurnState");
-        Method m = player.getClass().getDeclaredMethod("hasAction");
+        Method m = player.getClass().getDeclaredMethod("isChallenger");
         int oldSize = stateManager.getTable().get(action).get(1).getConditions().size();
 
         stateManager.addNewConditions(action,endTurn,m,true,0);
@@ -235,7 +235,7 @@ class StateManagerTest {
         List<Line> endTurnArrival = stateManager.searchFinishState(lineList, endTurn);
         List<Line> found = stateManager.searchForPriority(endTurnArrival,0);
 
-        assertTrue(found.get(0).getConditions().size()==oldSize && found.get(0).getConditions().size()==0);
+        assertTrue(found.get(0).getConditions().size()==oldSize);
     }
 
     /*
@@ -370,9 +370,9 @@ class StateManagerTest {
         controller.createFluxTable();
 
         State endTurn = stateManager.getState("EndTurnState");
-        List<Line> lineList = stateManager.searchForPriority(stateManager.getTable().get(endTurn), 2);
+        List<Line> lineList = stateManager.searchForPriority(stateManager.getTable().get(endTurn), 3);
 
-        assertTrue(lineList.size()==2 && lineList.get(0).getPriority()==2 && lineList.get(1).getPriority()==2);
+        assertTrue(lineList.size()==2 && lineList.get(0).getPriority()==3 && lineList.get(1).getPriority()==3);
     }
 
     /*

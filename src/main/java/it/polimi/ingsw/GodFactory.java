@@ -27,59 +27,61 @@ public class GodFactory {
     public void decoratePlayer(HashMap<String, List<String>> godMap,Player player) throws NoSuchMethodException, ClassNotFoundException {
         StateManager stateManager=player.getStateManager();
         List<String> effects=godMap.get(player.getPlayerGod());
-        if(effects.contains("SwapWorkers")){
-            swapWorkers(player,stateManager);
-        }
+        if(effects!=null) {
+            if (effects.contains("SwapWorkers")) {
+                swapWorkers(player, stateManager);
+            }
 
-        if(effects.contains("AdditionalMove")){
-            additionalMove(player,stateManager);
-        }
+            if (effects.contains("AdditionalMove")) {
+                additionalMove(player, stateManager);
+            }
 
-        if(effects.contains("DenyUpperMove")) {
-            denyUpperMove(player,stateManager);
-        }
+            if (effects.contains("DenyUpperMove")) {
+                denyUpperMove(player, stateManager);
+            }
 
-        if(effects.contains("DomeEverywhere")){
-            domeEveryWhere(player);
-        }
+            if (effects.contains("DomeEverywhere")) {
+                domeEveryWhere(player);
+            }
 
-        if(effects.contains("AdditionalBuildNoInitial")){
-            additionalBuildNoInitial(player,stateManager);
-        }
-        if(effects.contains("CanBuildTwiceNotDome")) {
-            CanBuildTwiceNotDome(player,stateManager);
-        }
-        if(effects.contains("PushBack")){
-            pushBack(player,stateManager);
-        }
-        if(effects.contains("JumpMoreLevelsWin")){
-            jumpMoreLevelsWin(player);
-        }
+            if (effects.contains("AdditionalBuildNoInitial")) {
+                additionalBuildNoInitial(player, stateManager);
+            }
+            if (effects.contains("CanBuildTwiceNotDome")) {
+                CanBuildTwiceNotDome(player, stateManager);
+            }
+            if (effects.contains("PushBack")) {
+                pushBack(player, stateManager);
+            }
+            if (effects.contains("JumpMoreLevelsWin")) {
+                jumpMoreLevelsWin(player);
+            }
 
-        if(effects.contains("BuildAlsoBeforeIfNotMoveUp")){
-            buildAlsoBefore(player,stateManager);
-        }
+            if (effects.contains("BuildAlsoBeforeIfNotMoveUp")) {
+                buildAlsoBefore(player, stateManager);
+            }
 
-        if(effects.contains("CompleteTowerWin")){
-            completeTowerWin(player);
-        }
+            if (effects.contains("CompleteTowerWin")) {
+                completeTowerWin(player);
+            }
 
-        if(effects.contains("AdditionalBuildNotPerimeter")){
-            additionalBuildsNoPerimeter(player,stateManager);
-        }
+            if (effects.contains("AdditionalBuildNotPerimeter")) {
+                additionalBuildsNoPerimeter(player, stateManager);
+            }
 
-        if(effects.contains("IfHigherNoMove")){
-            player.getIslandBoard().setHigherNoMove(true);
-            player.setNotHigherNoMove(true);
-        }
+            if (effects.contains("IfHigherNoMove")) {
+                player.getIslandBoard().setHigherNoMove(true);
+                player.setNotHigherNoMove(true);
+            }
 
-        if(effects.contains("MustMoveUp")) {
-            player.getIslandBoard().setMustMoveUp(true);
-            player.setNotMustMoveUp(true);
-        }
+            if (effects.contains("MustMoveUp")) {
+                player.getIslandBoard().setMustMoveUp(true);
+                player.setNotMustMoveUp(true);
+            }
 
-        if(effects.contains("BuildUnderYou")){
-            buildUnderYou(player);
+            if (effects.contains("BuildUnderYou")) {
+                buildUnderYou(player);
+            }
         }
 
     }

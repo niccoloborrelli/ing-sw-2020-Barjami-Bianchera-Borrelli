@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,6 +72,7 @@ public class Controller{
     private static final String NAME = "name";
     private static final String CHAR = "char";
     private static final String LOSE = "lose";
+    private static final String LOST = "lost";
     private static final String WORKERSETTING = "workerSetting";
     private static final String SPECIFICATION = "specification";
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -80,9 +82,12 @@ public class Controller{
     private HandlerHub handlerHub;
     private HashMap<String,List<String>> godMap;
     private Visitor visitor;
+    private List<String> operations;
+    private HashMap<String, List<String>> powerGodMap;
 
     public Controller() {
         visitor = new Visitor();
+        createHelp();
     }
 
     public Visitor getVisitor() {
@@ -111,19 +116,123 @@ public class Controller{
         resetAttributeVisitor(visitor);
         int code = findCode(message);
 
-        if (code == STRING_RECEIVING) {
-            String operation = findString(message);
-            visitor.setStringInput(operation);
-        } else if (code == SPACE_RECEIVING) {
-            HashMap<Worker, Space> workerSpaceHashMap = convertInSpaceAndWorker(message);
-            setSpaceInput(workerSpaceHashMap);
-        } else if (code == INT_RECEIVING) {
-            int value = parseItemInt(message);
-            visitor.setIntInput(value);
+        if(!isItHelp(message)) {
+            if (code == STRING_RECEIVING) {
+                String operation = findString(message);
+                visitor.setStringInput(operation);
+            } else if (code == SPACE_RECEIVING) {
+                HashMap<Worker, Space> workerSpaceHashMap = convertInSpaceAndWorker(message);
+                setSpaceInput(workerSpaceHashMap);
+            } else if (code == INT_RECEIVING) {
+                int value = parseItemInt(message);
+                visitor.setIntInput(value);
+            }
+
+            try {
+                player.onInput(visitor);
+            }catch (IOException ignored){}
+        }else
+            giveItHelp(message);
+    }
+
+    private boolean isItHelp(String message){
+        boolean isItHelp = false;
+        String operation = findString(message);
+
+        if(operation!=null) {
+            if (operation.equals("-help"))
+                isItHelp = true;
+            else if (operation.contains("-god"))
+                isItHelp = true;
+            else if (operation.equals("-whatToDo"))
+                isItHelp = true;
         }
-        try {
-            player.onInput(visitor);
-        }catch (IOException ignored){}
+
+        return isItHelp;
+    }
+    //VEDERE SE SPOSTARLO IN MODEL O TENERLO IN CONTROLLER (SE IN MODEL BISOGNA TENERE UNA CLASSE DEI GOD)
+
+    private void giveItHelp(String message){
+        String operation = findString(message);
+        if(operation.equals("-help"))
+            help();
+        else if(operation.equals("-whatToDo"))
+            whatToDo();
+        else if(operation.contains("-god")) {
+            if (operation.equals("-god"))
+                giveListOfGod();
+            else
+                pickChosenPower(message);
+        }
+
+    }
+
+    private void giveListOfGod(){
+        LastChange lastChange = new LastChange();
+        lastChange.setSpecification("god");
+        lastChange.setCode(1);
+
+        if(powerGodMap==null)
+            createPowerGodMap();
+
+        addAllGodsToStringList(lastChange);
+        update(lastChange);
+
+    }
+
+    private void addAllGodsToStringList(LastChange lastChange) {
+        for (String god : powerGodMap.keySet()) {
+            lastChange.getStringList().add(god + ": " + powerGodMap.get(god));
+        }
+    }
+
+    private void createPowerGodMap(){
+        Parser parser = new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        powerGodMap = parser.createHashRepresentation("Description");
+    }
+
+
+    private void pickChosenPower(String message){
+        String request = findString(message);
+        LastChange lastChange = new LastChange();
+        lastChange.setSpecification("god");
+        lastChange.setCode(0);
+        int index;
+        if(message.contains(" "))
+            index = message.indexOf(" ");
+        else
+            index = message.lastIndexOf("god") - 1;
+
+        if(powerGodMap==null)
+            createPowerGodMap();
+        System.out.println(request.substring(index));
+        if (powerGodMap.get(request.substring(index)) != null) {
+            lastChange.getStringList().add(powerGodMap.get(request.substring(index)).get(0));
+            update(lastChange);
+        }
+
+
+    }
+
+    private void help(){
+        LastChange lastChange = new LastChange();
+        lastChange.setStringList(new ArrayList<String>(operations));
+        lastChange.setCode(1);
+        lastChange.setSpecification("help");
+
+        player.notify(lastChange);
+    }
+
+    public void whatToDo(){
+        player.notifyController();
+    }
+
+    private void createHelp(){
+        operations=new ArrayList<>();
+        operations.add("-help : It gives you a list of possible operations you can always require");
+        operations.add("-whatToDo : It gives you the last significant message, which contains indication for what you have to do");
+        operations.add("-god : It gives you every God with associated power");
+        operations.add("-god__ : Instead of \"__\", you have to put a God name. It gives you the power of chosen God");
     }
 
     /**
@@ -176,8 +285,9 @@ public class Controller{
         if (worker != null) {
             space = convertInSpace(message);
             workerSpaceHashMap.put(worker, space);
-        } else
+        } else {
             workerSpaceHashMap.put(new Worker(), new Space(INVALID_VALUE, INVALID_VALUE));
+        }
 
         return workerSpaceHashMap;
     }
@@ -203,8 +313,9 @@ public class Controller{
             space = player.getIslandBoard().getSpace(row, column);
         }
 
-        if (space == null)
+        if (space == null) {
             space = new Space(INVALID_VALUE, INVALID_VALUE);
+        }
 
         return space;
     }
@@ -248,7 +359,7 @@ public class Controller{
             Node node = nodeList.item(FIRST_CHILD);
             if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
-                    coord = element.getTextContent();
+                coord = element.getTextContent();
             }
         }
         return coord;
@@ -298,12 +409,11 @@ public class Controller{
         if (numberInString != null) {
             try {
                 number = Integer.parseInt(numberInString);
-                if (number < player.getWorkers().size())
+                if (number < player.getWorkers().size()) {
                     worker = player.getWorkers().get(number);
-                else
-                    worker = new Worker();
+                }
             } catch (NumberFormatException e) {
-                worker = new Worker();
+                worker=null;
             }
         }
         return worker;
@@ -469,7 +579,6 @@ public class Controller{
                 break;
             case UPDATE_CHOICE:
             case UPDATE_ENDGAME:
-                System.out.println("UPDATE_ENDGAME");
                 codeCommunication = SINGLE_COMMUNICATION;
                 break;
             case UPDATE_GAME_FIELD:
@@ -486,7 +595,6 @@ public class Controller{
         int code = lastChange.getCode();
         String codeInString = insertCode(code);
         String specification = generateField(lastChange.getSpecification(), SPECIFICATION);
-        System.out.println(specification);
         String playerString = createPlayerString(player);
 
         switch (code) {
@@ -495,7 +603,6 @@ public class Controller{
                 break;
             case UPDATE_CHOICE:
                 message = buildUpdateChoiceMessage(lastChange);
-                System.out.println("UPDATE_CHOICE");
                 break;
             case UPDATE_GAME_FIELD:
                 message = buildUpdateGameFieldMessage(lastChange);
@@ -572,10 +679,11 @@ public class Controller{
     }
 
     private String convertIntToLetter(int number){
-        if(number==0)
+        if(number==0) {
             return "A";
-        else if(number==1)
+        }else if(number==1) {
             return "B";
+        }
         return "C";
     }
 
@@ -634,6 +742,7 @@ public class Controller{
                 break;
             case BUILD:
                 data = updateBuilding(dataOutput.getSpace());
+                break;
         }
         return data;
     }
@@ -688,7 +797,7 @@ public class Controller{
 
     private void sendLostToOthers(String code, String player){
         String message = generateField("", MESSAGE);
-        String specification = generateField(LOSE, SPECIFICATION);
+        String specification = generateField(LOST, SPECIFICATION);
         String data = generateField(code + player + specification + message, DATA);
         handlerHub.sendData(data, this, ALL_NOT_ME);
     }
@@ -723,8 +832,9 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\nikob\\Desktop\\Gods.txt"));
-        this.godMap=parser.createHashRepresentation();
+        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        this.godMap=parser.createHashRepresentation("Powers");
+
     }
 
     /**
@@ -748,7 +858,7 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\nikob\\Desktop\\table.txt"),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();

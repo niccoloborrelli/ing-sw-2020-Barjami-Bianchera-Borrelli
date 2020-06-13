@@ -2,8 +2,11 @@ package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static java.lang.Thread.sleep;
-import static org.junit.jupiter.api.Assertions.*;
 
 class FieldTest {
 
@@ -27,4 +30,49 @@ class FieldTest {
         field.viewRemoveWorker(2,1);
         field.plot();
     }
+
+    @Test
+    void printParticularSentences(){
+        Field field = new Field();
+        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("error", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("win", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("lose", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("lost", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("name", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("workerSetting", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("endGame", "carmelo", Color.ANSI_RED.escape());
+    }
+
+    @Test
+    void printChoicesTest1(){
+        Field field = new Field();
+        List<String> stringList = new ArrayList<>();
+        stringList.add("9");
+        stringList.add("1");
+
+        field.printChoices(stringList, "power", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices(stringList, "preLobby", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices(stringList, "color", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices(stringList, "godChoice", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices(stringList, "godSet", "carmelo", Color.ANSI_RED.escape());
+    }
+    @Test
+    void printChoicesTest2() {
+        Field field = new Field();
+        List<HashMap<String, String>> hashMaps = new ArrayList<>();
+        HashMap<String, String> space1 = new HashMap<>();
+        HashMap<String, String> space2 = new HashMap<>();
+        space1.put("1","1");
+        space2.put("2", "2");
+        hashMaps.add(space1);
+        hashMaps.add(space2);
+
+        field.printChoices("A", hashMaps, "move", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices("A", hashMaps, "build", "carmelo", Color.ANSI_RED.escape());
+    }
+
 }

@@ -30,13 +30,16 @@ public class CommunicationSentences {
     private static final String godSetSent1 = " you're the challenger. You have the power to decide which Gods would be involved " +
             "in this battle. In change of this possibility, you will receive the not-chosen God.\n" +
             "Pick them from those:";
+    private static final String godsPowers = ", these are god powers:\n";
+    private static final String singlePower = ", this is god power:\n";
     public static final String nameSent = "You have to choose your name";
     private static final String otherwise = "otherwise ";
     private static final String moved = " moved in space ";
     private static final String built = " built in space ";
     private static final String MOVE = "move";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
-    public static final String lost = "You lost! Your God lashes out in rage. Run away while you can";
+    public static final String lose = "You lost! Your God lashes out in rage. Run away while you can";
+    private static final String lost = " lost! One less enemy.";
     private static final String actionSent1_1 = " Choose carefully. Decide who would ";
     private static final String actionSent1_2 = ", worker can do it in these places:";
     private static final String actionSent2_1 = ", worker can ";
@@ -51,6 +54,12 @@ public class CommunicationSentences {
     private static List<String> errorSentence;
     private static int errorIndex;
 
+
+    public static String getLostPhrase(String playerName, String playerColor){
+        String prefix = playerColor + playerName + ANSI_RESET;
+
+        return prefix + lost;
+    }
 
     public static String getEndTurnPhrase(String playerName, String playerColor){
         String prefix = playerColor + playerName + ANSI_RESET;
@@ -187,6 +196,17 @@ public class CommunicationSentences {
                     return 0;
             }
         };
+    }
+
+    public static String getGodPowers(List<String> stringList, String playerName, String playerColor){
+        String prefix = playerColor + playerName + ANSI_RESET;
+        String built;
+        if(stringList.size()>1)
+            built = godsPowers + buildChoiceSent(stringList, "", "");
+        else
+            built = singlePower + stringList.get(0);
+
+        return prefix  + built;
     }
 
     public static void createAll(){

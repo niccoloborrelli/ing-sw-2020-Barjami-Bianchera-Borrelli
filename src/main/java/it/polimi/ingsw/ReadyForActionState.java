@@ -34,23 +34,37 @@ public class ReadyForActionState extends State {
     public void onStateTransition() throws IOException {
         boolean hasLost = false;
         player.setLastReceivedInput(null);
-        List<ArrayList<Space>> possibleAction = new ArrayList<ArrayList<Space>>();
-        String action = player.getActionsToPerform().get(0);
-        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
-        possibleAction=CheckingUtility.getLists(player,action);
+        List<ArrayList<Space>> possibleAction = calculateAvailableSpace();
         hasLost = checkForLosing(possibleAction);
-        if(hasLost) {
-            player.setInGame(false);
-            LastChange lastChange = player.getLastChange();
-            lastChange.setCode(3);
-            lastChange.setSpecification("lose");
-            player.notifyController();
-            player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
-        }
+        if(hasLost)
+            loseProcedure();
         else {
             notifyInputs();
             setAllowedSpaces();
         }
+    }
+
+    private List<ArrayList<Space>> calculateAvailableSpace(){
+        String action = player.getActionsToPerform().get(0);
+        clearAvailableSpacePlayer();
+        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
+        return CheckingUtility.getLists(player,action);
+    }
+
+    private void clearAvailableSpacePlayer(){
+        for(Worker w: player.getWorkers()){
+            w.getPossibleBuilding().clear();
+            w.getPossibleBuilding().clear();
+        }
+    }
+
+    private void loseProcedure() throws IOException {
+        player.setInGame(false);
+        LastChange lastChange = player.getLastChange();
+        lastChange.setCode(3);
+        lastChange.setSpecification("lose");
+        player.notifyController();
+        player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
     }
 
     /**

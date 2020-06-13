@@ -193,7 +193,10 @@ public class Field {
                 data = won;
                 break;
             case "lose":
-                data = lost;
+                data = lose;
+                break;
+            case "lost":
+                data = getLostPhrase(playerName, playerColor);
                 break;
             case "name":
                 data = nameSent;
@@ -227,6 +230,8 @@ public class Field {
             case "godSet":
                 data = getGodSetPhrase(stringList, playerName, playerColor);
                 break;
+            case "god":
+                data = getGodPowers(stringList, playerName, playerColor);
 
         }
         System.out.println(data);
@@ -252,6 +257,8 @@ public class Field {
                 data =getActionPhrase(worker, hashMap, specification, playerName, playerColor);
                 break;
         }
+
+        System.out.println(data);
     }
 }
 

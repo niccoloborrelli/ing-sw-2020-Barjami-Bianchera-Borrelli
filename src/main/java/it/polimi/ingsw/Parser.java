@@ -24,7 +24,7 @@ public class Parser {
         this.inputFile=input;
     }
 
-    public HashMap<String, List<String>> createHashRepresentation(){
+    public HashMap<String, List<String>> createHashRepresentation(String target){
         try
         {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -41,15 +41,14 @@ public class Parser {
                     Element eElement = (Element) nNode;
                     key=eElement.getElementsByTagName("Name").item(0).getTextContent();
 
-                    Node n=eElement.getElementsByTagName("Powers").item(0);
+                    Node n=eElement.getElementsByTagName(target).item(0);
                     NodeList nn=n.getChildNodes();
                     ArrayList<String> s=new ArrayList<String>();
                     for (int t = 0; t < nn.getLength(); t++) {
                         Node nodo = nn.item(t);
                         if (nodo.getNodeType() == Node.ELEMENT_NODE) {
                             Element ee = (Element) nodo;
-                            s.add( ee
-                                    .getTextContent());
+                            s.add( ee.getTextContent());
                         }
                     }
                     map.put(key,s);

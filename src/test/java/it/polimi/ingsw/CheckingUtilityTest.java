@@ -60,6 +60,7 @@ class CheckingUtilityTest {
     void calculateValidSpaceTest1() {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
+        player.setIslandBoard(islandBoard);
 
         Worker worker1 = player.getWorkers().get(0);
         worker1.setWorkerPlayer(player);
@@ -91,6 +92,7 @@ class CheckingUtilityTest {
     void calculateValidSpaceTest2() {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
+        player.setIslandBoard(islandBoard);
 
         Worker worker1 = player.getWorkers().get(0);
         worker1.setWorkerPlayer(player);
@@ -124,6 +126,7 @@ class CheckingUtilityTest {
     void calculateValidSpaceTest3() {
         Player player = new Player();
         IslandBoard islandBoard = new IslandBoard();
+        player.setIslandBoard(islandBoard);
 
         Worker worker1 = player.getWorkers().get(0);
         worker1.setWorkerPlayer(player);
@@ -132,6 +135,7 @@ class CheckingUtilityTest {
 
         worker1.setCantBuild(true);
 
+        worker2.setCantBuild(false);
         worker2.setCantBuildDome(true);
         worker2.setCantBuildUnder(false);
         worker2.setCantBuildPerimeter(true);
@@ -149,6 +153,7 @@ class CheckingUtilityTest {
 
         CheckingUtility.calculateValidSpace(player, islandBoard, "build");
 
+        System.out.println(worker2.getPossibleBuilding().size());
         assertTrue(worker1.getPossibleBuilding().size() == 0 && worker2.getPossibleBuilding().size() == 2 &&
                 worker2.getPossibleBuilding().contains(islandBoard.getSpace(1, 1)));
     }

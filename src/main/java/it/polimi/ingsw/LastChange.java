@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LastChange {
@@ -10,6 +11,12 @@ public class LastChange {
     Space space;
     int code;
     String specification;
+
+    public LastChange(){
+        listSpace = new ArrayList<>();
+        integerList = new ArrayList<>();
+        stringList = new ArrayList<>();
+    }
 
     public Worker getWorker() {
         return worker;

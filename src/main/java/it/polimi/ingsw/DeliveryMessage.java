@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static it.polimi.ingsw.Color.*;
 
 public class DeliveryMessage {
@@ -51,6 +52,7 @@ public class DeliveryMessage {
     private static final String NAME = "name";
     private static final String ENDGAME = "endGame";
     private static final String CHAR = "char";
+    private static final String HELP = "help";
     private static final int FIRST_CHILD = 0;
 
 
@@ -77,10 +79,11 @@ public class DeliveryMessage {
 
         if (code == 1) {
             message = buildActionMessage(input);
-        } else if (code == 2)
+        } else if (code == 2) {
             message = buildIntMessage(input);
-        else
+        }else {
             message = buildStringMessage(input);
+        }
 
         String coveredMessage = generateField(message, MESSAGE);
         String data = generateField(cd + coveredMessage, DATA);
@@ -98,10 +101,11 @@ public class DeliveryMessage {
     private int decodeInput(String input) {
         int code = 0;
 
-        if (isItWorkerAction(input))
+        if (isItWorkerAction(input)) {
             code = 1;
-        else if (isItInt(input))
+        }else if (isItInt(input)) {
             code = 2;
+        }
 
         return code;
 
@@ -180,7 +184,6 @@ public class DeliveryMessage {
      */
 
     private String buildIntMessage(String input) {
-
         return generateField(input, INT);
     }
 
@@ -228,11 +231,10 @@ public class DeliveryMessage {
         if (code == 0) {
             sendToInterface(specification, playerName, playerColor);
         } else if (code == 1) {
-            System.out.println("DECODE POSSIBLE CHOICE ->");
             decodePossibleChoice(doc, specification, playerName, playerColor);
         } else if (code == 2) {
             decodeUpdate(doc, specification, playerName, playerColor);
-        } else if(code==3){
+        } else if(code==3) {
             sendToInterface(specification, playerName, playerColor);
             netHandler.setEndGame(true);
             try {
@@ -288,18 +290,20 @@ public class DeliveryMessage {
      */
     private void decodePossibleChoice(Document doc, String specification, String playerName, String playerColor){
         String search;
-        if(specification.equals("power") || specification.equals("preLobby"))
+        if(specification.equals("power") || specification.equals("preLobby")) {
             search = INT;
-        else
+        }else {
             search = STRING;
+        }
         List<String> stringList = findListToPrint(doc, search);
         List<HashMap<String, String>> hashMapList = findHashMapToPrint(doc);
         String worker = findInsideWorker(doc);
 
-        if(stringList.size()!=0)
+        if(stringList.size()!=0) {
             sendToInterface(stringList, specification, playerName, playerColor);
-        else
+        }else {
             sendToInterface(worker, hashMapList, specification, playerName, playerColor);
+        }
     }
 
     /**
@@ -372,8 +376,9 @@ public class DeliveryMessage {
         if (nodeList != null) {
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE)
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
                     stringList.add(node.getTextContent());
+                }
             }
         }
     }
@@ -416,12 +421,13 @@ public class DeliveryMessage {
     }
 
     private String findFirstTextContent(Element element, String parameters){
+        String textContent = null;
         NodeList nodeList1 = element.getElementsByTagName(parameters);
         Node node1 = nodeList1.item(FIRST_CHILD);
         if (node1!=null && node1.getNodeType() == Node.ELEMENT_NODE) {
-            return node1.getTextContent();
+            textContent = node1.getTextContent();
         }
-        return null;
+        return textContent;
     }
 
 
@@ -433,13 +439,14 @@ public class DeliveryMessage {
     }
 
     private String parseWorker(Document document){
+        String textContent = null;
         Element el = insideField(document, MESSAGE);
         Element work = findTarget(el, WORKER);
         if(work!=null) {
             Element charWorker = findTarget(work, CHAR);
-            return charWorker.getTextContent();
+            textContent =  charWorker.getTextContent();
         }
-        return null;
+        return textContent;
     }
 
 
@@ -448,8 +455,9 @@ public class DeliveryMessage {
 
         if(specification.equals(MOVE)){
             parseMovement(integerList, document);
-        }else if(specification.equals(BUILD))
+        }else if(specification.equals(BUILD)) {
             parseBuilding(integerList, document);
+        }
 
         return integerList;
 
@@ -477,10 +485,10 @@ public class DeliveryMessage {
         Element element = findTarget(first, target);
         Element el = findTarget(element, coordinate);
         if(el!=null){
-            String rowString = el.getTextContent();
+            String coordinateString = el.getTextContent();
             try{
-               int row = Integer.parseInt(rowString);
-               integerList.add(row);
+               int coordinateValue = Integer.parseInt(coordinateString);
+               integerList.add(coordinateValue);
             }catch (NumberFormatException e){
                 integerList.add(INVALID_VALUE);
             }
@@ -489,14 +497,15 @@ public class DeliveryMessage {
 
 
     private Element findTarget(Element element, String target){
+        Element elTarget = null;
         NodeList nodeList = element.getElementsByTagName(target);
         if(nodeList!=null){
             Node node = nodeList.item(0);
             if(node!=null && node.getNodeType() == Node.ELEMENT_NODE){
-                return (Element) node;
+                elTarget =  (Element) node;
             }
         }
-        return null;
+        return elTarget;
     }
 
     private String getCodeColor(String color){
@@ -546,9 +555,7 @@ public class DeliveryMessage {
             netHandler.setEndGame(true);
             if(!graphicInterface)
                 sendToInterface(ENDGAME, null, null);
-        }catch(IOException e) {
-            e.printStackTrace();
-        }
+        }catch(IOException ignored) {}
 
     }
 
@@ -561,17 +568,17 @@ public class DeliveryMessage {
     private Document buildDocument(String message) {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;
+        Document doc = null;
         try {
             db = dbf.newDocumentBuilder();
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(message));
-            Document doc = db.parse(is);
+            doc = db.parse(is);
             doc.normalize();
-            return doc;
         } catch (ParserConfigurationException | IOException | SAXException e) { //bisogna vedere come gestirle
-            e.printStackTrace();
+            quitGame();
         }
-        return null;
+        return doc;
     }
 
     private int findCode(Document doc) {
@@ -615,6 +622,5 @@ public class DeliveryMessage {
     public void startReading(){
         netHandler.handle();
     }
-
 
 }

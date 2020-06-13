@@ -8,8 +8,10 @@ class ActionStateTest {
 
     @Test
     public  void generalActionTest1() throws IOException {
+        Controller controller = new Controller();
         Player player=new Player();
         IslandBoard islandBoard=new IslandBoard();
+        controller.setPlayer(player);
         player.setIslandBoard(islandBoard);
         Worker w1=player.getWorkers().get(0);
         Worker w2=player.getWorkers().get(1);
