@@ -153,10 +153,70 @@ class CheckingUtilityTest {
 
         CheckingUtility.calculateValidSpace(player, islandBoard, "build");
 
-        System.out.println(worker2.getPossibleBuilding().size());
         assertTrue(worker1.getPossibleBuilding().size() == 0 && worker2.getPossibleBuilding().size() == 2 &&
                 worker2.getPossibleBuilding().contains(islandBoard.getSpace(1, 1)));
     }
+
+    @Test
+    void calculateValidSpacesTest3(){
+        Player player1 = new Player();
+        Player player2 = new Player();
+        IslandBoard islandBoard = new IslandBoard();
+        player1.setIslandBoard(islandBoard);
+        player2.setIslandBoard(islandBoard);
+
+        player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(1,1));
+        islandBoard.getSpace(1,1).setOccupator(player1.getWorkers().get(0));
+        player1.getWorkers().get(1).setWorkerSpace(islandBoard.getSpace(2,2));
+        islandBoard.getSpace(2,2).setOccupator(player1.getWorkers().get(1));
+
+        player2.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
+        islandBoard.getSpace(0,0).setOccupator(player2.getWorkers().get(0));
+        player2.getWorkers().get(1).setWorkerSpace(islandBoard.getSpace(2,1));
+        islandBoard.getSpace(2,1).setOccupator(player2.getWorkers().get(1));
+
+        player1.setCantPush(false);
+        player2.setCantPush(false);
+
+        CheckingUtility.calculateValidSpace(player1, islandBoard, "move");
+        CheckingUtility.calculateValidSpace(player2, islandBoard, "move");
+
+
+        assertTrue(player1.getWorkers().get(0).getPossibleMovements().size()==6 &&
+                player1.getWorkers().get(0).getPossibleMovements().contains(islandBoard.getSpace(2,1)) &&
+                player2.getWorkers().get(0).getPossibleMovements().size()==2 &&
+                player2.getWorkers().get(1).getPossibleMovements().contains(islandBoard.getSpace(2,2)) &&
+                player2.getWorkers().get(1).getPossibleMovements().contains(islandBoard.getSpace(1,1)));
+
+    }
+
+    @Test
+    void calculateValidSpacesTest4(){
+        Player player1 = new Player();
+        Player player2 = new Player();
+        IslandBoard islandBoard = new IslandBoard();
+        player1.setIslandBoard(islandBoard);
+        player2.setIslandBoard(islandBoard);
+
+        player1.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(1,1));
+        islandBoard.getSpace(1,1).setOccupator(player1.getWorkers().get(0));
+        player1.getWorkers().get(1).setWorkerSpace(islandBoard.getSpace(2,2));
+        islandBoard.getSpace(2,2).setOccupator(player1.getWorkers().get(1));
+
+        player2.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
+        islandBoard.getSpace(0,0).setOccupator(player2.getWorkers().get(0));
+        player2.getWorkers().get(1).setWorkerSpace(islandBoard.getSpace(2,1));
+        islandBoard.getSpace(2,1).setOccupator(player2.getWorkers().get(1));
+
+        player1.setCantSwap(false);
+
+        CheckingUtility.calculateValidSpace(player1, islandBoard, "move");
+
+        assertTrue(player1.getWorkers().get(0).getPossibleMovements().size()==7 &&
+                !player1.getWorkers().get(0).getPossibleMovements().contains(islandBoard.getSpace(2,2)));
+    }
+
+
 
     /*
     questo test controlla che la restriction MustMoveUp sia eseguita correttamente

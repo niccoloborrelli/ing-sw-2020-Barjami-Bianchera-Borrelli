@@ -23,6 +23,7 @@ public class GodFactory {
     private static final String ANOTHERMOVE="hasMovesToDo";
     private static final String ANOTHERACTION="hasActionsToPerform";
     private static final String INPUTFORACTION="ReadyForActionState";
+    private static final String WORKERPLACED = "isWorkerPlaced";
 
     public void decoratePlayer(HashMap<String, List<String>> godMap,Player player) throws NoSuchMethodException, ClassNotFoundException {
         StateManager stateManager=player.getStateManager();
@@ -178,9 +179,11 @@ public class GodFactory {
         State endTurnState=stateManager.getState(ENDTURN);
         Class cl = Class.forName(CLASSNAME1);
         Method m = cl.getDeclaredMethod(INGAME);
+        Method m1 = cl.getDeclaredMethod(WORKERPLACED);
         System.out.println("IL NOME DEL METODO " + m.getName());
         stateManager.addNewFinishSpace(endTurnState,activationState,m,true,2);
         stateManager.addNewFinishSpace(activationState,readyForActionState,m,true,3);
+        stateManager.addNewConditions(endTurnState, activationState, m1, true, 2);
         stateManager.sortAllTable();
     }
 }

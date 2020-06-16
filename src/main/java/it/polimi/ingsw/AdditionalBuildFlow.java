@@ -122,8 +122,10 @@ public class AdditionalBuildFlow extends FlowChanger {
     }
 
     private void setFlagBeforeMove(Player player){
-        for (Worker w: player.getWorkers())
+        for (Worker w: player.getWorkers()) {
             w.setCantMoveUp(true);
+            w.setCantBuild(false);
+        }
     }
 
     private void setPlayerCantBuild(Player player, String type){

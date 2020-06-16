@@ -45,6 +45,7 @@ class FieldTest {
         field.printParticularSentence("name", "carmelo", Color.ANSI_RED.escape());
         field.printParticularSentence("workerSetting", "carmelo", Color.ANSI_RED.escape());
         field.printParticularSentence("endGame", "carmelo", Color.ANSI_RED.escape());
+
     }
 
     @Test
@@ -73,6 +74,28 @@ class FieldTest {
 
         field.printChoices("A", hashMaps, "move", "carmelo", Color.ANSI_RED.escape());
         field.printChoices("A", hashMaps, "build", "carmelo", Color.ANSI_RED.escape());
+    }
+
+    @Test
+    void printChoicesTest3(){
+        Field field = new Field();
+        List<String> strings = new ArrayList<>();
+        strings.add("-help : It gives you a list of possible operations you can always require");
+        strings.add("-whatToDo : It gives you the last significant message, which contains indication for what you have to do");
+        strings.add("-god : It gives you every God with associated power");
+        strings.add("-god__ : Instead of \"__\", you have to put a God name. It gives you the power of chosen God");
+
+        field.printChoices(strings, "help", "carmelo", "");
+
+        strings.clear();
+        strings.add("Atlas : [aaaaaaaaaa]");
+        strings.add("Persephone : [bbbbbb]");
+
+        field.printChoices(strings, "god", "carmelo", "");
+
+        strings.remove(0);
+
+        field.printChoices(strings, "god", "carmelo", "");;
     }
 
 }

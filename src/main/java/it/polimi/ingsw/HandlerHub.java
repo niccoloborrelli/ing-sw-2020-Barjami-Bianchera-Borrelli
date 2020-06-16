@@ -59,17 +59,19 @@ public class HandlerHub {
     }
 
     public void sendData(String message, Controller controller, int typeCommunication){
-        if(typeCommunication == 0) {
-            for (Handler handler : handlerControllerHashMap.values()) {
-                handler.communicate(message);
-            }
-        }else if(typeCommunication == 1) {
-            Handler handler = handlerControllerHashMap.get(controller);
-            handler.communicate(message);
-        }else if(typeCommunication == 2){
-            for (Handler handler : handlerControllerHashMap.values()) {
-                if (!handler.equals(handlerControllerHashMap.get(controller)))
+        if(handlerControllerHashMap.get(controller)!=null) {
+            if (typeCommunication == 0) {
+                for (Handler handler : handlerControllerHashMap.values()) {
                     handler.communicate(message);
+                }
+            } else if (typeCommunication == 1) {
+                Handler handler = handlerControllerHashMap.get(controller);
+                handler.communicate(message);
+            } else if (typeCommunication == 2) {
+                for (Handler handler : handlerControllerHashMap.values()) {
+                    if (!handler.equals(handlerControllerHashMap.get(controller)))
+                        handler.communicate(message);
+                }
             }
         }
     }

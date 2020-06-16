@@ -1,7 +1,9 @@
 package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,5 +139,121 @@ class TurnManagerTest {
 
         System.out.println("Il colore di ciro è " + ciro.getPlayerColor() + "questo" + Color.RESET);
         System.out.println("Il colore di francois è " + francois.getPlayerColor() + "questo" + Color.RESET);
+
+        turnManager.setColor(ciro, "purple");
+        turnManager.setColor(francois, "white");
+
+        System.out.println("Il colore di ciro è " + ciro.getPlayerColor() + "questo" + Color.RESET);
+        System.out.println("Il colore di francois è " + francois.getPlayerColor() + "questo" + Color.RESET);
+
+        turnManager.setColor(ciro, "grey");
+        System.out.println("Il colore di ciro è " + ciro.getPlayerColor() + "questo" + Color.RESET);
+    }
+
+    @Test
+    void setNextPlayerTest1() throws ParserConfigurationException, SAXException, IOException {
+        Player player1 = new Player();
+        Player player2 = new Player();
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        Controller controller1 = new Controller();
+        Controller controller2 = new Controller();
+        EndGameState endGameState1 = new EndGameState(player1);
+        EndGameState endGameState2 = new EndGameState(player2);
+        HandlerHub handlerHub = new HandlerHub();
+        TurnManager turnManager = new TurnManager();
+
+        controller1.setHandlerHub(handlerHub);
+        controller2.setHandlerHub(handlerHub);
+
+        player1.setStateManager(stateManager1);
+        player2.setStateManager(stateManager2);
+
+        stateManager1.createBaseStates(player1);
+        stateManager2.createBaseStates(player2);
+
+        player1.setController(controller1);
+        player2.setController(controller2);
+
+        controller1.setPlayer(player1);
+        controller2.setPlayer(player2);
+
+        controller1.createFluxTable();
+        controller2.createFluxTable();
+
+        stateManager1.setTurnManager(turnManager);
+        stateManager2.setTurnManager(turnManager);
+
+        turnManager.getPlayers().add(player1);
+        turnManager.getPlayers().add(player2);
+
+        player1.setHasWon(true);
+
+        player1.getStateManager().setCurrent_state(stateManager1.getStateHashMap().get("EndTurnState"));
+        player2.getStateManager().setCurrent_state(stateManager2.getStateHashMap().get("EndTurnState"));
+
+        turnManager.setNextPlayer(player1);
+    }
+
+    @Test
+    void setNextPlayerTest2() {
+        Player player1 = new Player();
+        Player player2 = new Player();
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        TurnManager turnManager = new TurnManager();
+        EndTurnState endTurnState = new EndTurnState(player1);
+
+        turnManager.getPlayers().add(player1);
+        turnManager.getPlayers().add(player2);
+
+        player1.setStateManager(stateManager1);
+        player2.setStateManager(stateManager2);
+
+        player1.getStateManager().setCurrent_state(endTurnState);
+        player2.getStateManager().setCurrent_state(new ActionState(player2));
+
+        turnManager.setNextPlayer(player1);
+
+        assertEquals(player1.getStateManager().getCurrent_state(), endTurnState);
+
+    }
+
+    @Test
+    void removeGodTest(){
+        TurnManager turnManager = new TurnManager();
+        List<String> nameList = new ArrayList<>();
+        nameList.add("A");
+        List<String> colorList = new ArrayList<>();
+        colorList.add("red");
+        turnManager.setAllowedColors(colorList);
+        turnManager.setNotAllowedNames(nameList);
+        turnManager.addName("B");
+        String god1 = "Apollo";
+        String god2 = "Prometheus";
+        List<String> stringGods = new ArrayList<>();
+
+        stringGods.add(god1);
+        stringGods.add(god2);
+
+        turnManager.setAvailableGods(stringGods);
+
+        turnManager.removeGod("Apollo");
+
+        assertTrue(turnManager.getAvailableGods().size()==1 && turnManager.getAllowedColors().size()==1 && turnManager.getNotAllowedNames().size()==2);
+    }
+
+    @Test
+    void removeGodTest2(){
+        TurnManager turnManager = new TurnManager();
+        String god1 = "Apollo";
+        String god2 = "Prometheus";
+
+        turnManager.addGod(god1);
+        turnManager.addGod(god2);
+
+        turnManager.removeGod("Apollo");
+
+        assertEquals(1, turnManager.getAvailableGods().size());
     }
 }

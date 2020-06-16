@@ -24,7 +24,7 @@ public class CommunicationSentences {
     private static final String errorSent3 = "Come on. You're the boss. You can't make a mistake like this";
     private static final String activateSent1 = "God gave you his power. You can use it!";
     private static final String activateSent2 = "Now, it's your choice. Do you want to use your God power?";
-    private static final String activateSent3 = "Be careful. God power could be a double-edge sword.";
+    private static final String activateSent3 = "Be careful. God power could be a double-edge sword. ";
     private static final String formToActivatePower = "If you want to activate it insert ";
     private static final String godChoiceSent1 = " choose carefully your Gods. Decide between: ";
     private static final String godSetSent1 = " you're the challenger. You have the power to decide which Gods would be involved " +
@@ -33,7 +33,7 @@ public class CommunicationSentences {
     private static final String godsPowers = ", these are god powers:\n";
     private static final String singlePower = ", this is god power:\n";
     public static final String nameSent = "You have to choose your name";
-    private static final String otherwise = "otherwise ";
+    private static final String otherwise = " otherwise ";
     private static final String moved = " moved in space ";
     private static final String built = " built in space ";
     private static final String MOVE = "move";
@@ -207,6 +207,10 @@ public class CommunicationSentences {
             built = singlePower + stringList.get(0);
 
         return prefix  + built;
+    }
+
+    public static String getHelp(List<String> stringList){
+        return buildChoiceSent(stringList, "", "");
     }
 
     public static void createAll(){

@@ -232,6 +232,10 @@ public class Field {
                 break;
             case "god":
                 data = getGodPowers(stringList, playerName, playerColor);
+                break;
+            case "help":
+                data = getHelp(stringList);
+                break;
 
         }
         System.out.println(data);

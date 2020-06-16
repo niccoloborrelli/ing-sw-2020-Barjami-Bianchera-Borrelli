@@ -8,6 +8,7 @@ import java.util.*;
 public class StateManager {
 
     private static final int MINIMUM_PRIORITY = 0;
+    private static final int FIRST_POSITION = 0;
 
     /*
     Idee: ordinare subito la tabella in base alla priorità, in modo tale che il calcolo del nuovo stato sia veloce
@@ -30,6 +31,11 @@ public class StateManager {
     private HashMap<State, List<Line>> table;
     private TurnManager turnManager;
 
+    public StateManager() {
+        stateHashMap = new HashMap<>();
+        table = new HashMap<>();
+    }
+
     public State getCurrent_state() {
         return current_state;
     }
@@ -38,38 +44,20 @@ public class StateManager {
         this.current_state = current_state;
     }
 
-    /*
-    NON è POSSIBILE AVERE LO STESSO STATO DI PARTENZA PER STATI DI ARRIVO CON UGUALE PRIORITà
-    SE IL METODO NON DEVE CONTROLLARE NESSUNA CONDIZIONE, SI USERà IL METODO QUI SOTTO ALWAYSTRUE E EXPECTED VALUE = TRUE
-     */
+    public TurnManager getTurnManager() {
+        return turnManager;
+    }
 
-    public StateManager() {
-        stateHashMap = new HashMap<>();
-        table = new HashMap<>();
+    public void setTurnManager(TurnManager turnManager) {
+        this.turnManager = turnManager;
+    }
+
+    public State getState(String state){
+        return stateHashMap.get(state);
     }
 
     public HashMap<State, List<Line>> getTable() {
         return table;
-    }
-
-    public void createBaseStates(Player player){
-        State nameSetting = new NameSettingState(player);
-        State colorSetting = new ColorSettingState(player);
-        State readyForAction = new ReadyForActionState(player);
-        State workerSetting = new WorkerSettingState(player);
-        State action = new ActionState(player);
-        State endTurn = new EndTurnState(player);
-        State godSet = new GodSetState(player);
-        State godChoice = new GodChoice(player);
-
-        stateHashMap.put(nameSetting.toString(), nameSetting);
-        stateHashMap.put(colorSetting.toString(), colorSetting);
-        stateHashMap.put(readyForAction.toString(), readyForAction);
-        stateHashMap.put(workerSetting.toString(), workerSetting);
-        stateHashMap.put(action.toString(), action);
-        stateHashMap.put(endTurn.toString(), endTurn);
-        stateHashMap.put(godSet.toString(), godSet);
-        stateHashMap.put(godChoice.toString(), godChoice);
     }
 
     public void setTable(HashMap<State, List<Line>> table) {
@@ -79,6 +67,51 @@ public class StateManager {
 
     public HashMap<String, State> getStateHashMap() {
         return stateHashMap;
+    }
+
+    /**
+     * Creates game base states that could begin and end a match. It also puts
+     * them in the hash map.
+     * @param player is player who states are linked.
+     */
+
+    public void createBaseStates(Player player){
+        createSetUp(player);
+        createGameState(player);
+    }
+
+    /**
+     * Creates and puts in hash map all state involved in game set-up.
+     * @param player  is player who states are linked.
+     */
+
+    private void createSetUp(Player player){
+        State nameSetting = new NameSettingState(player);
+        State colorSetting = new ColorSettingState(player);
+        State godSet = new GodSetState(player);
+        State godChoice = new GodChoice(player);
+
+        stateHashMap.put(nameSetting.toString(), nameSetting);
+        stateHashMap.put(colorSetting.toString(), colorSetting);
+        stateHashMap.put(godSet.toString(), godSet);
+        stateHashMap.put(godChoice.toString(), godChoice);
+    }
+
+    /**
+     * Creates and puts in hash map all state involved in game process.
+     * @param player is player who states are linked.
+     */
+
+    private void createGameState(Player player){
+        State readyForAction = new ReadyForActionState(player);
+        State workerSetting = new WorkerSettingState(player);
+        State action = new ActionState(player);
+        State endTurn = new EndTurnState(player);
+
+        stateHashMap.put(readyForAction.toString(), readyForAction);
+        stateHashMap.put(workerSetting.toString(), workerSetting);
+        stateHashMap.put(action.toString(), action);
+        stateHashMap.put(endTurn.toString(), endTurn);
     }
 
 
@@ -139,13 +172,23 @@ public class StateManager {
                 List<Line> linesWithFinishState = searchFinishState(lineList, finishState);
                 if (linesWithFinishState != null) {
                     lineList = searchForPriority(linesWithFinishState, priority);
-                    Line validLine;
-                    if (lineList != null) {
-                        validLine = lineList.get(0);
-                        validLine.getConditions().put(method,expectedValue);
-                    }
+                    putNewConditionsAtFirst(lineList, method, expectedValue);
                 }
             }
+        }
+    }
+
+    /**
+     * Puts new conditions in the first line hash map of list.
+     * @param lineList is list containing first line.
+     * @param method checks condition.
+     * @param expectedValue is value expected to validate condition.
+     */
+
+    private void putNewConditionsAtFirst(List<Line> lineList, Method method, boolean expectedValue){
+        if (lineList != null) {
+            Line validLine = lineList.get(FIRST_POSITION);
+            validLine.getConditions().put(method,expectedValue);
         }
     }
 
@@ -165,7 +208,7 @@ public class StateManager {
     }
 
     /**
-     * Finds which lines have this state as arrival.
+     * Finds which line has this state as arrival.
      * @param lines is the list controlled.
      * @param finishState is the state of arrival.
      * @return a list of lines with this finish state. If there's no one it returns null.
@@ -185,7 +228,7 @@ public class StateManager {
     }
 
     /**
-     * Finds which lines have this value of priority.
+     * Finds which line has this value of priority.
      * @param lines is the list controlled.
      * @param priority is the value on which research are based.
      * @return a list containing lines found with this level of priority. If there's no one it returns null.
@@ -203,7 +246,7 @@ public class StateManager {
     }
 
     /**
-     * Finds which lines have this method.
+     * Finds which line has this method.
      * @param lines is the list controlled.
      * @param condition is the value on which research are based.
      * @return a list containing lines found with this method. If there's no one it returns null.
@@ -265,6 +308,12 @@ public class StateManager {
         }
     }
 
+    /**
+     * Removes empty state from table.
+     * @param empty is state to control.
+     * @param left is list associated to this state.
+     */
+
     private void removeEmptyState(State empty, List<Line> left){
         if(left.size()==0)
             table.remove(empty);
@@ -299,7 +348,7 @@ public class StateManager {
     }
 
     /**
-     * Change priority in one specific line.
+     * Changes priority in one specific line.
      * @param startState is start state.
      * @param finishState is arrival state.
      * @param conditions is conditions in which change priority
@@ -307,14 +356,13 @@ public class StateManager {
      */
 
     public void changePriority(State startState, State finishState, HashMap<Method,Boolean> conditions, int newPriority){
-
         Line line = searchUnique(startState,finishState,conditions);
         if(line!=null)
             line.setPriority(newPriority);
     }
 
     /**
-     * Change conditions in one specific line.
+     * Changes conditions in one specific line.
      * @param startState is start state.
      * @param finishState is arrival state.
      * @param oldConditions is conditions to change.
@@ -322,14 +370,13 @@ public class StateManager {
      */
 
     public void changeConditions(State startState, State finishState, HashMap<Method,Boolean> oldConditions , HashMap<Method,Boolean> newConditions){
-
         Line line = searchUnique(startState,finishState,oldConditions);
         if(line!=null)
             line.setConditions(newConditions);
     }
 
     /**
-     * Change arrival state in one specific line.
+     * Changes arrival state in one specific line.
      * @param startState is start state.
      * @param oldFinishState is old arrival state.
      * @param conditions is conditions of line.
@@ -337,11 +384,16 @@ public class StateManager {
      */
 
     public void changeFinishState(State startState, State oldFinishState, HashMap<Method,Boolean> conditions, State newFinishState){
-
         Line line = searchUnique(startState,oldFinishState,conditions);
         if(line!=null)
             line.setFinishState(newFinishState);
     }
+
+    /**
+     * Changes every occurrence of the states indicated in an another passed.
+     * @param newState is state to put in place of old state.
+     * @param oldState is state to substitute.
+     */
 
     public void changeStates(State newState, State oldState){
         if(newState!=null && stateHashMap.containsKey(oldState.toString())){
@@ -350,17 +402,29 @@ public class StateManager {
             for(List<Line> lineList : table.values()) {
                 foundFinishState = searchFinishState(lineList, oldState);
                 if (foundFinishState != null) {
-                    substituteStates(foundFinishState, newState);
+                    substituteFinishStates(foundFinishState, newState);
                     foundFinishState = null;
                 }
             }
         }
     }
 
-    private void substituteStates(List<Line> lines, State newState){
+    /**
+     * Substitutes every finish states in line list with this new state.
+     * @param lines is list of line to change.
+     * @param newState is the state to put in place of old state.
+     */
+
+    private void substituteFinishStates(List<Line> lines, State newState){
         for(Line line: lines)
             line.setFinishState(newState);
     }
+
+    /**
+     * Substitutes start states with this new state.
+     * @param newState is new state to put in place of old state.
+     * @param oldState is state to substitute.
+     */
 
     private void substituteStartState(State newState, State oldState){
         stateHashMap.put(newState.toString(), newState);
@@ -402,23 +466,23 @@ public class StateManager {
         List<Line> stateLines = table.get(current_state);
         Iterator<Line> iterator = stateLines.iterator();
 
-
         while(iterator.hasNext()){
             Line line = iterator.next();
             try{
                 if (line.controlCondition(obRef)) {
-                    System.out.println("Il vecchio stato è:" + current_state);
                     current_state = line.getFinishState();
                     break;
                 }
             } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
                 iterator.remove();
-                
             }
         }
-        System.out.println("Il nuovo stato è: " +current_state.toString());
         current_state.onStateTransition();
     }
+
+    /**
+     * Sorts table in terms of priority.
+     */
 
     public void sortAllTable(){
         for(List<Line> lineList: table.values())
@@ -457,18 +521,6 @@ public class StateManager {
         };
 
         return comparator;
-    }
-
-    public TurnManager getTurnManager() {
-        return turnManager;
-    }
-
-    public void setTurnManager(TurnManager turnManager) {
-        this.turnManager = turnManager;
-    }
-
-    public State getState(String state){
-        return stateHashMap.get(state);
     }
 
 }

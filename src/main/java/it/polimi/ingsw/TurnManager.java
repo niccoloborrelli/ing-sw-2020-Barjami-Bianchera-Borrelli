@@ -46,9 +46,9 @@ public class TurnManager {
         notAllowedNames.add(name);
     }
 
-    public void removeColor(String color){
+    /*public void removeColor(String color){
         allowedColors.remove(color);
-    }
+    }*/
 
     public void setColor(Player player, String color){
         switch (color){
@@ -104,8 +104,9 @@ public class TurnManager {
             if (pos == players.size() - 1) {
                 nextPlayer = players.get(0);
             }
-            else
+            else {
                 nextPlayer = players.get(pos + 1);
+            }
 
             try {
                 nextPlayer.getStateManager().setNextState(nextPlayer);
@@ -117,8 +118,9 @@ public class TurnManager {
 
     private boolean allPlayerWait(){
         for(Player player: players){
-            if(!player.getState().equals(player.getStateManager().getStateHashMap().get("EndTurnState")))
+            if(!player.getState().equals(player.getStateManager().getStateHashMap().get("EndTurnState"))) {
                 return false;
+            }
         }
         return true;
     }

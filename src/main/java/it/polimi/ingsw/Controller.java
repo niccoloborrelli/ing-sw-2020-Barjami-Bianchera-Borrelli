@@ -34,6 +34,7 @@ public class Controller{
     private static final int INVALID_CODE = -1;
     private static final int INT_IF_BOOLEAN_TRUE = 1;
     private static final int INT_IF_BOOLEAN_FALSE = 0;
+    private static final int FIRST_INDEX = 0;
 
     private static final int BROADCAST = 0;
     private static final int SINGLE_COMMUNICATION = 1;
@@ -75,6 +76,23 @@ public class Controller{
     private static final String LOST = "lost";
     private static final String WORKERSETTING = "workerSetting";
     private static final String SPECIFICATION = "specification";
+    private static final String _GOD = "-god";
+    private static final String _HELP = "-help";
+    private static final String HELP = "help";
+    private static final String WHAT_TO_DO = "-whatToDo";
+    private static final String GOD = "god";
+    private static final String SPACE_STRING = " ";
+    private static final String TWO_POINTS = ": ";
+    private static final String HELP_PHRASE = "-help : It gives you a list of possible operations you can always require";
+    private static final String WHAT_TO_DO_PHRASE = "-whatToDo : It gives you the last significant message, which contains indication for what you have to do";
+    private static final String GODS_POWER = "-god : It gives you every God with associated power";
+    private static final String SINGLE_GOD_POWER = "-god__ : Instead of \"__\", you have to put a God name. It gives you the power of chosen God";
+    private static final int ADJUSTMENT_INDEX_OF = 1;
+    private static final String FIRST_WORKER = "A";
+    private static final String SECOND_WORKER = "B";
+    private static final String INVALID_CHAR = "C";
+    private static final int SECOND_INDEX = 1;
+
     private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 
@@ -109,7 +127,6 @@ public class Controller{
     /**
      * Sets visitor depending of message receveid.
      * Give input to model state.
-     *
      * @param message is string receveid.
      */
     public void giveInputToModel(String message) {
@@ -130,36 +147,48 @@ public class Controller{
 
             try {
                 player.onInput(visitor);
-            }catch (IOException ignored){}
+            }catch (IOException e){
+                handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this));
+            }
         }else
-            giveItHelp(message);
+            executeSpecialRequest(message);
     }
+
+    /**
+     * Controls if message contains a special request that don't modify model data.
+     * @param message is message to check.
+     * @return true if it contains a special request, otherwise false.
+     */
 
     private boolean isItHelp(String message){
         boolean isItHelp = false;
         String operation = findString(message);
 
         if(operation!=null) {
-            if (operation.equals("-help"))
+            if (operation.equals(_HELP))
                 isItHelp = true;
-            else if (operation.contains("-god"))
+            else if (operation.contains(_GOD))
                 isItHelp = true;
-            else if (operation.equals("-whatToDo"))
+            else if (operation.equals(WHAT_TO_DO))
                 isItHelp = true;
         }
 
         return isItHelp;
     }
-    //VEDERE SE SPOSTARLO IN MODEL O TENERLO IN CONTROLLER (SE IN MODEL BISOGNA TENERE UNA CLASSE DEI GOD)
 
-    private void giveItHelp(String message){
+    /**
+     * Executes special request contained in string.
+     * @param message is string that contains special request.
+     */
+
+    private void executeSpecialRequest(String message){
         String operation = findString(message);
-        if(operation.equals("-help"))
+        if(operation.equals(_HELP))
             help();
-        else if(operation.equals("-whatToDo"))
+        else if(operation.equals(WHAT_TO_DO))
             whatToDo();
-        else if(operation.contains("-god")) {
-            if (operation.equals("-god"))
+        else if(operation.contains(_GOD)) {
+            if (operation.equals(_GOD))
                 giveListOfGod();
             else
                 pickChosenPower(message);
@@ -167,72 +196,112 @@ public class Controller{
 
     }
 
+    /**
+     * Provides a list of gods with the power associated.
+     */
+
     private void giveListOfGod(){
         LastChange lastChange = new LastChange();
-        lastChange.setSpecification("god");
-        lastChange.setCode(1);
+        lastChange.setSpecification(GOD);
+        lastChange.setCode(UPDATE_CHOICE);
 
         if(powerGodMap==null)
             createPowerGodMap();
 
         addAllGodsToStringList(lastChange);
         update(lastChange);
-
     }
 
+    /**
+     * Adds all god to a string list with associated power.
+     * @param lastChange is message in which list will be put.
+     */
     private void addAllGodsToStringList(LastChange lastChange) {
         for (String god : powerGodMap.keySet()) {
             lastChange.getStringList().add(god + ": " + powerGodMap.get(god));
         }
     }
 
+    /**
+     * Creates the hash map that contains name and power of every God.
+     */
+
     private void createPowerGodMap(){
         Parser parser = new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
         powerGodMap = parser.createHashRepresentation("Description");
     }
 
+    /**
+     * Picks the correct god power required in message.
+     * @param message contains name of god.
+     */
 
     private void pickChosenPower(String message){
         String request = findString(message);
         LastChange lastChange = new LastChange();
-        lastChange.setSpecification("god");
-        lastChange.setCode(0);
-        int index;
-        if(message.contains(" "))
-            index = message.indexOf(" ");
-        else
-            index = message.lastIndexOf("god") - 1;
+        lastChange.setSpecification(GOD);
+        lastChange.setCode(UPDATE_CHOICE);
+
+        int index = findIndexOfGod(request);
 
         if(powerGodMap==null)
             createPowerGodMap();
-        System.out.println(request.substring(index));
+
         if (powerGodMap.get(request.substring(index)) != null) {
-            lastChange.getStringList().add(powerGodMap.get(request.substring(index)).get(0));
+            lastChange.getStringList().add(powerGodMap.get(request.substring(index)).get(FIRST_INDEX));
             update(lastChange);
         }
-
-
     }
+
+    /**
+     * Finds index of god name.
+     * @param request is message containing god name.
+     * @return index of god name.
+     */
+
+    private int findIndexOfGod(String request){
+        int index;
+        if(request.contains(SPACE_STRING))
+            index = request.indexOf(SPACE_STRING) + ADJUSTMENT_INDEX_OF;
+        else
+            index = request.lastIndexOf(_GOD) + _GOD.length();
+
+        return index;
+    }
+
+    /**
+     * Executes the help request, sending a list of possible operations that could be done.
+     */
 
     private void help(){
         LastChange lastChange = new LastChange();
+        if(operations==null)
+            createHelp();
         lastChange.setStringList(new ArrayList<String>(operations));
-        lastChange.setCode(1);
-        lastChange.setSpecification("help");
+        lastChange.setCode(UPDATE_CHOICE);
+        lastChange.setSpecification(HELP);
 
         player.notify(lastChange);
     }
+
+    /**
+     * Sends the last significant notify to client.
+     */
 
     public void whatToDo(){
         player.notifyController();
     }
 
+    /**
+     * Creates a list of possible operations that client could do.
+     */
+
     private void createHelp(){
         operations=new ArrayList<>();
-        operations.add("-help : It gives you a list of possible operations you can always require");
-        operations.add("-whatToDo : It gives you the last significant message, which contains indication for what you have to do");
-        operations.add("-god : It gives you every God with associated power");
-        operations.add("-god__ : Instead of \"__\", you have to put a God name. It gives you the power of chosen God");
+        operations.add(HELP_PHRASE);
+        operations.add(WHAT_TO_DO_PHRASE);
+        operations.add(GODS_POWER);
+        operations.add(SINGLE_GOD_POWER);
     }
 
     /**
@@ -303,7 +372,6 @@ public class Controller{
         Space space = null;
         int row;
         int column;
-
         Element element = elementInsideMessage(message);
         Element el = throughOneLevelNode(element);
 
@@ -366,7 +434,7 @@ public class Controller{
     }
 
     /**
-     * Parse value in integer value if contains only numbers.
+     * Parses value in integer value if contains only numbers.
      * @param value is value to parser
      * @return this integer value (if possible), otherwise an invalid value;.
      */
@@ -380,7 +448,7 @@ public class Controller{
     }
 
     /**
-     * Go through one level of node.
+     * Goes through one level of node.
      * @param element is start element.
      * @return element in the next level of node.
      */
@@ -439,8 +507,7 @@ public class Controller{
     }
 
     /**
-     * Find the informations in this first wrapper.
-     *
+     * Finds the informations in this first wrapper.
      * @param document is document in which search information.
      * @return element containing lists of information.
      */
@@ -460,8 +527,8 @@ public class Controller{
 
     /**
      * Finds and converts information from message to a integer value.
-     * @param message
-     * @return
+     * @param message contains information to convert.
+     * @return integer value of information.
      */
 
     private int parseItemInt(String message) {
@@ -477,7 +544,6 @@ public class Controller{
 
     /**
      * Finds string information from message.
-     *
      * @param message is message containing information.
      * @return information.
      */
@@ -489,7 +555,6 @@ public class Controller{
 
     /**
      * Finds and traduces code in message.
-     *
      * @param message is message containing code.
      * @return code if valid, otherwise an invalid integer.
      */
@@ -501,7 +566,7 @@ public class Controller{
             NodeList nodeList = doc.getElementsByTagName(CODE);
             Node node = nodeList.item(FIRST_CHILD);
             if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-                String value = nodeList.item(0).getTextContent();
+                String value = nodeList.item(FIRST_CHILD).getTextContent();
                 try {
                     code = Integer.parseInt(value);
                 } catch (NumberFormatException e) {
@@ -557,6 +622,9 @@ public class Controller{
     }
 
 
+    /**
+     * Sends message that represents a significant change or event in model.
+     */
     public void update(){
         LastChange lastChange = player.getLastChange();
         String data = buildUpdate(lastChange);
@@ -564,11 +632,23 @@ public class Controller{
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
+    /**
+     * Sends message that represents an answer to a request or a message of error..
+     * @param lastChange
+     */
+
     public void update(LastChange lastChange){
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
+
+    /**
+     * Finds specific code of communication (single communication, broadcast, almost-broadcast) analyzing code of message.
+     * @param code is code of message.
+     * @param lastChange is message.
+     * @return code of communication.
+     */
 
     public int howToCommunicate(int code, LastChange lastChange){
         int codeCommunication = INVALID_VALUE;
@@ -589,6 +669,11 @@ public class Controller{
         return codeCommunication;
     }
 
+    /**
+     * Builds the update message to send analyzing code's message.
+     * @param lastChange is message.
+     * @return string that represents update to send.
+     */
 
     public String buildUpdate(LastChange lastChange){
         String message = "";
@@ -671,6 +756,12 @@ public class Controller{
         return generateField(stringList.toString(), MESSAGE);
     }
 
+    /**
+     * Generates the string that represents a worker.
+     * @param worker is worker to convert in string.
+     * @return string that represents worker
+     */
+
     private String generateWorker(Worker worker){
         int numberOfWorker = player.getWorkers().indexOf(worker);
         String letterOfWorker = convertIntToLetter(numberOfWorker);
@@ -678,13 +769,19 @@ public class Controller{
         return generateField(letterOfWorker, CHAR);
     }
 
+    /**
+     * Converts number of worker in a char.
+     * @param number is worker to convert.
+     * @return a letter that represents this worker.
+     */
+
     private String convertIntToLetter(int number){
-        if(number==0) {
-            return "A";
-        }else if(number==1) {
-            return "B";
+        if(number==FIRST_INDEX) {
+            return FIRST_WORKER;
+        }else if(number==SECOND_INDEX) {
+            return SECOND_WORKER;
         }
-        return "C";
+        return INVALID_CHAR;
     }
 
     /**
@@ -701,6 +798,13 @@ public class Controller{
         }
         return message;
     }
+
+    /**
+     * Generates a string that represents a string list.
+     * @param message is StringBuilder that would build string.
+     * @param stringList is string list.
+     * @return StringBuilder that contains list.
+     */
 
     private StringBuilder generateStringList(StringBuilder message, List<String> stringList){
         if(stringList != null){
@@ -795,6 +899,12 @@ public class Controller{
         return generateField(otherParameters + rowPart + columnPart, field);
     }
 
+    /**
+     * Send a lost message to other players.
+     * @param code is code of message.
+     * @param player is player who won.
+     */
+
     private void sendLostToOthers(String code, String player){
         String message = generateField("", MESSAGE);
         String specification = generateField(LOST, SPECIFICATION);
@@ -840,8 +950,8 @@ public class Controller{
     /**
      * Decorates player  according to god map.
      * @param playerToDecorate is player to decorate.
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException if there's no method with the same signature.
+     * @throws ClassNotFoundException if class (in which it will search) doesn't exist.
      */
 
     public void decoratePlayer(Player playerToDecorate) throws NoSuchMethodException, ClassNotFoundException {
@@ -852,9 +962,9 @@ public class Controller{
 
     /**
      * Create the base flux table.
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
+     * @throws IOException if there's problem due to opening file.
+     * @throws SAXException if xml-file isn't well formed.
+     * @throws ParserConfigurationException if method doesn't success to parse file.
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {

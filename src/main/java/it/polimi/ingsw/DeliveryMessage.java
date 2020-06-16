@@ -54,6 +54,18 @@ public class DeliveryMessage {
     private static final String CHAR = "char";
     private static final String HELP = "help";
     private static final int FIRST_CHILD = 0;
+    private static final int ACTION_CODE = 1;
+    private static final int INT_CODE = 2;
+    private static final int STRING_CODE = 0;
+
+    private static final int UPDATE_TO_PRINT = 0;
+    private static final int UPDATE_CHOICE = 1;
+    private static final int UPDATE_GAME_FIELD = 2;
+    private static final int UPDATE_ENDGAME = 3;
+
+    private static final String POWER = "power";
+    private static final String PRE_LOBBY = "preLobby";
+    private static final int EMPTY = 0;
 
 
     private boolean graphicInterface;
@@ -68,7 +80,6 @@ public class DeliveryMessage {
 
     /**
      * Traduces input e sends it to net manager.
-     *
      * @param input is input received.
      */
 
@@ -77,9 +88,9 @@ public class DeliveryMessage {
         String cd = generateField(String.valueOf(code), CODE);
         String message;
 
-        if (code == 1) {
+        if (code == ACTION_CODE) {
             message = buildActionMessage(input);
-        } else if (code == 2) {
+        } else if (code == INT_CODE) {
             message = buildIntMessage(input);
         }else {
             message = buildStringMessage(input);
@@ -94,17 +105,16 @@ public class DeliveryMessage {
 
     /**
      * Decodes type of message.
-     *
      * @param input is input received.
      * @return code that represents type of message.
      */
     private int decodeInput(String input) {
-        int code = 0;
+        int code = STRING_CODE;
 
         if (isItWorkerAction(input)) {
-            code = 1;
+            code = ACTION_CODE;
         }else if (isItInt(input)) {
-            code = 2;
+            code = INT_CODE;
         }
 
         return code;
@@ -113,7 +123,6 @@ public class DeliveryMessage {
 
     /**
      * Determines if input represents a worker's action.
-     *
      * @param input is input received.
      * @return true if it is, otherwise false.
      */
@@ -129,7 +138,6 @@ public class DeliveryMessage {
 
     /**
      * Determines if input represents an int.
-     *
      * @param input is input received.
      * @return true if it is, otherwise false.
      */
@@ -145,7 +153,6 @@ public class DeliveryMessage {
 
     /**
      * Builds action's message according to rules of communication.
-     *
      * @param input is input received.
      * @return message codified.
      */
@@ -160,8 +167,7 @@ public class DeliveryMessage {
     }
 
     /**
-     * Build space's message according to rules of communication.
-     *
+     * Builds space's message according to rules of communication.
      * @param input is input received.
      * @return message codified.
      */
@@ -178,7 +184,6 @@ public class DeliveryMessage {
 
     /**
      * Builds int's message according to rules of communication.
-     *
      * @param input is input received.
      * @return int's string codified.
      */
@@ -189,7 +194,6 @@ public class DeliveryMessage {
 
     /**
      * Builds string's message according to rules of communication.
-     *
      * @param input is input received.
      * @return string codified.
      */
@@ -200,7 +204,6 @@ public class DeliveryMessage {
 
     /**
      * Covers content string according to XML rules creating a field passed.
-     *
      * @param content is string covered.
      * @param field   is field that cover content.
      * @return content covered with field.
@@ -215,7 +218,7 @@ public class DeliveryMessage {
 
 
     /**
-     * Parse message received and send it to client interface.
+     * Parses message received and send it to client interface.
      * @param message is message received.
      */
 
@@ -228,13 +231,13 @@ public class DeliveryMessage {
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
 
-        if (code == 0) {
+        if (code == UPDATE_TO_PRINT) {
             sendToInterface(specification, playerName, playerColor);
-        } else if (code == 1) {
+        } else if (code == UPDATE_CHOICE) {
             decodePossibleChoice(doc, specification, playerName, playerColor);
-        } else if (code == 2) {
+        } else if (code == UPDATE_GAME_FIELD) {
             decodeUpdate(doc, specification, playerName, playerColor);
-        } else if(code==3) {
+        } else if(code==UPDATE_ENDGAME) {
             sendToInterface(specification, playerName, playerColor);
             netHandler.setEndGame(true);
             try {
@@ -288,9 +291,10 @@ public class DeliveryMessage {
      * @param playerName is player's name.
      * @param playerColor is player's color.
      */
+
     private void decodePossibleChoice(Document doc, String specification, String playerName, String playerColor){
         String search;
-        if(specification.equals("power") || specification.equals("preLobby")) {
+        if(specification.equals(POWER) || specification.equals(PRE_LOBBY)) {
             search = INT;
         }else {
             search = STRING;
@@ -299,7 +303,7 @@ public class DeliveryMessage {
         List<HashMap<String, String>> hashMapList = findHashMapToPrint(doc);
         String worker = findInsideWorker(doc);
 
-        if(stringList.size()!=0) {
+        if(stringList.size()!=EMPTY) {
             sendToInterface(stringList, specification, playerName, playerColor);
         }else {
             sendToInterface(worker, hashMapList, specification, playerName, playerColor);
@@ -317,7 +321,7 @@ public class DeliveryMessage {
         String worker = null;
         String content = null;
         NodeList nodeList = el.getElementsByTagName(WORKER);
-        Node node = nodeList.item(0);
+        Node node = nodeList.item(FIRST_CHILD);
 
 
         if(node!=null && node.getNodeType()==Node.ELEMENT_NODE){
@@ -329,6 +333,12 @@ public class DeliveryMessage {
 
         return worker;
     }
+
+    /**
+     * Returns text content of element.
+     * @param el is element that contains text.
+     * @return text content of element.
+     */
 
     private String contentElement(Element el){
         return el.getTextContent();
@@ -401,10 +411,10 @@ public class DeliveryMessage {
     }
 
     /**
-     *
-     * @param node
-     * @param hashMapList
-     * @param parameters
+     * Searches determined parameters in a node and adds them to a hash map.
+     * @param node contains information.
+     * @param hashMapList is hash map to fill.
+     * @param parameters contains what fields will be searched in.
      */
 
     private void addParametersToHashMap(Node node, List<HashMap<String, String>> hashMapList, List<String> parameters){
@@ -420,6 +430,13 @@ public class DeliveryMessage {
         }
     }
 
+    /**
+     * Finds text content of first node of list.
+     * @param element is element that contains node list.
+     * @param parameters is field searched.
+     * @return text content of first node.
+     */
+
     private String findFirstTextContent(Element element, String parameters){
         String textContent = null;
         NodeList nodeList1 = element.getElementsByTagName(parameters);
@@ -430,6 +447,13 @@ public class DeliveryMessage {
         return textContent;
     }
 
+    /**
+     * Decodes update from document.
+     * @param document is document that contains information.
+     * @param specification contains type of update.
+     * @param playerName is name of player.
+     * @param playerColor is color of player.
+     */
 
     private void decodeUpdate(Document document, String specification,  String playerName, String playerColor){
         List<Integer> integerList = parseUpdate(document, specification);
@@ -437,6 +461,12 @@ public class DeliveryMessage {
         sendToInterface(worker, specification, integerList, playerName, playerColor);
 
     }
+
+    /**
+     * Translates part of information in a letter that represents worker from document.
+     * @param document is document that contains information.
+     * @return a string that represents worker.
+     */
 
     private String parseWorker(Document document){
         String textContent = null;
@@ -449,6 +479,12 @@ public class DeliveryMessage {
         return textContent;
     }
 
+    /**
+     * Translates document in a action.
+     * @param document contains information.
+     * @param specification specifies action type.
+     * @return a list of parameters that represent action.
+     */
 
     private List<Integer> parseUpdate(Document document, String specification){
         List<Integer> integerList = new ArrayList<>();
@@ -460,8 +496,13 @@ public class DeliveryMessage {
         }
 
         return integerList;
-
     }
+
+    /**
+     * Translates a document in a list of parameters that represents a movement.
+     * @param integerList is list to fill with parameters.
+     * @param document contains information.
+     */
 
     private void parseMovement(List<Integer> integerList, Document document){
         Element el = insideField(document, MESSAGE);
@@ -472,6 +513,11 @@ public class DeliveryMessage {
         addTargetCoordinate(integerList, el, WORKER, COLUMN);
     }
 
+    /**
+     * Translates a document in a list of parameters that represents a build.
+     * @param integerList is list to fill with parameters.
+     * @param document contains information.
+     */
     private void parseBuilding(List<Integer> integerList, Document document){
         Element el = insideField(document, MESSAGE);
 
@@ -481,6 +527,13 @@ public class DeliveryMessage {
         addTargetCoordinate(integerList, el, SPACE, DOME);
     }
 
+    /**
+     *
+     * @param integerList
+     * @param first
+     * @param target
+     * @param coordinate
+     */
     private void addTargetCoordinate(List<Integer> integerList, Element first, String target, String coordinate){
         Element element = findTarget(first, target);
         Element el = findTarget(element, coordinate);

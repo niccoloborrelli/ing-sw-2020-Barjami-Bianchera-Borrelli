@@ -3,9 +3,7 @@ package it.polimi.ingsw;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-import javax.xml.crypto.Data;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
@@ -15,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ControllerTest {
 
@@ -100,6 +99,49 @@ class ControllerTest {
             fail();
     }
 
+    @Test
+    void giveInputToModelTest4() throws InterruptedException {
+        Thread client = clientThread();
+        Thread server = new Thread(()->{
+            try {
+                ServerSocket serverSocket = new ServerSocket(62100);
+                Socket clientSocket = serverSocket.accept();
+                Controller controller = new Controller();
+                HandlerHub handlerHub = new HandlerHub();
+                Handler handler = new Handler(clientSocket, handlerHub);
+                handlerHub.getHandlerControllerHashMap().put(controller, handler);
+                controller.setHandlerHub(handlerHub);
+                Player player = new Player();
+                player.setLastChange(new LastChange());
+                player.getLastChange().setCode(0);
+                player.getLastChange().setSpecification("endTurn");
+                controller.setPlayer(player);
+                player.setController(controller);
+
+                String message1 = "<data><code>0</code><message><string>-help</string></message></data>";
+                String message2 =  "<data><code>0</code><message><string>-god</string></message></data>";
+                String message3 = "<data><code>0</code><message><string>-god Atlas</string></message></data>";
+                String message4 = "<data><code>0</code><message><string>-godAtlas</string></message></data>";
+
+                controller.giveInputToModel(message1);
+                controller.giveInputToModel(message2);
+                controller.giveInputToModel(message3);
+                controller.giveInputToModel(message4);
+
+                serverSocket.close();
+                clientSocket.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        server.start();
+        client.start();
+        server.join();
+
+    }
+
 
 
     @Test
@@ -160,7 +202,6 @@ class ControllerTest {
         t.start();
         client.start();
         t.join();
-        client.join();
     }
 
     @Test
@@ -217,7 +258,6 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
-        t2.join();
     }
 
     @Test
@@ -266,7 +306,6 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
-        t2.join();
     }
 
     @Test
@@ -302,7 +341,6 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
-        t2.join();
     }
 
     @Test
@@ -337,7 +375,6 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
-        t2.join();
     }
 
     private Thread clientThread(){
@@ -346,6 +383,7 @@ class ControllerTest {
                 sleep(50);
                 Socket socket = new Socket("localhost", 62100);
                 DeliveryMessage deliveryMessage = new DeliveryMessage(socket);
+                deliveryMessage.startReading();
                 sleep(300);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
