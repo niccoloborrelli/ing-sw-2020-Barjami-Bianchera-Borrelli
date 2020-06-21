@@ -1,0 +1,117 @@
+package it.polimi.ingsw;
+
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.MeshView;
+
+public class Cell {
+    private VBox vBox;
+    private Pawn worker;
+    private MeshView buildingLvl1;
+    private MeshView buildingLvl2;
+    private MeshView buildingLvl3;
+    private MeshView dome;
+    private Box base;
+
+    public Cell(){
+        vBox=new VBox();
+        createBase();
+        vBox.setSpacing(-45);
+        vBox.setOnMouseClicked(mouseEvent -> {
+            //if(this.worker!=null)
+            //TrafoTest.tolto=removeWorker();
+        });
+    }
+
+    private void createBase(){
+        base=new Box(100,1,100);
+        PhongMaterial phongMaterial=new PhongMaterial();
+        phongMaterial.setDiffuseColor(javafx.scene.paint.Color.rgb(218,248,255));
+        base.setMaterial(phongMaterial);
+        vBox.getChildren().add(base);
+        vBox.getChildren().get(0).setTranslateX(-50);
+        vBox.getChildren().get(0);
+    }
+
+    public Pawn getWorker(){
+        return worker;
+    }
+
+    public void setWorker(Pawn worker){
+        this.worker=worker;
+        MeshView meshWorker=worker.getWorkerMesh();
+        vBox.getChildren().addAll(meshWorker);
+        if(buildingLvl3!=null){
+            meshWorker.setTranslateY(-55);
+        }
+        else if(buildingLvl2!=null){
+            meshWorker.setTranslateY(-55);
+        }
+        else if (buildingLvl1!=null){
+            meshWorker.setTranslateY(-37);
+        }
+        else if(buildingLvl1==null){
+            meshWorker.setTranslateY(-3);
+        }
+    }
+
+    public void setBuildingLvl1(MeshView base){
+        this.buildingLvl1=base;
+        vBox.getChildren().addAll(base);
+    }
+
+    public VBox getvBox() {
+        return vBox;
+    }
+
+    public Pawn removeWorker(){
+        Pawn temp=worker;
+        vBox.getChildren().remove(worker.getWorkerMesh());
+        this.worker=null;
+        return temp;
+    }
+
+    public void setBuildingLvl2(MeshView buildingLvl2) {
+        this.buildingLvl2 = buildingLvl2;
+        buildingLvl2.setTranslateY(-20);
+        vBox.getChildren().addAll(buildingLvl2);
+    }
+
+    public void setBuildingLvl3(MeshView buildingLvl3) {
+        this.buildingLvl3 = buildingLvl3;
+        buildingLvl3.setTranslateY(-30);
+        vBox.getChildren().addAll(buildingLvl3);
+    }
+
+    public void setDome(MeshView dome) {
+        this.dome = dome;
+        if(buildingLvl3!=null)
+            dome.setTranslateY(-27);
+        else if(buildingLvl2!=null)
+            dome.setTranslateY(-28);
+        else if(buildingLvl1!=null)
+            dome.setTranslateY(-10);
+        vBox.getChildren().addAll(dome);
+    }
+
+    public MeshView getBuildingLvl1() {
+        return buildingLvl1;
+    }
+
+    public MeshView getBuildingLvl2() {
+        return buildingLvl2;
+    }
+
+    public MeshView getBuildingLvl3() {
+        return buildingLvl3;
+    }
+
+    public MeshView getDome() {
+        return dome;
+    }
+
+    public Box getBase() {
+        return base;
+    }
+}

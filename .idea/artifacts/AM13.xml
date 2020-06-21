@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" build-on-make="true" name="AM13">
+    <output-path>$PROJECT_DIR$/out/artifacts/AM13</output-path>
+    <root id="root">
+      <element id="archive" name="AM13.jar">
+        <element id="module-output" name="AM13" />
+      </element>
+    </root>
+  </artifact>
+</component>
