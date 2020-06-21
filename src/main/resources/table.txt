@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table>
+	<startState id="NameSettingState">
+		<finishState id= "ColorSettingState">
+		</finishState>
+	</startState>
+	<startState id= "ColorSettingState">
+		<finishState id= "EndTurnState">
+		</finishState>
+	</startState>
+	<startState id="GodSetState">
+		<finishState id="EndTurnState">
+		</finishState>
+	</startState>
+	<startState id="GodChoiceState">
+		<finishState id="EndTurnState">
+		</finishState>
+	</startState>
+	<startState id="WorkerSettingState">
+		<finishState id="EndTurnState">
+		</finishState>
+	</startState>
+	<startState id= "ReadyForActionState">
+		<finishState id="EndTurnState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<priority>5</priority>
+		</finishState>
+		<finishState id="ActionState">
+		</finishState>
+	</startState>
+	<startState id= "ActionState">
+		<finishState id= "EndTurnState">
+			<condition>
+				<flag>HasWon</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>3</priority>
+		</finishState>
+		<finishState id= "ReadyForActionState">
+			<condition>
+				<flag>Action</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>2</priority>
+		</finishState>
+		<finishState id= "EndTurnState">
+			<condition>
+				<flag>Action</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<priority>0</priority>
+		</finishState>
+	</startState>
+	<startState id="EndTurnState">
+		<finishState id="GodSetState">
+			<condition>
+				<flag>GodSetFormed</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<condition>
+				<flag>Challenger</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>7</priority>
+		</finishState>
+		<finishState id="GodChoiceState">
+			<condition>
+				<flag>ValidGod</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<condition>
+				<flag>GodSetFormed</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>Challenger</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<priority>6</priority>
+		</finishState>
+		<finishState id="GodChoiceState">
+			<condition>
+				<flag>ValidGod</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<condition>
+				<flag>LastGod</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>Challenger</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>5</priority>
+		</finishState>
+		<finishState id= "WorkerSettingState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>WorkerPlaced</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<condition>
+				<flag>ValidGod</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>Challenger</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>4</priority>
+		</finishState>
+		<finishState id= "WorkerSettingState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>WorkerPlaced</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<condition>
+				<flag>ValidGod</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>ChallengerWorkerSet</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>Challenger</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+			<priority>4</priority>
+		</finishState>
+		<finishState id="ReadyForActionState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<condition>
+				<flag>WorkerPlaced</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
+			<priority>1</priority>
+		</finishState>
+	</startState>
+</Table>

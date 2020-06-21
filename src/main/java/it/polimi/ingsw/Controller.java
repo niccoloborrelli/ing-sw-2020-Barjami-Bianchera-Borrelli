@@ -7,6 +7,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.nio.file.Files;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -891,7 +894,8 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        Parser parser=new Parser(new File(classLoader.getResource("Gods.txt").getFile()));
         this.godMap=parser.createHashRepresentation("Powers");
 
     }
@@ -917,7 +921,8 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        TableXML tableXML = new TableXML(new File(classLoader.getResource("table.txt").getFile()),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();
