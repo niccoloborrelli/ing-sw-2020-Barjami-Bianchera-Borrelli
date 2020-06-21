@@ -107,11 +107,13 @@ public class StateManager {
         State workerSetting = new WorkerSettingState(player);
         State action = new ActionState(player);
         State endTurn = new EndTurnState(player);
+        State endGame = new EndGameState(player);
 
         stateHashMap.put(readyForAction.toString(), readyForAction);
         stateHashMap.put(workerSetting.toString(), workerSetting);
         stateHashMap.put(action.toString(), action);
         stateHashMap.put(endTurn.toString(), endTurn);
+        stateHashMap.put(endGame.toString(), endGame);
     }
 
 

@@ -18,53 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class DeliveryMessage {
 
     private static final String ACTION = "w";
     private static final String SPECIAL_CHAR1 = "+";
     private static final String SPECIAL_CHAR2 = "-";
-    private static final String PREFIX = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-    private static final int FIRST_INDEX = 0;
-    private static final int SECOND_INDEX = 1;
     private static final int MINIMUM_LENGTH_INT = 1;
-    private static final int INVALID_VALUE = -1;
-    private static final int INVALID_CODE = -1;
-    private static final String MESSAGE = "message";
-    private static final String BEGIN_FIELD = "<";
-    private static final String END = ">";
-    private static final String END_FIELD = "</";
-    private static final String WORKER = "worker";
-    private static final String ROW = "row";
-    private static final String COLUMN = "column";
-    private static final String SPACE = "space";
-    private static final String INT = "int";
-    private static final String STRING = "string";
-    private static final String CODE = "code";
-    private static final String DATA = "data";
-    private static final String LEVEL = "level";
-    private static final String COLOR = "color";
-    private static final String DOME = "dome";
-    private static final String SPECIFICATION = "specification";
-    private static final String MOVE = "move";
-    private static final String BUILD = "build";
-    private static final String PLAYER = "player";
-    private static final String NAME = "name";
-    private static final String ENDGAME = "endGame";
-    private static final String CHAR = "char";
-    private static final String HELP = "help";
-    private static final int FIRST_CHILD = 0;
-    private static final int ACTION_CODE = 1;
-    private static final int INT_CODE = 2;
-    private static final int STRING_CODE = 0;
-
-    private static final int UPDATE_TO_PRINT = 0;
-    private static final int UPDATE_CHOICE = 1;
-    private static final int UPDATE_GAME_FIELD = 2;
-    private static final int UPDATE_ENDGAME = 3;
-
-    private static final String POWER = "power";
-    private static final String PRE_LOBBY = "preLobby";
     private static final int EMPTY = 0;
 
 
@@ -231,20 +192,12 @@ public class DeliveryMessage {
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
 
-        if (code == UPDATE_TO_PRINT) {
+        if (code == UPDATE_TO_PRINT || code == UPDATE_ENDGAME) {
             sendToInterface(specification, playerName, playerColor);
         } else if (code == UPDATE_CHOICE) {
             decodePossibleChoice(doc, specification, playerName, playerColor);
         } else if (code == UPDATE_GAME_FIELD) {
             decodeUpdate(doc, specification, playerName, playerColor);
-        } else if(code==UPDATE_ENDGAME) {
-            sendToInterface(specification, playerName, playerColor);
-            netHandler.setEndGame(true);
-            try {
-                netHandler.getSocket().close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
     }
@@ -489,7 +442,7 @@ public class DeliveryMessage {
     private List<Integer> parseUpdate(Document document, String specification){
         List<Integer> integerList = new ArrayList<>();
 
-        if(specification.equals(MOVE)){
+        if(specification.equals(MOVE) || specification.equals(DELETED)){
             parseMovement(integerList, document);
         }else if(specification.equals(BUILD)) {
             parseBuilding(integerList, document);
@@ -507,10 +460,10 @@ public class DeliveryMessage {
     private void parseMovement(List<Integer> integerList, Document document){
         Element el = insideField(document, MESSAGE);
 
-        addTargetCoordinate(integerList, el, SPACE, ROW);
-        addTargetCoordinate(integerList, el, SPACE, COLUMN);
-        addTargetCoordinate(integerList, el, WORKER, ROW);
-        addTargetCoordinate(integerList, el, WORKER, COLUMN);
+        addIntNestedField(integerList, el, SPACE, ROW);
+        addIntNestedField(integerList, el, SPACE, COLUMN);
+        addIntNestedField(integerList, el, WORKER, ROW);
+        addIntNestedField(integerList, el, WORKER, COLUMN);
     }
 
     /**
@@ -521,39 +474,46 @@ public class DeliveryMessage {
     private void parseBuilding(List<Integer> integerList, Document document){
         Element el = insideField(document, MESSAGE);
 
-        addTargetCoordinate(integerList, el, SPACE, ROW);
-        addTargetCoordinate(integerList, el, SPACE, COLUMN);
-        addTargetCoordinate(integerList, el, SPACE, LEVEL);
-        addTargetCoordinate(integerList, el, SPACE, DOME);
+        addIntNestedField(integerList, el, SPACE, ROW);
+        addIntNestedField(integerList, el, SPACE, COLUMN);
+        addIntNestedField(integerList, el, SPACE, LEVEL);
+        addIntNestedField(integerList, el, SPACE, DOME);
     }
 
     /**
-     *
-     * @param integerList
-     * @param first
-     * @param target
-     * @param coordinate
+     * Finds, converts to integer and adds to a list value contained in a nested field inside another field.
+     * @param integerList is list in which value will be added.
+     * @param targetElement is element that contains field which contains other field.
+     * @param fieldNest is field to look into to find the nested field.
+     * @param nestedField contains string to convert.
      */
-    private void addTargetCoordinate(List<Integer> integerList, Element first, String target, String coordinate){
-        Element element = findTarget(first, target);
-        Element el = findTarget(element, coordinate);
-        if(el!=null){
-            String coordinateString = el.getTextContent();
-            try{
-               int coordinateValue = Integer.parseInt(coordinateString);
-               integerList.add(coordinateValue);
-            }catch (NumberFormatException e){
-                integerList.add(INVALID_VALUE);
+    private void addIntNestedField(List<Integer> integerList, Element targetElement, String fieldNest, String nestedField){
+        Element element = findTarget(targetElement, fieldNest);
+        if(element!=null) {
+            Element el = findTarget(element, nestedField);
+            if (el != null) {
+                String coordinateString = el.getTextContent();
+                try {
+                    int coordinateValue = Integer.parseInt(coordinateString);
+                    integerList.add(coordinateValue);
+                } catch (NumberFormatException e) {
+                    integerList.add(INVALID_VALUE);
+                }
             }
         }
     }
 
-
+    /**
+     * Finds first element contained in element passed.
+     * @param element is element in which search.
+     * @param target is field to look into.
+     * @return element search if it exists, otherwise null.
+     */
     private Element findTarget(Element element, String target){
         Element elTarget = null;
         NodeList nodeList = element.getElementsByTagName(target);
         if(nodeList!=null){
-            Node node = nodeList.item(0);
+            Node node = nodeList.item(FIRST_CHILD);
             if(node!=null && node.getNodeType() == Node.ELEMENT_NODE){
                 elTarget =  (Element) node;
             }
@@ -561,23 +521,29 @@ public class DeliveryMessage {
         return elTarget;
     }
 
+    /**
+     * Traduces a string that means color in the correct color string.
+     * @param color is the string to traduce.
+     * @return the string that's the correct color, otherwise an invalid string.
+     */
+
     private String getCodeColor(String color){
         if(color!=null) {
             switch (color) {
-                case "red":
+                case RED:
                     return ANSI_RED.escape();
-                case "purple":
+                case PURPLE:
                     return ANSI_PURPLE.escape();
-                case "white":
+                case WHITE:
                     return ANSI_WHITE.escape();
-                case "cyan":
+                case CYAN:
                     return ANSI_CYAN.escape();
-                case "grey":
+                case GREY:
                     return ANSI_GREY.escape();
             }
-            return "invalidColor";
+            return INVALID_COLOR;
         }
-        return "invalidColor";
+        return INVALID_COLOR;
     }
 
     /**
@@ -602,12 +568,16 @@ public class DeliveryMessage {
         return element;
     }
 
+    /**
+     * Closed every socket and sends a message that indicates the end of game.
+     */
+
     public void quitGame() {
         try {
             netHandler.getSocket().close();
             netHandler.setEndGame(true);
             if(!graphicInterface)
-                sendToInterface(ENDGAME, null, null);
+                sendToInterface(DISCONNECTION, null, null);
         }catch(IOException ignored) {}
 
     }
@@ -634,13 +604,18 @@ public class DeliveryMessage {
         return doc;
     }
 
+    /**
+     * Finds code in message and converts it in a integer.
+     * @param doc contains message.
+     * @return an integer that represents code, otherwise an invalid integer.
+     */
     private int findCode(Document doc) {
         int code = INVALID_CODE;
         if (doc != null) {
             NodeList nodeList = doc.getElementsByTagName(CODE);
             Node node = nodeList.item(FIRST_CHILD);
             if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
-                String value = nodeList.item(0).getTextContent();
+                String value = nodeList.item(FIRST_CHILD).getTextContent();
                 try {
                     code = Integer.parseInt(value);
                 } catch (NumberFormatException e) {
@@ -652,25 +627,62 @@ public class DeliveryMessage {
         return code;
     }
 
+    /**
+     * Sends to interface information to print a particular sentence.
+     * @param specification specifies what type of message to send is.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
+
     private void sendToInterface(String specification, String playerName, String playerColor){
         if(!graphicInterface)
             field.printParticularSentence(specification, playerName, playerColor);
     }
+
+    /**
+     * Sends to interface information to print choices.
+     * @param stringList contains choices.
+     * @param specification specifies what type of message to send is.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
 
     private void sendToInterface(List<String> stringList, String specification, String playerName, String playerColor){
         if(!graphicInterface)
             field.printChoices(stringList, specification, playerName, playerColor);
     }
 
+    /**
+     * Sends to interface information to print choices with 2 parameters.
+     * @param worker is worker that could do these choice.
+     * @param hashMapList contains choices.
+     * @param specification specifies what type of message to send is.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
+
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
         if(!graphicInterface)
             field.printChoices(worker, hashMapList, specification, playerName, playerColor);
     }
 
+    /**
+     * Sends to interface information to update game field.
+     * @param worker is worker that causes this update.
+     * @param integerList contains information of updating.
+     * @param specification specifies what type of message to send is.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
+
     public void sendToInterface(String worker, String specification, List<Integer> integerList, String playerName, String playerColor){
         if(!graphicInterface)
             field.updateGameField(worker, integerList, specification, playerName, playerColor);
     }
+
+    /**
+     * Starts reading messages.
+     */
 
     public void startReading(){
         netHandler.handle();

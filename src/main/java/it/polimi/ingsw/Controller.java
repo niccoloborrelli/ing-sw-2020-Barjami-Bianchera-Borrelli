@@ -17,84 +17,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class Controller{
 
-    private static final int STRING_RECEIVING = 0;
-    private static final int SPACE_RECEIVING = 1;
-    private static final int INT_RECEIVING = 2;
-
-    private static final int UPDATE_TO_PRINT = 0;
-    private static final int UPDATE_CHOICE = 1;
-    private static final int UPDATE_GAME_FIELD = 2;
-    private static final int UPDATE_ENDGAME = 3;
-
-    private static final int FIRST_CHILD = 0;
-    private static final int INVALID_VALUE = -1;
-    private static final int INVALID_CODE = -1;
     private static final int INT_IF_BOOLEAN_TRUE = 1;
     private static final int INT_IF_BOOLEAN_FALSE = 0;
-    private static final int FIRST_INDEX = 0;
+
+    private static final int ADJUSTMENT_INDEX_OF = 1;
 
     private static final int BROADCAST = 0;
     private static final int SINGLE_COMMUNICATION = 1;
     private static final int ALL_NOT_ME = 2;
 
-    private static final String CYAN = "cyan";
-    private static final String GREY = "grey";
-    private static final String RED = "red";
-    private static final String PURPLE = "purple";
-    private static final String WHITE="white";
-    private static final String INVALID_COLOR = "none";
-
-    private static final String ERROR = "error";
-    private static final String ENDTURN = "endTurn";
-    private static final String ENDGAME = "endGame";
-
-    private static final String BEGIN_FIELD = "<";
-    private static final String END = ">";
-    private static final String END_FIELD = "</";
-
-    private static final String WORKER = "worker";
-    private static final String ROW = "row";
-    private static final String COLUMN = "column";
-    private static final String SPACE = "space";
-    private static final String INT = "int";
-    private static final String STRING = "string";
-    private static final String CODE = "code";
-    private static final String MESSAGE = "message";
-    private static final String DATA = "data";
-    private static final String LEVEL = "level";
-    private static final String MOVE = "move";
-    private static final String BUILD = "build";
-    private static final String COLOR = "color";
-    private static final String DOME = "dome";
-    private static final String PLAYER = "player";
-    private static final String NAME = "name";
-    private static final String CHAR = "char";
-    private static final String LOSE = "lose";
-    private static final String LOST = "lost";
-    private static final String WORKERSETTING = "workerSetting";
-    private static final String SPECIFICATION = "specification";
-    private static final String _GOD = "-god";
-    private static final String _HELP = "-help";
-    private static final String HELP = "help";
-    private static final String WHAT_TO_DO = "-whatToDo";
-    private static final String GOD = "god";
-    private static final String SPACE_STRING = " ";
-    private static final String TWO_POINTS = ": ";
     private static final String HELP_PHRASE = "-help : It gives you a list of possible operations you can always require";
     private static final String WHAT_TO_DO_PHRASE = "-whatToDo : It gives you the last significant message, which contains indication for what you have to do";
     private static final String GODS_POWER = "-god : It gives you every God with associated power";
     private static final String SINGLE_GOD_POWER = "-god__ : Instead of \"__\", you have to put a God name. It gives you the power of chosen God";
-    private static final int ADJUSTMENT_INDEX_OF = 1;
-    private static final String FIRST_WORKER = "A";
-    private static final String SECOND_WORKER = "B";
-    private static final String INVALID_CHAR = "C";
-    private static final int SECOND_INDEX = 1;
-
-    private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-
 
     private Player player;
     private HandlerHub handlerHub;
@@ -134,13 +73,13 @@ public class Controller{
         int code = findCode(message);
 
         if(!isItHelp(message)) {
-            if (code == STRING_RECEIVING) {
+            if (code == STRING_CODE) {
                 String operation = findString(message);
                 visitor.setStringInput(operation);
-            } else if (code == SPACE_RECEIVING) {
+            } else if (code == ACTION_CODE) {
                 HashMap<Worker, Space> workerSpaceHashMap = convertInSpaceAndWorker(message);
                 setSpaceInput(workerSpaceHashMap);
-            } else if (code == INT_RECEIVING) {
+            } else if (code == INT_CODE) {
                 int value = parseItemInt(message);
                 visitor.setIntInput(value);
             }
@@ -218,7 +157,7 @@ public class Controller{
      */
     private void addAllGodsToStringList(LastChange lastChange) {
         for (String god : powerGodMap.keySet()) {
-            lastChange.getStringList().add(god + ": " + powerGodMap.get(god));
+            lastChange.getStringList().add(god + TWO_POINTS + powerGodMap.get(god));
         }
     }
 
@@ -693,7 +632,9 @@ public class Controller{
                 message = buildUpdateGameFieldMessage(lastChange);
                 break;
             case UPDATE_ENDGAME:
-                sendLostToOthers(codeInString, playerString);
+                sendLostToOthers(codeInString, playerString, specification);
+                break;
+
         }
 
         return generateField(codeInString+ playerString + specification+message, DATA);
@@ -842,6 +783,7 @@ public class Controller{
 
         switch (causeOfChange){
             case MOVE:
+            case DELETED:
                 data = updateMovement(dataOutput.getWorker(), dataOutput.getSpace());
                 break;
             case BUILD:
@@ -905,10 +847,17 @@ public class Controller{
      * @param player is player who won.
      */
 
-    private void sendLostToOthers(String code, String player){
+    private void sendLostToOthers(String code, String player, String typeOfLost){
+        String specification;
         String message = generateField("", MESSAGE);
-        String specification = generateField(LOST, SPECIFICATION);
+
+        if(typeOfLost.equals(LOSE))
+            specification = generateField(LOST, SPECIFICATION);
+        else
+            specification = generateField(LOSE, SPECIFICATION);
+
         String data = generateField(code + player + specification + message, DATA);
+        System.out.println(data);
         handlerHub.sendData(data, this, ALL_NOT_ME);
     }
 

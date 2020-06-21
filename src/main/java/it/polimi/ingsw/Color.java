@@ -11,6 +11,12 @@ public enum Color {
     ANSI_WHITE("\u001B[30m");
 
     static final String RESET = "\u001B[0m";
+    public static final String CYAN = "cyan";
+    public static final String GREY = "grey";
+    public static final String RED = "red";
+    public static final String PURPLE = "purple";
+    public static final String WHITE="white";
+    public static final String INVALID_COLOR = "none";
 
     private String escape;
 

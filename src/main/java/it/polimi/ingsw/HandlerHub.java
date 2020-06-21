@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 
+import static it.polimi.ingsw.FinalCommunication.*;
+
 public class HandlerHub {
 
     private HashMap<Controller, Handler> handlerControllerHashMap;
-    private static final String endMessage = "<data><code>3</code><player></player><specification>endGame</specification><message></message></data>"; // DA CAMBIARE
-    private static final String PREFIX ="<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-
 
     public HandlerHub() {
         handlerControllerHashMap = new HashMap<>();
@@ -26,7 +25,6 @@ public class HandlerHub {
     }
 
     public void quitGame(Handler handler){
-
         for(Handler leftHandler: handlerControllerHashMap.values()){
             try {
                 if(!leftHandler.equals(handler))

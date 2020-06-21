@@ -123,6 +123,7 @@ class TurnManagerTest {
     /*
     Questo test verifica l'inserimento corretto dei colori
      */
+    /*
     @Test
     public void insertColor(){
         Player ciro = new Player();
@@ -149,6 +150,7 @@ class TurnManagerTest {
         turnManager.setColor(ciro, "grey");
         System.out.println("Il colore di ciro è " + ciro.getPlayerColor() + "questo" + Color.RESET);
     }
+     */
 
     @Test
     void setNextPlayerTest1() throws ParserConfigurationException, SAXException, IOException {

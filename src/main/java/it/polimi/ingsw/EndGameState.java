@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import java.io.IOException;
-
 public class EndGameState extends State {
 
     EndGameState(Player player) {
@@ -14,5 +12,9 @@ public class EndGameState extends State {
         uselessInput.setCode(3);
         uselessInput.setSpecification("endGame");
         player.notifyController();
+    }
+
+    public String toString(){
+        return "EndGameState";
     }
 }

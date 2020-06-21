@@ -329,4 +329,10 @@ public class Player implements Observed{
         return lastChange;
     }
 
+    public void notifyWin(){
+        lastChange.setCode(3);
+        lastChange.setSpecification("win");
+        notify();
+    }
+
 }

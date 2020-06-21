@@ -16,11 +16,11 @@ public class TurnManager {
 
     public TurnManager(){
         allowedColors = new ArrayList<>();
-        allowedColors.add("red");
-        allowedColors.add("purple");
-        allowedColors.add("white");
-        allowedColors.add("grey");
-        allowedColors.add("cyan");
+        allowedColors.add(RED);
+        allowedColors.add(PURPLE);
+        allowedColors.add(WHITE);
+        allowedColors.add(GREY);
+        allowedColors.add(CYAN);
         notAllowedNames = new ArrayList<>();
         players = new ArrayList<>();
         availableGods = new ArrayList<>();
@@ -50,25 +50,28 @@ public class TurnManager {
         allowedColors.remove(color);
     }*/
 
+    /*
     public void setColor(Player player, String color){
         switch (color){
-            case "red":
-                player.setPlayerColor("red");
+            case RED:
+                player.setPlayerColor(RED);
                 break;
-            case "purple":
-                player.setPlayerColor("purple");
+            case PURPLE:
+                player.setPlayerColor(PURPLE);
                 break;
-            case "white":
-                player.setPlayerColor("white");
+            case WHITE:
+                player.setPlayerColor(WHITE);
                 break;
-            case "cyan":
-                player.setPlayerColor("cyan");
+            case CYAN:
+                player.setPlayerColor(CYAN);
                 break;
-            case "grey":
-                player.setPlayerColor("grey");
+            case GREY:
+                player.setPlayerColor(GREY);
                 break;
         }
     }
+
+     */
 
     /**
      * This method check if someone has won after an action
@@ -79,6 +82,7 @@ public class TurnManager {
                 if (p.isInGame()) {
                     p.getWinCondition().checkHasWon(p);
                     if(p.isHasWon()){
+                        p.notifyWin();
                         setEndGame();
                         break;
                     }
@@ -89,13 +93,21 @@ public class TurnManager {
     private void setEndGame(){
         for(Player player: players) {
             player.setInGame(false);
-            player.getStateManager().setCurrent_state(new EndGameState(player));
+            try {
+                player.getStateManager().setNextState(player);
+            } catch (IOException e) {
+                player.getStateManager().setCurrent_state(new EndGameState(player)); //vedere se cambiarlo in set next state
+                try {
+                    player.getState().onStateTransition();
+                } catch (IOException ignored) {
+                }
+            }
         }
     }
 
+
     /**
-     * @param player is the player who has just finished hir turn
-     * @return the next player to play
+     * @param player is the player who has just finished his turn.
      */
     public void setNextPlayer(Player player){
         Player nextPlayer;

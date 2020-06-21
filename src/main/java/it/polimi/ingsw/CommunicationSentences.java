@@ -14,8 +14,8 @@ public class CommunicationSentences {
             "From your decision, your worker will have that color. Those are available: \n";
     private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
             "Second _ is the row of space and third _ is the column\n";
-    private static int set_upIndex;
-    public static final String endGame = "Somebody crashed. You're gonna be disconnected. Press any button.";
+    public static final String disconnection = "Somebody crashed. You're gonna be disconnected. Press any button.";
+    public static final String endGame = "Game finished. Press any button";
     private static final String endSent1 = ", good job! Your turn is finished. Look at your enemies to understand their strategy.";
     private static final String endSent2 = ", well done! Now you can rest.";
     private static final String endSent3 = ", your turn ended. Who knows if your enemies will fall in your trap.";
@@ -37,14 +37,17 @@ public class CommunicationSentences {
     private static final String moved = " moved in space ";
     private static final String built = " built in space ";
     private static final String MOVE = "move";
+    private static final String BUILD = "build";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
-    public static final String lose = "You lost! Your God lashes out in rage. Run away while you can";
+    public static final String lose = "You lost! Your God lashes out in rage. Run away while you can.\n" +
+            "Now you can watch others winning.";
     private static final String lost = " lost! One less enemy.";
     private static final String actionSent1_1 = " Choose carefully. Decide who would ";
     private static final String actionSent1_2 = ", worker can do it in these places:";
     private static final String actionSent2_1 = ", worker can ";
     private static final String actionSent2_2 = " in these places:";
     private static final String godChosen1 = " chose you. ";
+    private static final String removed = " removed his worker due to his defeat";
     private static List<String> actionSentences;
     private static int actionIndex;
     private static List<String> endTurnSentences;
@@ -124,8 +127,10 @@ public class CommunicationSentences {
         String prefix = playerColor + playerName + ANSI_RESET;
         if(specification.equals(MOVE)){
             sentence = moved + "[" + newRow +","+newColumn+"]";
-        }else
+        }else if(specification.equals(BUILD))
             sentence = built + "[" + newRow + ","+newColumn+"]";
+        else
+            sentence = removed;
 
         return prefix + sentence;
     }
@@ -246,7 +251,6 @@ public class CommunicationSentences {
     }
 
     private static void createBaseActionSentence(){
-        set_upIndex = 0;
         actionIndex = 0;
         actionSentences = new ArrayList<>();
         actionSentences.add(actionSent1_1);

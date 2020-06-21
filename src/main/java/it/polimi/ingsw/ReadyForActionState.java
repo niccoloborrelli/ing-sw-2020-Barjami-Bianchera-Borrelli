@@ -64,8 +64,33 @@ public class ReadyForActionState extends State {
         lastChange.setCode(3);
         lastChange.setSpecification("lose");
         player.notifyController();
-        player.getStateManager().setNextState(player); //se ho perso richiamo il stateManager perche' cambi lo stato
+        deleteWorkersFromBoard();
+        player.getStateManager().setNextState(player);
     }
+
+    private void deleteWorkersFromBoard(){
+        for(Worker w: player.getWorkers()) {
+            Space space = w.getWorkerSpace();
+            space.setOccupator(null);
+            w.setWorkerSpace(new Space(-1,-1));
+            notifyDeletedWorker(w, space);
+            w.setWorkerSpace(null);
+        }
+
+    }
+
+    private void notifyDeletedWorker(Worker worker, Space space){
+        LastChange lastChange = new LastChange();
+        lastChange.setCode(2);
+        lastChange.setWorker(worker);
+        lastChange.setSpecification("deleted");
+        lastChange.setSpace(space);
+
+        player.notify(lastChange);
+
+    }
+
+
 
     /**
      * this method sets the inputs this state of the FSM is allowed to receive and which from this can evolve
