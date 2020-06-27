@@ -31,6 +31,7 @@ public class FinalCommunication {
     public static final String NAME = "name";
     public static final String ENDGAME = "endGame";
     public static final String CHAR = "char";
+    public static final String SET_UP = "setUp";
     public static final String endMessage = "<data><code>3</code><player></player><specification>disconnection</specification><message></message></data>";
     public static final String PREFIX = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
@@ -48,6 +49,7 @@ public class FinalCommunication {
     public static final String GOD = "god";
     public static final String WIN = "win";
     public static final String DELETED = "deleted";
+    public static final String QUIT = "quit";
 
     public static final String FIRST_WORKER = "A";
     public static final String SECOND_WORKER = "B";

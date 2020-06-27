@@ -30,7 +30,7 @@ public abstract class State {
      * @throws IOException
      */
     public void onInput(Visitor visitor) throws IOException {
-        //inserisco on input base
+
     }
 
     /**

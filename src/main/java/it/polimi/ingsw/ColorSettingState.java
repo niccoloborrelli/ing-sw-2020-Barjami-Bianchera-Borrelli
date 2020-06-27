@@ -23,7 +23,6 @@ public class ColorSettingState extends State {
             }
         }
         if(!colorSetted) {
-            System.out.println("Inviato da color");
             uselessInputNotify();
         }
     }

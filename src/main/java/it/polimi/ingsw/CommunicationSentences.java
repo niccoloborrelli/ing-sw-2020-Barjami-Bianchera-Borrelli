@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import java.util.*;
 
 import static it.polimi.ingsw.Field.ANSI_RESET;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommunicationSentences {
 
@@ -12,7 +13,7 @@ public class CommunicationSentences {
             "Only one of you could dominate Santorini.\nI hope it will be you.";
     private static final String colorSent = "You have to choose color with which your workers paint themselves.\n" +
             "From your decision, your worker will have that color. Those are available: \n";
-    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
+    private static final String setup = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
             "Second _ is the row of space and third _ is the column\n";
     public static final String disconnection = "Somebody crashed. You're gonna be disconnected. Press any button.";
     public static final String endGame = "Game finished. Press any button";
@@ -137,7 +138,7 @@ public class CommunicationSentences {
 
     public static String getActionPhrase(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor) {
         String phrase = actionSentences.get(actionIndex);
-        String prefix = SET_UP + playerColor + playerName + ANSI_RESET;
+        String prefix = setup + playerColor + playerName + ANSI_RESET;
 
         actionIndex = addIndexOfList(actionSentences, actionIndex);
 
@@ -267,4 +268,54 @@ public class CommunicationSentences {
 
         return index;
     }
+
+    public static String printParticularSentence(String specification, String playerName, String playerColor) {
+        String data = null;
+        switch (specification) {
+            case ENDTURN:
+                data = getEndTurnPhrase(playerName, playerColor);
+                break;
+            case ERROR:
+                data = getErrorPhrase();
+                break;
+            case WIN:
+                data = won;
+                break;
+            case LOSE:
+                data = lose;
+                break;
+            case LOST:
+                data = getLostPhrase(playerName, playerColor);
+                break;
+            case NAME:
+                data = nameSent;
+                break;
+            case SET_UP:
+                System.out.println("Giusto");
+                data = setup;
+                break;
+            case DISCONNECTION:
+                data = disconnection;
+                break;
+            case ENDGAME:
+                data = endGame;
+                break;
+        }
+
+        return data;
+    }
+
+    public static String printChoices(String worker, List<HashMap<String, String>> hashMap, String specification, String playerName, String playerColor) {
+        String data = null;
+        switch (specification) {
+            case MOVE:
+            case BUILD:
+                data = getActionPhrase(worker, hashMap, specification, playerName, playerColor);
+                break;
+        }
+
+        return data;
+    }
+
+
 }

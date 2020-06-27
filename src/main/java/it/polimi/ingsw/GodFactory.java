@@ -125,8 +125,19 @@ public class GodFactory {
         stateManager.changeStates(decorator,actionState);
     }
 
-    private void domeEveryWhere(Player player){
-        player.setDomeEveryWhere(true);
+    private void domeEveryWhere(Player player) throws ClassNotFoundException, NoSuchMethodException {
+        PowerActivationState activationState=new PowerActivationState(player,new DomeOnEveryLevel());
+        StateManager stateManager=player.getStateManager();
+        stateManager.addNewState(activationState);
+        State readyForActionState=stateManager.getState(INPUTFORACTION);
+        State endTurnState=stateManager.getState(ENDTURN);
+        State actionState=stateManager.getState(ACTION);
+        Class cl = Class.forName(CLASSNAME1);
+        Method m2 = cl.getDeclaredMethod("hasBuildsToDo");
+        Method m4=cl.getDeclaredMethod(ANOTHERACTION);
+        stateManager.addNewFinishSpace(actionState,activationState,m2,true,3);
+        stateManager.addNewFinishSpace(activationState,readyForActionState,cl.getDeclaredMethod("isInGame"),true,3);
+        stateManager.addNewFinishSpace(activationState,endTurnState,m4,false,3);
     }
 
     private void additionalBuildNoInitial(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {

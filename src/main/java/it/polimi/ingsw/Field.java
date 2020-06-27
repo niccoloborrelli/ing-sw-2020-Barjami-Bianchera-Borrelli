@@ -3,17 +3,15 @@ package it.polimi.ingsw;
 import java.util.HashMap;
 import java.util.List;
 
-import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.ColorConverter.*;
 import static it.polimi.ingsw.CommunicationSentences.*;
 import static it.polimi.ingsw.DefinedValues.*;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 
-public class Field {
+public class Field{
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
-    private static final String SET_UP = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
-            "Second _ is the row of space and third _ is the column";
     public static final String ANSI_RESET = "\u001B[0m";
 
 
@@ -106,11 +104,11 @@ public class Field {
      * @param row    is the start space row
      * @param column is the start space column
      */
-    public void viewSetup(int row, int column, String color) {
+    public void viewSetup(int row, int column, String worker, String color) {
         row = 2 * row + 2;
         column = 4 * column + 2;
 
-        field[row][column] = color + "W";
+        field[row][column] = color + worker;
         plot();
     }
 
@@ -125,6 +123,7 @@ public class Field {
         column = 4 * column + 2;
 
         field[row][column] = " ";
+        plot();
     }
 
     private void blankSpaces() {
@@ -184,6 +183,8 @@ public class Field {
                 field[i][j] = ANSI_BLUE.escape() + "0";
     }
 
+    /*
+
     public void printParticularSentence(String specification, String playerName, String playerColor) {
         String data = null;
         switch (specification) {
@@ -219,6 +220,12 @@ public class Field {
 
         System.out.println(data);
     }
+     */
+
+    public void printSentence(String sentence){
+        System.out.println(sentence);
+    }
+
 
     public void printChoices(List<String> stringList, String specification, String playerName, String playerColor) {
         String data = null;
@@ -252,6 +259,9 @@ public class Field {
     public void updateGameField(String worker, List<Integer> integerList, String specification, String playerName, String playerColor) {
         System.out.println(updateField(integerList.get(2), integerList.get(3), playerName, playerColor, specification));
         switch (specification) {
+            case WORKERSETTING:
+                viewSetup(integerList.get(2), integerList.get(3), worker, playerColor);
+                break;
             case MOVE:
             case DELETED:
                 viewMove(worker, integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
@@ -261,7 +271,7 @@ public class Field {
                 break;
         }
     }
-
+/*
     public void printChoices(String worker, List<HashMap<String, String>> hashMap, String specification, String playerName, String playerColor){
         String data = null;
         switch (specification){
@@ -273,5 +283,7 @@ public class Field {
 
         System.out.println(data);
     }
+
+ */
 }
 

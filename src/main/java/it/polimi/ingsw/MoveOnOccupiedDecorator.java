@@ -2,10 +2,11 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
+import static it.polimi.ingsw.FinalCommunication.*;
+
 public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
     private static final String ACTIONTYPE1="move";
-    private static final String ACTIONTYPE2="build";
     private static final String PUSHBACK="push";
     private static final String SWAP="swap";
 
@@ -29,11 +30,14 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
             if(action.equals(ACTIONTYPE1)) {
                 moveAbility(actingWorker,spaceToAct);
                 actingWorker.setMovedThisTurn(true);
-                notifyActionPerformed(new WorkerSpaceCouple(actingWorker,actingWorker.getWorkerSpace()),action);
                 player.getStateManager().getTurnManager().checkWin();
                 if(player.isHasWon())
                     notifyWin();
-                player.getStateManager().setNextState(player);
+                if(player.isInGame()) {
+                    for(Worker tempWorker: player.getWorkers())
+                        tempWorker.clearLists();
+                    player.getStateManager().setNextState(player);
+                }
             }
         }
     }
@@ -50,7 +54,9 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
     }
 
     private void swap(Worker actingWorker,Space spaceToAct){
+        notifyDeleted(player, actingWorker);
         Worker enemyToSwap=spaceToAct.getOccupator();
+        notifyEnemy(enemyToSwap, true);
         Space startingSpace=actingWorker.getWorkerSpace();
         actingWorker.setLastSpaceOccupied(startingSpace);
         actingWorker.setWorkerSpace(spaceToAct);
@@ -58,6 +64,48 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         spaceToAct.setOccupator(actingWorker);
         startingSpace.setOccupator(enemyToSwap);
         enemyToSwap.setLastSpaceOccupied(spaceToAct);
+        notifyEnemy(enemyToSwap, false);
+        notifySwap(player, actingWorker);
+    }
+
+    private void notifyEnemy(Worker enemyToSwap, boolean deleted){
+        Player enemyPlayer = findPlayer(enemyToSwap);
+        if(deleted)
+            notifyDeleted(enemyPlayer, enemyToSwap);
+        else
+            notifySwap(enemyPlayer, enemyToSwap);
+    }
+
+    private void notifySwap(Player player, Worker worker){
+        LastChange lastChange = new LastChange();
+        lastChange.setCode(2);
+        lastChange.setSpecification(WORKERSETTING);
+        lastChange.setWorker(worker);
+        lastChange.setSpace(worker.getWorkerSpace());
+        player.notify(lastChange);
+    }
+
+    private void notifyDeleted(Player player, Worker worker){
+        LastChange lastChange = new LastChange();
+        Space spaceOfWorker = worker.getWorkerSpace();
+        worker.setWorkerSpace(new Space(-1,-1));
+        lastChange.setSpecification(DELETED);
+        lastChange.setCode(2);
+        lastChange.setWorker(worker);
+        lastChange.setSpace(spaceOfWorker);
+        player.notify(lastChange);
+        worker.setWorkerSpace(spaceOfWorker);
+    }
+
+    private Player findPlayer(Worker workerOfPlayer){
+        Player playerToFind = player;
+        TurnManager turnManager = player.getStateManager().getTurnManager();
+        for(Player player: turnManager.getPlayers()){
+            if(player.getWorkers().contains(workerOfPlayer))
+                playerToFind = player;
+        }
+
+        return playerToFind;
     }
 
     private void pushBack(Worker actingWorker,Space spaceToAct){
@@ -69,13 +117,27 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
         Worker workerToPush=spaceToAct.getOccupator(); //sposto il worker in posizione spaceToAct nel space trovato prima
         workerToPush.setLastSpaceOccupied(spaceToAct);
         workerToPush.setWorkerSpace(finishPushSpace);
+        notifyPushed(workerToPush, workerToPush.getLastSpaceOccupied());
 
         actingWorker.setWorkerSpace(spaceToAct); //sposto actingWorker in spaceToAct
         actingWorker.setLastSpaceOccupied(startingSpace);
+        notifyActionPerformed(new WorkerSpaceCouple(actingWorker, actingWorker.getLastSpaceOccupied()), MOVE);
 
         finishPushSpace.setOccupator(workerToPush);
         spaceToAct.setOccupator(actingWorker);
         startingSpace.setOccupator(null);
     }
+
+    private void notifyPushed(Worker worker, Space space){
+        Player player = findPlayer(worker);
+        LastChange lastChange = new LastChange();
+        lastChange.setCode(2);
+        lastChange.setSpecification(MOVE);
+        lastChange.setWorker(worker);
+        lastChange.setSpace(space);
+        player.notify(lastChange);
+
+    }
+
 
 }

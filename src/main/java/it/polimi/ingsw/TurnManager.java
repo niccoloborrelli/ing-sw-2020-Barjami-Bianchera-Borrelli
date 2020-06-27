@@ -3,9 +3,8 @@ package it.polimi.ingsw;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import static it.polimi.ingsw.DefinedValues.*;
 
-import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.ColorConverter.*;
 
 public class TurnManager {
 

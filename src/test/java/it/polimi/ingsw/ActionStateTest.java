@@ -3,68 +3,268 @@ package it.polimi.ingsw;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ActionStateTest {
 
     @Test
-    public  void generalActionTest1() throws IOException {
+    void onStateTransitionTest1() throws IOException {
         Controller controller = new Controller();
-        Player player=new Player();
-        IslandBoard islandBoard=new IslandBoard();
-        controller.setPlayer(player);
+        HandlerHub handlerHub = new HandlerHub();
+        TurnManager turnManager = new TurnManager();
+        Player player = new Player();
+        WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple();
+        IslandBoard islandBoard = new IslandBoard();
+        StateManager stateManager = new StateManager();
+        State endGame = new EndGameState(player);
+        ActionState actionState = new ActionState(player);
+
+        stateManager.getStateHashMap().put(endGame.toString(), endGame);
+        stateManager.getStateHashMap().put(actionState.toString(), actionState);
+
+        List<Line> lineList = new ArrayList<>();
+        Line line = new Line(endGame);
+        line.setPriority(100);
+        lineList.add(line);
+
+        stateManager.getTable().put(actionState, lineList);
+
+        stateManager.setCurrent_state(actionState);
+        stateManager.setTurnManager(turnManager);
+
+        turnManager.getPlayers().add(player);
+
+        player.setStateManager(stateManager);
         player.setIslandBoard(islandBoard);
-        Worker w1=player.getWorkers().get(0);
-        Worker w2=player.getWorkers().get(1);
-        w1.setWorkerSpace(islandBoard.getSpace(0,0));
-        islandBoard.getSpace(0,0).setOccupator(w1);
 
-        Worker w3=new Worker();
-        w3.setWorkerPlayer(new Player());
+        player.setController(controller);
+        player.getWorkers().get(0).setCantMove(false);
 
-        islandBoard.getSpace(1,1).setLevel(2);
-        for(int i=0;i<5;i++){
-            for(int j=0;j<5;j++){
-                if(islandBoard.getSpace(i,j).getOccupator()==null)
-                    System.out.print(0+" ");
-                else
-                    System.out.print("x");
-            }
-            System.out.println();
-        }
+        controller.setHandlerHub(handlerHub);
+        controller.setPlayer(player);
 
-        ActionState actionState=new ActionState(player);
-
-        AbstractActionState athena=new OnMoveUpDecorator(actionState,"denyUpperMove");
-        player.getStateManager().setCurrent_state(athena);
-        WorkerSpaceCouple workerSpaceCouple =new WorkerSpaceCouple();
-        workerSpaceCouple.setWorker(w1);
-        workerSpaceCouple.setSpace(islandBoard.getSpace(1,1));
+        player.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
+        islandBoard.getSpace(0,0).setOccupator(player.getWorkers().get(0));
+        workerSpaceCouple.setWorker(player.getWorkers().get(0));
+        workerSpaceCouple.setSpace(islandBoard.getSpace(2,1));
         player.setLastReceivedInput(workerSpaceCouple);
-        player.getState().onStateTransition();
-        System.out.println();
-        for(int i=0;i<5;i++){
-            for(int j=0;j<5;j++){
-                if(islandBoard.getSpace(i,j).getOccupator()==null)
-                    System.out.print(islandBoard.getSpace(i,j).getLevel()+" ");
-                else
-                    System.out.print("x");
-            }
-            System.out.println();
-        }
-        System.out.println(player.getActionsToPerform().get(0));
-/*
-        ReadyForActionState readyForActionState = new ReadyForActionState(player);
-        player.getStateManager().setCurrent_state(readyForActionState);
 
-        player.getState().onStateTransition();
+        int oldSize = player.getActionsToPerform().size();
 
-        for(Worker w:player.getWorkers()){
-            for(Space c:w.getPossibleMovements()) {
-                System.out.println("worker:" + w.getWorkerPlayer().getWorkers().indexOf(w) + "-" +c.getRow()+c.getColumn());
-            }
-        }
-*/
+        actionState.onStateTransition();
+
+        assertTrue(player.getActionsToPerform().size()==oldSize-1 && player.getWorkers().get(0).getWorkerSpace().equals(islandBoard.getSpace(2,1)) &&
+                islandBoard.getSpace(0,0).getOccupator()==null && actionState.getActingWorker().equals(player.getWorkers().get(0)) &&
+                actionState.getSpaceToAct().equals(islandBoard.getSpace(2,1)) && actionState.getStartingSpace().equals(islandBoard.getSpace(0,0)) &&
+                actionState.getAction().equals("move"));
+
     }
 
+    @Test
+    void onStateTransitionTest2() throws IOException {
+            Controller controller = new Controller();
+            HandlerHub handlerHub = new HandlerHub();
+            TurnManager turnManager = new TurnManager();
+            Player player = new Player();
+            WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple();
+            IslandBoard islandBoard = new IslandBoard();
+            StateManager stateManager = new StateManager();
+            State endGame = new EndGameState(player);
+            State actionState = new ActionState(player);
+
+            stateManager.getStateHashMap().put(endGame.toString(), endGame);
+            stateManager.getStateHashMap().put(actionState.toString(), actionState);
+
+            List<Line> lineList = new ArrayList<>();
+            Line line = new Line(endGame);
+            line.setPriority(100);
+            lineList.add(line);
+
+            stateManager.getTable().put(actionState, lineList);
+
+            stateManager.setCurrent_state(actionState);
+            stateManager.setTurnManager(turnManager);
+
+            turnManager.getPlayers().add(player);
+
+
+            player.setStateManager(stateManager);
+            player.setIslandBoard(islandBoard);
+            player.getActionsToPerform().remove("move");
+            player.setController(controller);
+            player.getWorkers().get(0).setCantMove(false);
+
+
+            controller.setHandlerHub(handlerHub);
+            controller.setPlayer(player);
+
+            player.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
+            islandBoard.getSpace(0,0).setOccupator(player.getWorkers().get(0));
+            workerSpaceCouple.setWorker(player.getWorkers().get(0));
+            workerSpaceCouple.setSpace(islandBoard.getSpace(2,1));
+            player.setLastReceivedInput(workerSpaceCouple);
+
+            int oldSize = player.getActionsToPerform().size();
+
+            actionState.onStateTransition();
+
+            assertTrue(player.getActionsToPerform().size()==oldSize-1 && player.getWorkers().get(0).getWorkerSpace().equals(islandBoard.getSpace(0,0)) &&
+                    islandBoard.getSpace(2,1).getOccupator()==null && islandBoard.getSpace(2,1).getLevel()==1);
+    }
+
+    @Test
+    void onStateTransitionTest3() throws IOException {
+        Controller controller = new Controller();
+        HandlerHub handlerHub = new HandlerHub();
+        TurnManager turnManager = new TurnManager();
+        Player player = new Player();
+        WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple();
+        IslandBoard islandBoard = new IslandBoard();
+        StateManager stateManager = new StateManager();
+        State endGame = new EndGameState(player);
+        State actionState = new ActionState(player);
+
+        stateManager.getStateHashMap().put(endGame.toString(), endGame);
+        stateManager.getStateHashMap().put(actionState.toString(), actionState);
+
+        List<Line> lineList = new ArrayList<>();
+        Line line = new Line(endGame);
+        line.setPriority(100);
+        lineList.add(line);
+
+        stateManager.getTable().put(actionState, lineList);
+
+        stateManager.setCurrent_state(actionState);
+        stateManager.setTurnManager(turnManager);
+
+        turnManager.getPlayers().add(player);
+
+
+        player.setStateManager(stateManager);
+        player.setIslandBoard(islandBoard);
+        player.getActionsToPerform().remove("move");
+        player.setController(controller);
+        player.getWorkers().get(0).setCantMove(false);
+
+
+        controller.setHandlerHub(handlerHub);
+        controller.setPlayer(player);
+
+        player.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0, 0));
+        islandBoard.getSpace(0, 0).setOccupator(player.getWorkers().get(0));
+        workerSpaceCouple.setWorker(player.getWorkers().get(0));
+        workerSpaceCouple.setSpace(islandBoard.getSpace(2, 1));
+        islandBoard.getSpace(2, 1).setLevel(3);
+        player.setLastReceivedInput(workerSpaceCouple);
+
+        actionState.onStateTransition();
+
+        assertTrue(islandBoard.getSpace(2, 1).HasDome());
+
+    }
+
+    @Test
+    void onStateTransitionTest4() throws IOException {
+        Controller controller = new Controller();
+        HandlerHub handlerHub = new HandlerHub();
+        TurnManager turnManager = new TurnManager();
+        Player player = new Player();
+        WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple();
+        IslandBoard islandBoard = new IslandBoard();
+        StateManager stateManager = new StateManager();
+        State endGame = new EndGameState(player);
+        State actionState = new ActionState(player);
+
+        stateManager.getStateHashMap().put(endGame.toString(), endGame);
+        stateManager.getStateHashMap().put(actionState.toString(), actionState);
+
+        List<Line> lineList = new ArrayList<>();
+        Line line = new Line(endGame);
+        line.setPriority(100);
+        lineList.add(line);
+
+        stateManager.getTable().put(actionState, lineList);
+
+        stateManager.setCurrent_state(actionState);
+        stateManager.setTurnManager(turnManager);
+
+        turnManager.getPlayers().add(player);
+
+
+        player.setStateManager(stateManager);
+        player.setIslandBoard(islandBoard);
+        player.getActionsToPerform().remove("move");
+        player.setController(controller);
+        player.getWorkers().get(0).setCantMove(false);
+
+
+        controller.setHandlerHub(handlerHub);
+        controller.setPlayer(player);
+
+        player.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0, 0));
+        islandBoard.getSpace(0, 0).setOccupator(player.getWorkers().get(0));
+        workerSpaceCouple.setWorker(player.getWorkers().get(0));
+        workerSpaceCouple.setSpace(islandBoard.getSpace(2, 1));
+        player.getWorkers().get(0).setMustBuildDome(true);
+        player.setLastReceivedInput(workerSpaceCouple);
+
+        actionState.onStateTransition();
+
+        assertTrue(islandBoard.getSpace(2, 1).HasDome());
+    }
+
+    @Test
+    void onStateTransitionTest5() throws IOException {
+        Controller controller = new Controller();
+        HandlerHub handlerHub = new HandlerHub();
+        TurnManager turnManager = new TurnManager();
+        Player player = new Player();
+        WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple();
+        IslandBoard islandBoard = new IslandBoard();
+        StateManager stateManager = new StateManager();
+        State endGame = new EndGameState(player);
+        ActionState actionState = new ActionState(player);
+
+        stateManager.getStateHashMap().put(endGame.toString(), endGame);
+        stateManager.getStateHashMap().put(actionState.toString(), actionState);
+
+        List<Line> lineList = new ArrayList<>();
+        Line line = new Line(endGame);
+        line.setPriority(100);
+        lineList.add(line);
+
+        stateManager.getTable().put(actionState, lineList);
+
+        stateManager.setCurrent_state(actionState);
+        stateManager.setTurnManager(turnManager);
+
+        turnManager.getPlayers().add(player);
+
+        player.setStateManager(stateManager);
+        player.setIslandBoard(islandBoard);
+
+        player.setController(controller);
+        player.getWorkers().get(0).setCantMove(false);
+
+
+        controller.setHandlerHub(handlerHub);
+        controller.setPlayer(player);
+
+        player.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
+        islandBoard.getSpace(0,0).setOccupator(player.getWorkers().get(0));
+        islandBoard.getSpace(0,0).setLevel(2);
+        islandBoard.getSpace(2,1).setLevel(3);
+        workerSpaceCouple.setWorker(player.getWorkers().get(0));
+        workerSpaceCouple.setSpace(islandBoard.getSpace(2,1));
+        player.setLastReceivedInput(workerSpaceCouple);
+
+        actionState.onStateTransition();
+
+        assertTrue(player.isHasWon());
+
+    }
 
 }

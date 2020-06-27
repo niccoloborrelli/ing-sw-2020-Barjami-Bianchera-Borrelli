@@ -7,9 +7,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.nio.file.Files;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -113,6 +110,8 @@ public class Controller{
                 isItHelp = true;
             else if (operation.equals(WHAT_TO_DO))
                 isItHelp = true;
+            else if(operation.equals(QUIT))
+                isItHelp = true;
         }
 
         return isItHelp;
@@ -134,7 +133,8 @@ public class Controller{
                 giveListOfGod();
             else
                 pickChosenPower(message);
-        }
+        }else if(operation.equals(QUIT))
+            handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this));
 
     }
 
@@ -571,6 +571,7 @@ public class Controller{
         LastChange lastChange = player.getLastChange();
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        System.out.println(data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
@@ -582,6 +583,7 @@ public class Controller{
     public void update(LastChange lastChange){
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        System.out.println(data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
@@ -677,7 +679,7 @@ public class Controller{
      */
 
     private int findCommunication(String string){
-        if(string.equals(ERROR) || string.equals(ENDTURN) || string.equals(NAME) || string.equals(WORKERSETTING))
+        if(string.equals(ERROR) || string.equals(ENDTURN) || string.equals(NAME) || string.equals(WORKERSETTING) || string.equals(SET_UP))
                 return SINGLE_COMMUNICATION;
         else if(string.equals(ENDGAME))
                 return BROADCAST;
@@ -786,6 +788,7 @@ public class Controller{
 
         switch (causeOfChange){
             case MOVE:
+            case WORKERSETTING:
             case DELETED:
                 data = updateMovement(dataOutput.getWorker(), dataOutput.getSpace());
                 break;
@@ -860,7 +863,6 @@ public class Controller{
             specification = generateField(LOSE, SPECIFICATION);
 
         String data = generateField(code + player + specification + message, DATA);
-        System.out.println(data);
         handlerHub.sendData(data, this, ALL_NOT_ME);
     }
 
@@ -894,8 +896,7 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Parser parser=new Parser(new File(classLoader.getResource("Gods.txt").getFile()));
+        Parser parser=new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
         this.godMap=parser.createHashRepresentation("Powers");
 
     }
@@ -921,8 +922,7 @@ public class Controller{
      */
 
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        TableXML tableXML = new TableXML(new File(classLoader.getResource("table.txt").getFile()),player);
+        TableXML tableXML = new TableXML(new File("C:\\Users\\Yoshi\\Desktop\\table.txt"),player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);
         player.getStateManager().sortAllTable();

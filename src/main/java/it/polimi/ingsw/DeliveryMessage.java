@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static it.polimi.ingsw.Color.*;
+import static it.polimi.ingsw.ColorConverter.*;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class DeliveryMessage {
@@ -28,15 +28,16 @@ public class DeliveryMessage {
     private static final int MINIMUM_LENGTH_INT = 1;
     private static final int EMPTY = 0;
 
-
-    private boolean graphicInterface;
-    private Field field;
+    private Command command;
     private NetHandler netHandler;
 
 
     public DeliveryMessage(Socket sc) throws IOException {
-        field = new Field();
         netHandler = new NetHandler(this, sc);
+    }
+
+    public void setCommand(Command command) {
+        this.command = command;
     }
 
     /**
@@ -442,7 +443,7 @@ public class DeliveryMessage {
     private List<Integer> parseUpdate(Document document, String specification){
         List<Integer> integerList = new ArrayList<>();
 
-        if(specification.equals(MOVE) || specification.equals(DELETED)){
+        if(specification.equals(MOVE) || specification.equals(DELETED) || specification.equals(WORKERSETTING)){
             parseMovement(integerList, document);
         }else if(specification.equals(BUILD)) {
             parseBuilding(integerList, document);
@@ -576,8 +577,7 @@ public class DeliveryMessage {
         try {
             netHandler.getSocket().close();
             netHandler.setEndGame(true);
-            if(!graphicInterface)
-                sendToInterface(DISCONNECTION, null, null);
+            sendToInterface(DISCONNECTION, null, null);
         }catch(IOException ignored) {}
 
     }
@@ -635,8 +635,8 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String specification, String playerName, String playerColor){
-        if(!graphicInterface)
-            field.printParticularSentence(specification, playerName, playerColor);
+        SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
+        command.manageCommand(sentenceBottomRequestCommand);
     }
 
     /**
@@ -648,8 +648,8 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(List<String> stringList, String specification, String playerName, String playerColor){
-        if(!graphicInterface)
-            field.printChoices(stringList, specification, playerName, playerColor);
+        LimitedOptionsCommand limitedOptionsCommand = new LimitedOptionsCommand(stringList, specification, playerName, playerColor);
+        command.manageCommand(limitedOptionsCommand);
     }
 
     /**
@@ -662,8 +662,8 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
-        if(!graphicInterface)
-            field.printChoices(worker, hashMapList, specification, playerName, playerColor);
+        ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
+        command.manageCommand(showAvCells);
     }
 
     /**
@@ -676,14 +676,48 @@ public class DeliveryMessage {
      */
 
     public void sendToInterface(String worker, String specification, List<Integer> integerList, String playerName, String playerColor){
-        if(!graphicInterface)
-            field.updateGameField(worker, integerList, specification, playerName, playerColor);
+        switch (specification){
+            case MOVE:
+                createMoveUpdateCommand(integerList, worker, playerName, playerColor);
+                break;
+            case BUILD:
+                createBuildUpdateCommand(integerList, playerName, playerColor);
+                break;
+            case WORKERSETTING:
+                createSetUpCommand(integerList, worker, playerColor);
+                break;
+            case DELETED:
+                createRemoveWorkerCommand(integerList);
+                break;
+
+        }
     }
+
+    private void createMoveUpdateCommand(List<Integer> integerList, String worker, String playerName, String playerColor){
+        MoveUpdateCommand moveUpdateCommand = new MoveUpdateCommand(integerList, worker, playerName, playerColor);
+        command.manageCommand(moveUpdateCommand);
+    }
+
+    private void createBuildUpdateCommand(List<Integer> integerList, String playerName, String playerColor){
+        BuildUpdateCommand buildUpdateCommand = new BuildUpdateCommand(integerList, playerName, playerColor);
+        command.manageCommand(buildUpdateCommand);
+    }
+
+    private void createSetUpCommand(List<Integer> integerList, String worker, String playerColor){
+        SettingPawnCommand settingPawnCommand = new SettingPawnCommand(integerList, worker, playerColor);
+        command.manageCommand(settingPawnCommand);
+    }
+
+    private void createRemoveWorkerCommand(List<Integer> integerList){
+        RemovingCommand removingCommand = new RemovingCommand(integerList);
+        command.manageCommand(removingCommand);
+    }
+
+
 
     /**
      * Starts reading messages.
      */
-
     public void startReading(){
         netHandler.handle();
     }

@@ -13,22 +13,39 @@ public class Cell {
     private MeshView buildingLvl3;
     private MeshView dome;
     private Box base;
+    private PhongMaterial standardMaterial;
+    private int row;
+    private int column;
+    private CommandGUIManager commandGUIManager;
 
-    public Cell(){
+    public Cell(int row,int column,CommandGUIManager commandGUIManager){
+        this.commandGUIManager=commandGUIManager;
+        this.row=row;
+        this.column=column;
         vBox=new VBox();
         createBase();
         vBox.setSpacing(-45);
         vBox.setOnMouseClicked(mouseEvent -> {
-            //if(this.worker!=null)
-            //TrafoTest.tolto=removeWorker();
+            createCommand();
         });
     }
 
+    private void createCommand(){
+        SelectPawnRequestCommand selectPawnRequestCommand=null;
+        if(worker!=null) {
+            selectPawnRequestCommand = new SelectPawnRequestCommand(worker.getIdNumber());
+        }
+        SelectCellRequestCommand selectCellRequestCommand=new SelectCellRequestCommand(row,column);
+        commandGUIManager.selectAction(selectPawnRequestCommand,selectCellRequestCommand);
+    }
+
+
     private void createBase(){
         base=new Box(100,1,100);
-        PhongMaterial phongMaterial=new PhongMaterial();
-        phongMaterial.setDiffuseColor(javafx.scene.paint.Color.rgb(218,248,255));
-        base.setMaterial(phongMaterial);
+        standardMaterial=new PhongMaterial();
+        standardMaterial.setDiffuseColor(javafx.scene.paint.Color.rgb(218,248,255));
+        vBox.setTranslateY(-2);
+        base.setMaterial(standardMaterial);
         vBox.getChildren().add(base);
         vBox.getChildren().get(0).setTranslateX(-50);
         vBox.getChildren().get(0);
@@ -40,19 +57,19 @@ public class Cell {
 
     public void setWorker(Pawn worker){
         this.worker=worker;
-        MeshView meshWorker=worker.getWorkerMesh();
-        vBox.getChildren().addAll(meshWorker);
-        if(buildingLvl3!=null){
-            meshWorker.setTranslateY(-55);
-        }
-        else if(buildingLvl2!=null){
-            meshWorker.setTranslateY(-55);
-        }
-        else if (buildingLvl1!=null){
-            meshWorker.setTranslateY(-37);
-        }
-        else if(buildingLvl1==null){
-            meshWorker.setTranslateY(-3);
+        MeshView meshWorker;
+        if(worker!=null) {
+            meshWorker = worker.getWorkerMesh();
+            vBox.getChildren().addAll(meshWorker);
+            if (buildingLvl3 != null) {
+                meshWorker.setTranslateY(-55);
+            } else if (buildingLvl2 != null) {
+                meshWorker.setTranslateY(-55);
+            } else if (buildingLvl1 != null) {
+                meshWorker.setTranslateY(-37);
+            } else if (buildingLvl1 == null) {
+                meshWorker.setTranslateY(-3);
+            }
         }
     }
 
@@ -67,7 +84,8 @@ public class Cell {
 
     public Pawn removeWorker(){
         Pawn temp=worker;
-        vBox.getChildren().remove(worker.getWorkerMesh());
+        if(worker!=null)
+            vBox.getChildren().remove(worker.getWorkerMesh());
         this.worker=null;
         return temp;
     }
@@ -111,7 +129,31 @@ public class Cell {
         return dome;
     }
 
+    public void resetPawn(){
+        setWorker(removeWorker());
+    }
+
     public Box getBase() {
         return base;
+    }
+
+    public void lightenUp(PhongMaterial lightenedUpMaterial){
+        base.setMaterial(lightenedUpMaterial);
+        if(buildingLvl1!=null)
+            buildingLvl1.setMaterial(lightenedUpMaterial);
+        if(buildingLvl2!=null)
+            buildingLvl2.setMaterial(lightenedUpMaterial);
+        if(buildingLvl3!=null)
+            buildingLvl3.setMaterial(lightenedUpMaterial);
+    }
+
+    public void switchOff(PhongMaterial materialBase){
+        base.setMaterial(standardMaterial);
+        if(buildingLvl1!=null)
+            buildingLvl1.setMaterial(materialBase);
+        if(buildingLvl2!=null)
+            buildingLvl2.setMaterial(materialBase);
+        if(buildingLvl3!=null)
+            buildingLvl3.setMaterial(materialBase);
     }
 }

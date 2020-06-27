@@ -1,5 +1,5 @@
 package it.polimi.ingsw;
-
+/*
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,15 +13,15 @@ class FieldTest {
     @Test
     void CLITest1() throws InterruptedException {
         Field field = new Field();
-        field.viewSetup(1,3, Color.ANSI_RED.escape());
+        field.viewSetup(1,3, ColorConverter.ANSI_RED.escape());
         sleep(1000);
-        field.viewMove("A", 1,3,2,3, Color.ANSI_RED.escape());
+        field.viewMove("A", 1,3,2,3, ColorConverter.ANSI_RED.escape());
         sleep(1000);
-        field.viewSetup(2,2, Color.ANSI_WHITE.escape());
+        field.viewSetup(2,2, ColorConverter.ANSI_WHITE.escape());
         sleep(1000);
-        field.viewSetup(2,1, Color.ANSI_CYAN.escape());
+        field.viewSetup(2,1, ColorConverter.ANSI_CYAN.escape());
         sleep(1000);
-        field.viewSetup(3,2, Color.ANSI_PURPLE.escape());
+        field.viewSetup(3,2, ColorConverter.ANSI_PURPLE.escape());
         sleep(1000);
         field.viewBuild(3,2,1,0);
         sleep(1000);
@@ -34,17 +34,17 @@ class FieldTest {
     @Test
     void printParticularSentences(){
         Field field = new Field();
-        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("endTurn", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("error", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("win", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("lose", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("lost", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("name", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("workerSetting", "carmelo", Color.ANSI_RED.escape());
-        field.printParticularSentence("endGame", "carmelo", Color.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("endTurn", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("error", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("win", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("lose", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("lost", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("name", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("workerSetting", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printParticularSentence("endGame", "carmelo", ColorConverter.ANSI_RED.escape());
 
     }
 
@@ -55,11 +55,11 @@ class FieldTest {
         stringList.add("9");
         stringList.add("1");
 
-        field.printChoices(stringList, "power", "carmelo", Color.ANSI_RED.escape());
-        field.printChoices(stringList, "preLobby", "carmelo", Color.ANSI_RED.escape());
-        field.printChoices(stringList, "color", "carmelo", Color.ANSI_RED.escape());
-        field.printChoices(stringList, "godChoice", "carmelo", Color.ANSI_RED.escape());
-        field.printChoices(stringList, "godSet", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices(stringList, "power", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printChoices(stringList, "preLobby", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printChoices(stringList, "color", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printChoices(stringList, "godChoice", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printChoices(stringList, "godSet", "carmelo", ColorConverter.ANSI_RED.escape());
     }
     @Test
     void printChoicesTest2() {
@@ -72,8 +72,8 @@ class FieldTest {
         hashMaps.add(space1);
         hashMaps.add(space2);
 
-        field.printChoices("A", hashMaps, "move", "carmelo", Color.ANSI_RED.escape());
-        field.printChoices("A", hashMaps, "build", "carmelo", Color.ANSI_RED.escape());
+        field.printChoices("A", hashMaps, "move", "carmelo", ColorConverter.ANSI_RED.escape());
+        field.printChoices("A", hashMaps, "build", "carmelo", ColorConverter.ANSI_RED.escape());
     }
 
     @Test
@@ -99,3 +99,4 @@ class FieldTest {
     }
 
 }
+*/

@@ -16,7 +16,7 @@ class TableXMLTest {
 
     @Test
     void readXML() {
-        File file = new File("C:\\Users\\Yoshi\\Desktop\\testXML.txt");
+        File file = new File("C:\\Users\\Rei\\IdeaProjects\\TestMAvenJfx\\src\\main\\java\\resources\\table.txt");
         HashMap<State, List<Line>> hash = null;
         Player player = new Player();
         TableXML tableXML = new TableXML(file, player);
