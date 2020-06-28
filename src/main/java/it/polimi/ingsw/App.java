@@ -213,7 +213,6 @@ public class App extends Application {
 
             img.setOnMouseClicked(mouseEvent -> {
                 set3DGui();
-                System.out.println(numberPlayers.get(img));
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(String.valueOf(numberPlayers.get(img)));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
             });
@@ -236,10 +235,8 @@ public class App extends Application {
 
             img.setOnMouseClicked(mouseEvent-> {
                 img.setEffect(colorAdjust);
-                System.out.println(cardToName.get(img));
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(cardToName.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
-                //StringCommand stringCommand = new StringCommand(cardToName.get(img));
             });
         }
     }
@@ -457,7 +454,6 @@ public class App extends Application {
             img.setOnMouseClicked(mouseEvent-> {
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(cardToName.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
-                //StringCommand stringCommand = new StringCommand(cardToName.get(img));
             });
         }
     }
