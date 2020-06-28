@@ -467,7 +467,6 @@ public class App extends Application {
             img.setOnMouseClicked(mouseEvent-> {
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(cardToName.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
-                set3DGui();
             });
         }
     }
@@ -507,12 +506,16 @@ public class App extends Application {
         switch (string) {
             case "player":
                 context.strokeText("Waiting for players", 363, 349);
+                break;
             case "color":
                 context.strokeText("Waiting for players to choose color", 390, 349);
+                break;
             case "game":
                 context.strokeText("Waiting for the game to start", 363, 349);
+                break;
         }
     }
+
 
     public void setCommandGUIManager(CommandGUIManager commandGUIManager) {
         this.commandGUIManager = commandGUIManager;

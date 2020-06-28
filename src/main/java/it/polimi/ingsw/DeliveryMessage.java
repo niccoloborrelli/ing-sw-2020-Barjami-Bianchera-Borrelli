@@ -638,6 +638,8 @@ public class DeliveryMessage {
         if(specification.equals(NAME) || specification.equals(COLOR)){
             TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(playerName, playerColor, specification);
             command.manageCommand(transitionSceneCommand);
+        }else if(specification.equals(SET_UP)) {
+            command.manageCommand(new SetUpCommand(specification,playerName, playerColor));
         }else {
             SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
             command.manageCommand(sentenceBottomRequestCommand);

@@ -1,6 +1,7 @@
 package it.polimi.ingsw;
 
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -77,8 +78,10 @@ public class GraphicInterface {
         }
 
         public void printBottom(String bottomString){
-            if(bottomLabel!=null)
-                bottomLabel.setText(bottomString);
+            Platform.runLater(() -> {
+                if(bottomLabel!=null)
+                    bottomLabel.setText(bottomString);
+            });
         }
 
         public void clearBottomLabel(){
@@ -185,38 +188,47 @@ public class GraphicInterface {
             camera.setTranslateZ(CAMERA_INITIAL_DISTANCE);
         }
 
-        public void workerCreation(String gender){
-            valuableId=true;
-            Pawn pawn;
-            if(firstHasAlreadyCome==false){
-                pawns=new ArrayList<Pawn>();
-                pawn = createMaleWorker();
-                pawn.setIdNumber(0);
-                firstHasAlreadyCome=true;
+    public void workerCreation(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                valuableId=true;
+                Pawn pawn;
+                if(!firstHasAlreadyCome){
+                    pawns=new ArrayList<Pawn>();
+                    pawn = createMaleWorker();
+                    pawn.setIdNumber(0);
+                    firstHasAlreadyCome=true;
+                    positionMesh(750,-58,300,pawn.getWorkerMesh());
+                }
+                else {
+                    pawn = createFemaleWorker();
+                    pawn.setIdNumber(1);
+                    positionMesh(-450,-80,750,pawn.getWorkerMesh());
+                }
+                pawn.getWorkerMesh().setOnMouseClicked(mouseEvent -> {
+                    SelectPawnRequestCommand selectPawnRequestCommand = new SelectPawnRequestCommand(pawn.getIdNumber());
+                    SelectCellRequestCommand selectCellRequestCommand = new SelectCellRequestCommand(100,100);
+                    commandGUIManager.selectAction(selectPawnRequestCommand,selectCellRequestCommand);
+                });
+                pawns.add(pawn);
+                world.getChildren().add(pawn.getWorkerMesh());
             }
-            else {
-                pawn = createFemaleWorker();
-                pawn.setIdNumber(1);
-            }
-            pawn.getWorkerMesh().setOnMouseClicked(mouseEvent -> {
-                SelectPawnRequestCommand selectPawnRequestCommand = new SelectPawnRequestCommand(pawn.getIdNumber());
-                SelectCellRequestCommand selectCellRequestCommand = new SelectCellRequestCommand(100,100);
-                commandGUIManager.selectAction(selectPawnRequestCommand,selectCellRequestCommand);
-            });
+        });
 
-            pawns.add(pawn);
-            world.getChildren().add(pawn.getWorkerMesh());
-            putSopraLaRoccia(pawn.getWorkerMesh());
-        }
-
-        public void showPower(){
+    }
+    private void positionMesh(int x,int y,int z,MeshView meshView){
+        root.getChildren().add(meshView);
+        meshView.setTranslateY(y);
+        meshView.setTranslateX(x);
+        meshView.setTranslateZ(z);
+    }
+    public void showPower(){
             powerToolbar.setVisible(true);
         }
 
-        public void putSopraLaRoccia(MeshView meshView){
-        }
 
-        public void buildBoard(){
+    public void buildBoard(){
             //IMPORTS GRAPHICAL RESOURCES
             ObjModelImporter importer = new ObjModelImporter();
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -468,25 +480,29 @@ public class GraphicInterface {
         }
 
         public void setPawn(int row,int column,String color,String gender){
-            Pawn pawn;
-            if(valuableId!=true) {
-                if (gender.equals("A"))
-                    pawn = createFemaleWorker();
-                else if (gender.equals("B"))
-                    pawn = createMaleWorker();
-                else return;
-                pawn.setIdNumber(100);
-            }
-
-            else {
-                pawn = pawns.get(0);
-                pawns.remove(0);
-                if(pawns.size()==0)
-                    valuableId=false;
-            }
-            pawn.getWorkerMesh().setMaterial(colorCreation(color));
-            Cell cell=grid[row][column];
-            cell.setWorker(pawn);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Pawn pawn;
+                    if(!valuableId) {
+                        if (gender.equals("A"))
+                            pawn = createFemaleWorker();
+                        else if (gender.equals("B"))
+                            pawn = createMaleWorker();
+                        else return;
+                        pawn.setIdNumber(100);
+                    }
+                    else {
+                        pawn = pawns.get(0);
+                        pawns.remove(0);
+                        if(pawns.size()==0)
+                            valuableId=false;
+                    }
+                    pawn.getWorkerMesh().setMaterial(colorCreation(color));
+                    Cell cell=grid[row][column];
+                    cell.setWorker(pawn);
+                }
+            });
         }
 
         public PhongMaterial colorCreation(String color){

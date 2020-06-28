@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -57,25 +58,33 @@ public class Cell {
 
     public void setWorker(Pawn worker){
         this.worker=worker;
-        MeshView meshWorker;
-        if(worker!=null) {
-            meshWorker = worker.getWorkerMesh();
-            vBox.getChildren().addAll(meshWorker);
-            if (buildingLvl3 != null) {
-                meshWorker.setTranslateY(-55);
-            } else if (buildingLvl2 != null) {
-                meshWorker.setTranslateY(-55);
-            } else if (buildingLvl1 != null) {
-                meshWorker.setTranslateY(-37);
-            } else if (buildingLvl1 == null) {
-                meshWorker.setTranslateY(-3);
+        Platform.runLater(() -> {
+            if(worker!=null) {
+                MeshView meshWorker;
+                meshWorker = worker.getWorkerMesh();
+                vBox.getChildren().addAll(meshWorker);
+                if (buildingLvl3 != null) {
+                    meshWorker.setTranslateY(-55);
+                } else if (buildingLvl2 != null) {
+                    meshWorker.setTranslateY(-55);
+                } else if (buildingLvl1 != null) {
+                    meshWorker.setTranslateY(-37);
+                } else if (buildingLvl1 == null) {
+                    meshWorker.setTranslateY(-3);
+                }
             }
-        }
+        });
+
     }
 
     public void setBuildingLvl1(MeshView base){
         this.buildingLvl1=base;
-        vBox.getChildren().addAll(base);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBox.getChildren().addAll(base);
+            }
+        });
     }
 
     public VBox getvBox() {
@@ -84,8 +93,13 @@ public class Cell {
 
     public Pawn removeWorker(){
         Pawn temp=worker;
-        if(worker!=null)
-            vBox.getChildren().remove(worker.getWorkerMesh());
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(worker!=null)
+                    vBox.getChildren().remove(worker.getWorkerMesh());
+            }
+        });
         this.worker=null;
         return temp;
     }
@@ -93,13 +107,23 @@ public class Cell {
     public void setBuildingLvl2(MeshView buildingLvl2) {
         this.buildingLvl2 = buildingLvl2;
         buildingLvl2.setTranslateY(-20);
-        vBox.getChildren().addAll(buildingLvl2);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBox.getChildren().addAll(buildingLvl2);
+            }
+        });
     }
 
     public void setBuildingLvl3(MeshView buildingLvl3) {
         this.buildingLvl3 = buildingLvl3;
         buildingLvl3.setTranslateY(-30);
-        vBox.getChildren().addAll(buildingLvl3);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBox.getChildren().addAll(buildingLvl3);
+            }
+        });
     }
 
     public void setDome(MeshView dome) {
@@ -110,7 +134,12 @@ public class Cell {
             dome.setTranslateY(-28);
         else if(buildingLvl1!=null)
             dome.setTranslateY(-10);
-        vBox.getChildren().addAll(dome);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                vBox.getChildren().addAll(dome);
+            }
+        });
     }
 
     public MeshView getBuildingLvl1() {

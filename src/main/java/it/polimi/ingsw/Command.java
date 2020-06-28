@@ -11,7 +11,6 @@ public interface Command {
     public void manageCommand(TransitionSceneCommand transitionSceneCommand);
     public void manageCommand(MoveUpdateCommand moveUpdateCommand);
     public void manageCommand(BuildUpdateCommand buildUpdateCommand);
-
-
+    void manageCommand(SetUpCommand setUpCommand);
 }
 

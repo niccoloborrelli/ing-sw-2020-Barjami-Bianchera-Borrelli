@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static it.polimi.ingsw.CommunicationSentences.createAll;
 import static it.polimi.ingsw.FinalCommunication.*;
@@ -17,7 +18,6 @@ public class CommandGUIManager implements Command {
     private List<ReplyCommand> replyCommandList;
     private List<TransitionSceneCommand> switchingScene;
     private App app;
-
     SelectPawnRequestCommand pawnChosen;
 
     public CommandGUIManager(Socket socket) throws IOException {
@@ -36,9 +36,10 @@ public class CommandGUIManager implements Command {
     }
 
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
-        if(pawnChosen == null&& pawnSelected!=null) {
-            showCells();
+        if(pawnChosen == null && pawnSelected!=null) {
             pawnChosen = pawnSelected;
+            if(showAvCellsList.size()>0)
+                showCells();
         }else {
             graphicInterface.resetColorBoard();
             sendActionToServer(cellSelected);
@@ -57,7 +58,8 @@ public class CommandGUIManager implements Command {
 
 
     private void showCells(){
-        int pawnSelected = Integer.parseInt(pawnChosen.execute());
+        String indexOfPawn = pawnChosen.execute().substring(1);
+        int pawnSelected = Integer.parseInt(indexOfPawn);
         if(showAvCellsList.get(pawnSelected) != null)
             showAvCellsList.get(pawnSelected).execute(graphicInterface);
     }
@@ -78,6 +80,12 @@ public class CommandGUIManager implements Command {
         graphicInterface.resetColorBoard();
         deselectWorkerRequestCommand.execute(graphicInterface);
         pawnChosen=null;
+    }
+
+    public void manageCommand(SetUpCommand setUpCommand){
+        if(graphicInterface==null)
+            app.set3DGui();
+        setUpCommand.execute(graphicInterface);
     }
 
     public void manageCommand(SentenceBottomRequestCommand sentenceBottomRequestCommand){
@@ -113,6 +121,8 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(SettingPawnCommand settingPawnCommand){
+        if(graphicInterface==null)
+            app.set3DGui();
         if(replyCommandList.size()==4){
             for(ReplyCommand replyCommand: replyCommandList)
                 replyCommand.execute(graphicInterface);

@@ -68,5 +68,10 @@ public class CommandCLIManager implements Command{
         buildUpdateCommand.execute(field);
     }
 
+    @Override
+    public void manageCommand(SetUpCommand setUpCommand) {
+        setUpCommand.execute(field);
+    }
+
 
 }
