@@ -1,9 +1,13 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import static it.polimi.ingsw.CommunicationSentences.createAll;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommandGUIManager implements Command {
 
@@ -11,6 +15,7 @@ public class CommandGUIManager implements Command {
     private GraphicInterface graphicInterface;
     private List<ShowAvCells> showAvCellsList;
     private List<ReplyCommand> replyCommandList;
+    private List<TransitionSceneCommand> switchingScene;
     private App app;
 
     SelectPawnRequestCommand pawnChosen;
@@ -21,7 +26,8 @@ public class CommandGUIManager implements Command {
         showAvCellsList = new ArrayList<>();
         pawnChosen = null;
         replyCommandList = new ArrayList<>();
-
+        switchingScene = new ArrayList<>();
+        createAll();
     }
 
 
@@ -34,16 +40,19 @@ public class CommandGUIManager implements Command {
             showCells();
             pawnChosen = pawnSelected;
         }else {
-            //graphicInterface.resetColorBoard();
+            graphicInterface.resetColorBoard();
             sendActionToServer(cellSelected);
         }
     }
 
     private void sendActionToServer(SelectCellRequestCommand cellSelected){
-        String pawn = pawnChosen.execute();
-        String cell = cellSelected.execute();
+        if(pawnChosen!=null) {
+            String pawn = pawnChosen.execute();
+            String cell = cellSelected.execute();
 
-        deliveryMessage.send(pawn+cell);
+            deliveryMessage.send(pawn + cell);
+            pawnChosen = null;
+        }
     }
 
 
@@ -54,7 +63,10 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(GeneralStringRequestCommand generalString){
-        System.out.println(generalString.execute());
+        if(switchingScene.size()>0) {
+                switchingScene.get(0).execute(app);
+                switchingScene.remove(0);
+            }
         deliveryMessage.send(generalString.execute());
     }
 
@@ -63,13 +75,14 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(DeselectWorkerRequestCommand deselectWorkerRequestCommand){
-        //graphicInterface.resetColorBoard();
+        graphicInterface.resetColorBoard();
         deselectWorkerRequestCommand.execute(graphicInterface);
         pawnChosen=null;
     }
 
     public void manageCommand(SentenceBottomRequestCommand sentenceBottomRequestCommand){
         sentenceBottomRequestCommand.execute(graphicInterface);
+
     }
 
     public void manageCommand(PopUpCommand popUpCommand){
@@ -112,6 +125,17 @@ public class CommandGUIManager implements Command {
 
     @Override
     public void manageCommand(LimitedOptionsCommand limitedOptionsCommand) {
+        if(limitedOptionsCommand.getSpecification().equals(COLOR)){
+            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, WAITING_COLOR);
+            switchingScene.add(transitionSceneCommand);
+        }else if(limitedOptionsCommand.getSpecification().equals(PRE_LOBBY)){
+            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, WAITING_PLAYER);
+            switchingScene.add(transitionSceneCommand);
+        }if(limitedOptionsCommand.getSpecification().equals(GODCHOICE)){
+            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, GODCHOICE);
+            switchingScene.add(transitionSceneCommand);
+        }
+
         limitedOptionsCommand.execute(app);
     }
 

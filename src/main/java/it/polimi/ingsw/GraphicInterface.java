@@ -64,18 +64,21 @@ public class GraphicInterface {
             root.setDepthTest(DepthTest.ENABLE);
             buildBodySystem();
             buildCamera();
-            Scene scene = new Scene(pane,800,600,true);
+            //Scene scene = new Scene(pane,800,600,true);
+            Scene scene = primaryStage.getScene();
             scene.setFill(javafx.scene.paint.Color.GREY);
             handleMouse(scene);
             primaryStage.setTitle("Santorini");
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            primaryStage.getScene().setRoot(pane);
+            //primaryStage.setScene(scene);
+            //primaryStage.show();
             mouseFactorX = 180.0 / scene.getWidth();
             mouseFactorY = 180.0 / scene.getHeight();
         }
 
         public void printBottom(String bottomString){
-            bottomLabel.setText(bottomString);
+            if(bottomLabel!=null)
+                bottomLabel.setText(bottomString);
         }
 
         public void clearBottomLabel(){

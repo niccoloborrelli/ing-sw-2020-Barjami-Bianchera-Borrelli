@@ -1,6 +1,4 @@
-
 package  it.polimi.ingsw;
-
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -31,11 +29,11 @@ import java.util.List;
 
 public class App extends Application {
 
-    private static Scene title;
-    private static Scene gods;
-    private static Scene selectionName;
-    private static Scene selectionColor;
-    private static Scene selectionGods;
+    private static Group title;
+    private static Group gods;
+    private static Group selectionName;
+    private static Group selectionColor;
+    private static Group selectionGods;
     private Stage stage;
     private Image apollo = new Image("card_apollo.png");
     private Image artemis = new Image("card_artemis.png");
@@ -204,11 +202,17 @@ public class App extends Application {
                 hephaestusImg, hestiaImg, hypnusImg, minotaurImg, panImg, persephoneImg, prometheusImg, zeusImg);
         root3.getChildren().addAll(nameSelection, textName, textFieldName);
         root4.getChildren().addAll(colorSelection, textColor, textFieldColor);
-        title = new Scene(root);
-        gods = new Scene(root2);
-        selectionName = new Scene(root3);
-        selectionColor = new Scene(root4);
-        stage.setScene(title);
+        title = root;
+        gods = root2;
+        selectionName = root3;
+        selectionColor = root4;
+        //title = new Scene(root);
+        //gods = new Scene(root2);
+        //selectionName = new Scene(root3);
+        //selectionColor = new Scene(root4);
+        //stage.setScene(title);
+        Scene scene = new Scene(title);
+        stage.setScene(scene);
         stage.show();
 
         for (ImageView img: buttons) {
@@ -218,7 +222,6 @@ public class App extends Application {
 
             img.setOnMouseClicked(mouseEvent -> {
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(String.valueOf(numberPlayers.get(img)));
-                System.out.println(numberPlayers.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
             });
         }
@@ -330,18 +333,21 @@ public class App extends Application {
     }
 
     public void setNameStage(){
-        stage.setScene(selectionName);
-        stage.show();
+        stage.getScene().setRoot(selectionName);
+        //stage.setScene(selectionName);
+        //stage.show();
     }
 
     public void setColorStage(){
-        stage.setScene(selectionColor);
-        stage.show();
+        stage.getScene().setRoot(selectionColor);
+        //stage.setScene(selectionColor);
+        //stage.show();
     }
 
     public void setGodsStage(){
-        stage.setScene(gods);
-        stage.show();
+        stage.getScene().setRoot(gods);
+        //stage.setScene(gods);
+        //stage.show();
     }
 
     public void changeGods(List<String> godsList){
@@ -447,9 +453,11 @@ public class App extends Application {
         gc.setFont(new Font("", 18));
         gc.strokeText("Choose the god to use in this match", 363, 349);
 
-        selectionGods = new Scene(root);
-        stage.setScene(selectionGods);
-        stage.show();
+        //selectionGods = new Scene(root);
+        //stage.setScene(selectionGods);
+        selectionGods = root;
+        stage.getScene().setRoot(selectionGods);
+        //stage.show();
 
         for (ImageView img: cards) {
             img.setOnMouseEntered(mouseEvent -> selectionGods.setCursor(Cursor.HAND));
@@ -459,7 +467,50 @@ public class App extends Application {
             img.setOnMouseClicked(mouseEvent-> {
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(cardToName.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
+                set3DGui();
             });
+        }
+    }
+
+    public void setWaitingColor(){
+        Group root = new Group();
+        Canvas waitingColor = new Canvas(1024, 700);
+        GraphicsContext gwaitcolor = waitingColor.getGraphicsContext2D();
+        createWaitScene("color", gwaitcolor);
+        root.getChildren().add(waitingColor);
+        stage.getScene().setRoot(root);
+    }
+
+    public void setWaitingPlayer(){
+        Group root = new Group();
+        Canvas waitingPlayer = new Canvas(1024, 700);
+        GraphicsContext gwaitplayer = waitingPlayer.getGraphicsContext2D();
+        createWaitScene("player", gwaitplayer);
+        root.getChildren().add(waitingPlayer);
+        stage.getScene().setRoot(root);
+    }
+
+    public void setWaitingGame(){
+        Group root = new Group();
+        Canvas waitingGame = new Canvas(1024, 700);
+        GraphicsContext gwaitgame = waitingGame.getGraphicsContext2D();
+        createWaitScene("player", gwaitgame);
+        root.getChildren().add(waitingGame);
+        stage.getScene().setRoot(root);
+    }
+
+    public void createWaitScene(String string, GraphicsContext context){
+        context.drawImage(background, 0, 0, 1024, 700);
+        context.drawImage(askPlayers, 335, 320, askPlayers.getWidth()/1.5, askPlayers.getHeight()/2);
+        context.setStroke(Color.WHITE);
+        context.setFont(new Font("", 18));
+        switch (string) {
+            case "player":
+                context.strokeText("Waiting for players", 363, 349);
+            case "color":
+                context.strokeText("Waiting for players to choose color", 390, 349);
+            case "game":
+                context.strokeText("Waiting for the game to start", 363, 349);
         }
     }
 
@@ -475,6 +526,7 @@ public class App extends Application {
     public void set3DGui(){
         GraphicInterface gui=new GraphicInterface();
         commandGUIManager.setGraphicInterface(gui);
+        gui.setCommandGUIManager(commandGUIManager);
         gui.start(stage);
     }
 }

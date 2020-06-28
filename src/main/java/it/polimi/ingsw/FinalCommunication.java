@@ -52,6 +52,9 @@ public class FinalCommunication {
     public static final String WIN = "win";
     public static final String DELETED = "deleted";
     public static final String QUIT = "quit";
+    public static final String WAITING_COLOR = "waitingColor";
+    public static final String WAITING_GAME = "waitingGame";
+    public static final String WAITING_PLAYER = "waitingPlayer";
 
     public static final String FIRST_WORKER = "A";
     public static final String SECOND_WORKER = "B";

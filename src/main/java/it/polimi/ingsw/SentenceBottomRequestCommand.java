@@ -15,11 +15,16 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
         this.specification = specification;
     }
 
+    public String getSpecification() {
+        return specification;
+    }
 
     @Override
     public void execute(GraphicInterface graphicInterface) {
-        String sentence = printParticularSentence(specification, playerName, playerColor);
-        //graphicInterface.printBottom(sentence);
+        if(graphicInterface!=null) {
+            String sentence = printParticularSentence(specification, playerName, playerColor);
+            graphicInterface.printBottom(sentence);
+        }
     }
 
 

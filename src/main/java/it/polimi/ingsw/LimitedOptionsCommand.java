@@ -2,8 +2,7 @@ package it.polimi.ingsw;
 
 import java.util.List;
 
-import static it.polimi.ingsw.FinalCommunication.COLOR;
-import static it.polimi.ingsw.FinalCommunication.GODCHOICE;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class LimitedOptionsCommand extends ReplyCommand {
 
@@ -19,16 +18,26 @@ public class LimitedOptionsCommand extends ReplyCommand {
         this.playerColor = playerColor;
     }
 
+    public String getSpecification() {
+        return specification;
+    }
 
     @Override
     public void execute(GraphicInterface gui) {
     }
 
     public void execute(App app){
-        if(specification.equals(COLOR))
-            app.setColorStage();
-        if(specification.equals(GODCHOICE))
-            app.changeGods(options);
+        switch (specification) {
+            case COLOR:
+                app.setColorStage();
+                break;
+            case GODCHOICE:
+                app.changeGods(options);
+                break;
+            case GODSET:
+                app.setGodsStage();
+                break;
+        }
     }
 
     @Override

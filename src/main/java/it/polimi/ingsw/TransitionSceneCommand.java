@@ -23,6 +23,12 @@ public class TransitionSceneCommand extends ReplyCommand {
             app.setNameStage();
         else if(specification.equals(GODSET))
             app.setGodsStage();
+        else if(specification.equals(WAITING_COLOR))
+            app.setWaitingColor();
+        else if(specification.equals(WAITING_PLAYER))
+            app.setWaitingPlayer();
+        else if(specification.equals(WAITING_GAME))
+            app.setWaitingGame();
     }
 
     @Override
