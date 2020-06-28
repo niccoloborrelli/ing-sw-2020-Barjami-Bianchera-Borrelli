@@ -6,7 +6,7 @@ public class DeselectWorkerRequestCommand extends ReplyCommand {
 
     @Override
     public void execute(GraphicInterface gui) {
-        gui.resetColorBoard();
+        //gui.resetColorBoard();
     }
 
     @Override

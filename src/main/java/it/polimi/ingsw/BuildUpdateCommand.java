@@ -27,7 +27,7 @@ public class BuildUpdateCommand extends ReplyCommand {
     @Override
     public void execute(GraphicInterface gui) {
 
-        gui.build(row, column, level, dome);
+      //  gui.build(row, column, level, dome);
     }
 
 

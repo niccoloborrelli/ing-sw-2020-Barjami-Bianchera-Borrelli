@@ -2,6 +2,9 @@ package it.polimi.ingsw;
 
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.COLOR;
+import static it.polimi.ingsw.FinalCommunication.GODCHOICE;
+
 public class LimitedOptionsCommand extends ReplyCommand {
 
     private List<String> options;
@@ -21,6 +24,12 @@ public class LimitedOptionsCommand extends ReplyCommand {
     public void execute(GraphicInterface gui) {
     }
 
+    public void execute(App app){
+        if(specification.equals(COLOR))
+            app.setColorStage();
+        if(specification.equals(GODCHOICE))
+            app.changeGods(options);
+    }
 
     @Override
     public void execute(Field field) {

@@ -53,7 +53,7 @@ public class ReadyForActionState extends State {
 
     private void clearAvailableSpacePlayer(){
         for(Worker w: player.getWorkers()){
-            w.getPossibleBuilding().clear();
+            w.getPossibleMovements().clear();
             w.getPossibleBuilding().clear();
         }
     }

@@ -145,6 +145,7 @@ public class StateManager {
 
     public void addNewFinishSpace(State startState, State finishState, Method method, boolean expectedValue, int priority) {
         if(stateHashMap.containsKey(finishState.toString())) {
+            System.out.println("Sono dentro");
             Line newLine = new Line(finishState);
             if (priority >= MINIMUM_PRIORITY) {
                 newLine.setPriority(priority);

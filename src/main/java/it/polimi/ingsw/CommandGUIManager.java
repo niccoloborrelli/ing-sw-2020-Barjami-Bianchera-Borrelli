@@ -10,23 +10,23 @@ public class CommandGUIManager implements Command {
     private DeliveryMessage deliveryMessage;
     private GraphicInterface graphicInterface;
     private List<ShowAvCells> showAvCellsList;
+    private List<ReplyCommand> replyCommandList;
     private App app;
-
-    public DeliveryMessage getDeliveryMessage() {
-        return deliveryMessage;
-    }
-
-    public void setDeliveryMessage(DeliveryMessage deliveryMessage) {
-        this.deliveryMessage = deliveryMessage;
-    }
 
     SelectPawnRequestCommand pawnChosen;
 
     public CommandGUIManager(Socket socket) throws IOException {
         this.deliveryMessage = new DeliveryMessage(socket);
+        deliveryMessage.setCommand(this);
         showAvCellsList = new ArrayList<>();
         pawnChosen = null;
+        replyCommandList = new ArrayList<>();
 
+    }
+
+
+    public DeliveryMessage getDeliveryMessage() {
+        return deliveryMessage;
     }
 
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
@@ -34,7 +34,7 @@ public class CommandGUIManager implements Command {
             showCells();
             pawnChosen = pawnSelected;
         }else {
-            graphicInterface.resetColorBoard();
+            //graphicInterface.resetColorBoard();
             sendActionToServer(cellSelected);
         }
     }
@@ -54,20 +54,16 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(GeneralStringRequestCommand generalString){
+        System.out.println(generalString.execute());
         deliveryMessage.send(generalString.execute());
     }
 
-    @Override
-    public void manageCommand(ReplyCommand replyCommand) {
-    }
-
     public void manageCommand(UsePowerRequestCommand usePowerRequestCommand){
-       // graphicInterface.turnOffGodBottom();
         deliveryMessage.send(usePowerRequestCommand.execute());
     }
 
     public void manageCommand(DeselectWorkerRequestCommand deselectWorkerRequestCommand){
-        graphicInterface.resetColorBoard();
+        //graphicInterface.resetColorBoard();
         deselectWorkerRequestCommand.execute(graphicInterface);
         pawnChosen=null;
     }
@@ -77,6 +73,8 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(PopUpCommand popUpCommand){
+        for(ReplyCommand replyCommand: replyCommandList)
+            replyCommand.execute(graphicInterface);
         popUpCommand.execute(graphicInterface);
     }
 
@@ -89,12 +87,47 @@ public class CommandGUIManager implements Command {
         showAvCellsList.add(showAvCells);
     }
 
+    public void manageCommand(RemovingCommand removingCommand){
+        replyCommandList.add(removingCommand);
+    }
+
     public void setGraphicInterface(GraphicInterface graphicInterface) {
         this.graphicInterface = graphicInterface;
     }
 
     public void setApp(App app) {
         this.app = app;
+    }
+
+    public void manageCommand(SettingPawnCommand settingPawnCommand){
+        if(replyCommandList.size()==4){
+            for(ReplyCommand replyCommand: replyCommandList)
+                replyCommand.execute(graphicInterface);
+            replyCommandList.clear();
+        }else if(replyCommandList.size()==2){
+            replyCommandList.add(settingPawnCommand);
+        }else
+            settingPawnCommand.execute(graphicInterface);
+    }
+
+    @Override
+    public void manageCommand(LimitedOptionsCommand limitedOptionsCommand) {
+        limitedOptionsCommand.execute(app);
+    }
+
+    @Override
+    public void manageCommand(TransitionSceneCommand transitionSceneCommand) {
+        transitionSceneCommand.execute(app);
+    }
+
+    @Override
+    public void manageCommand(MoveUpdateCommand moveUpdateCommand) {
+        moveUpdateCommand.execute(graphicInterface);
+    }
+
+    @Override
+    public void manageCommand(BuildUpdateCommand buildUpdateCommand) {
+        buildUpdateCommand.execute(graphicInterface);
     }
 }
 

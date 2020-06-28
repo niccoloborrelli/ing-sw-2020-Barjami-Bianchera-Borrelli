@@ -635,8 +635,13 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String specification, String playerName, String playerColor){
-        SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
-        command.manageCommand(sentenceBottomRequestCommand);
+        if(specification.equals(NAME) || specification.equals(COLOR)){
+            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(playerName, playerColor, specification);
+            command.manageCommand(transitionSceneCommand);
+        }else {
+            SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
+            command.manageCommand(sentenceBottomRequestCommand);
+        }
     }
 
     /**

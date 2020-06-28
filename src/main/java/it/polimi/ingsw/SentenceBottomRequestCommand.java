@@ -19,7 +19,7 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
     @Override
     public void execute(GraphicInterface graphicInterface) {
         String sentence = printParticularSentence(specification, playerName, playerColor);
-        graphicInterface.printBottom(sentence);
+        //graphicInterface.printBottom(sentence);
     }
 
 

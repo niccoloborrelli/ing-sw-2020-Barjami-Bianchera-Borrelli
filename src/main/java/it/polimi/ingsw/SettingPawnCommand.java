@@ -19,7 +19,7 @@ public class SettingPawnCommand extends ReplyCommand {
 
     @Override
     public void execute(GraphicInterface gui) {
-        gui.setPawn(row, column,playerColor,worker);
+        //gui.setPawn(row, column,playerColor,worker);
     }
 
     @Override

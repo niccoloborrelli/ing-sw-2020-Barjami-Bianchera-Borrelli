@@ -56,8 +56,13 @@ public class App extends Application {
     private CommandGUIManager commandGUIManager;
 
     @Override
-    public void start(Stage stage){
-        //commandGUIManager.setApp(this);
+    public void start(Stage stage) throws IOException {
+        Socket socket = new Socket("localhost", 60100);
+        CommandGUIManager commandGUIManager = new CommandGUIManager(socket);
+        DeliveryMessage deliveryMessage = commandGUIManager.getDeliveryMessage();
+        new Thread(deliveryMessage::startReading).start();
+        commandGUIManager.setApp(this);
+        this.setCommandGUIManager(commandGUIManager);
         stage.setTitle("Santorini");
         stage.setResizable(true);
         setStageClass(stage);
@@ -212,8 +217,8 @@ public class App extends Application {
             img.setOnMouseExited(mouseEvent -> title.setCursor(Cursor.DEFAULT));
 
             img.setOnMouseClicked(mouseEvent -> {
-                set3DGui();
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(String.valueOf(numberPlayers.get(img)));
+                System.out.println(numberPlayers.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
             });
         }
@@ -463,16 +468,13 @@ public class App extends Application {
     }
 
     public static void main(String[] args) throws IOException {
-        //Socket socket = new Socket("localhost", 60100);
-        //CommandGUIManager commandGUIManager = new CommandGUIManager(socket);
-        //DeliveryMessage deliveryMessage = commandGUIManager.getDeliveryMessage();
-       // new Thread(deliveryMessage::startReading).start();
         launch();
     }
 
+
     public void set3DGui(){
         GraphicInterface gui=new GraphicInterface();
-       // commandGUIManager.setGraphicInterface(gui);
+        commandGUIManager.setGraphicInterface(gui);
         gui.start(stage);
     }
 }

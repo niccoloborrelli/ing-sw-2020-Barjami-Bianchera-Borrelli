@@ -40,6 +40,8 @@ public class FinalCommunication {
     public static final String WORKERSETTING = "workerSetting";
     public static final String POWER = "power";
     public static final String PRE_LOBBY = "preLobby";
+    public static final String GODSET = "godSet";
+    public static final String GODCHOICE = "godChoice";
     public static final String LOSE = "lose";
     public static final String LOST = "lost";
     public static final String _GOD = "-god";

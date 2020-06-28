@@ -25,7 +25,6 @@ public class NameSettingState extends State {
             }
         }
         if(!nameSetted) {
-            System.out.println("Inviato da Name");
             uselessInputNotify();
         }
     }

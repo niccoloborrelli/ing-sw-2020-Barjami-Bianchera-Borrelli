@@ -31,7 +31,7 @@ public class ShowAvCells extends ReplyCommand {
             value = hashMap.get(key);
         }
 
-        gui.cellLightenUp(Integer.parseInt(key), Integer.parseInt(value));
+        //gui.cellLightenUp(Integer.parseInt(key), Integer.parseInt(value));
     }
 
 

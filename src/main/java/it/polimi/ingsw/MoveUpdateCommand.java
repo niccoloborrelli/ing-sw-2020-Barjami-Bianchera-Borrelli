@@ -28,7 +28,7 @@ public class MoveUpdateCommand extends ReplyCommand {
 
     @Override
     public void execute(GraphicInterface graphicInterface) {
-        graphicInterface.move(oldRow, oldColumn, newRow, newColumn, workerValue);
+       // graphicInterface.move(oldRow, oldColumn, newRow, newColumn, workerValue);
     }
 
 

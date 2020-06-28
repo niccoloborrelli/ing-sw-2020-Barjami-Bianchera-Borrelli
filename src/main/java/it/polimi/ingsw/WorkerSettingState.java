@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.SET_UP;
+import static it.polimi.ingsw.FinalCommunication.WORKERSETTING;
+
 public class WorkerSettingState extends State {
     private final int STARTINGNUMBER=0;
     private final int ROWS=4;
@@ -48,7 +51,7 @@ public class WorkerSettingState extends State {
             removeFromInput(worker,input.getSpace());;
             LastChange workerPlacedChange = player.getLastChange();
             workerPlacedChange.setCode(2);
-            workerPlacedChange.setSpecification("move");
+            workerPlacedChange.setSpecification(WORKERSETTING);
             workerPlacedChange.setWorker(input.getWorker());
             workerPlacedChange.setSpace(input.getSpace());
             player.notifyController();
@@ -120,7 +123,7 @@ public class WorkerSettingState extends State {
     private void notifySetUp(){
         LastChange settingWorker = player.getLastChange();
         settingWorker.setCode(0);
-        settingWorker.setSpecification("workerSetting");
+        settingWorker.setSpecification(SET_UP);
         player.notifyController();
     }
 }

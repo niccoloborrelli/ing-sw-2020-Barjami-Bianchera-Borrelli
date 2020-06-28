@@ -23,7 +23,50 @@ public class CommandCLIManager implements Command{
         deliveryMessage.send(generalStringRequestCommand.execute());
     }
 
-    public void manageCommand(ReplyCommand replyCommand){
-        replyCommand.execute(field);
+    @Override
+    public void manageCommand(SentenceBottomRequestCommand sentenceBottomRequestCommand) {
+        sentenceBottomRequestCommand.execute(field);
     }
+
+    @Override
+    public void manageCommand(PopUpCommand popUpCommand) {
+        popUpCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(ShowAvCells showAvCells) {
+        showAvCells.execute(field);
+    }
+
+    @Override
+    public void manageCommand(RemovingCommand removingCommand) {
+        removingCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(SettingPawnCommand settingPawnCommand) {
+        settingPawnCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(LimitedOptionsCommand limitedOptionsCommand) {
+        limitedOptionsCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(TransitionSceneCommand transitionSceneCommand) {
+        transitionSceneCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(MoveUpdateCommand moveUpdateCommand) {
+        moveUpdateCommand.execute(field);
+    }
+
+    @Override
+    public void manageCommand(BuildUpdateCommand buildUpdateCommand) {
+        buildUpdateCommand.execute(field);
+    }
+
+
 }

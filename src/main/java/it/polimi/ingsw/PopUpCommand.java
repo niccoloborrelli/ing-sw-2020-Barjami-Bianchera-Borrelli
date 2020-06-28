@@ -10,7 +10,7 @@ public class PopUpCommand extends ReplyCommand {
 
     @Override
     public void execute(GraphicInterface hellofx) { ;
-        hellofx.printPopUp(sentence);
+      //  hellofx.printPopUp(sentence);
     }
 
     @Override
