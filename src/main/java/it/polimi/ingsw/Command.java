@@ -12,5 +12,6 @@ public interface Command {
     public void manageCommand(MoveUpdateCommand moveUpdateCommand);
     public void manageCommand(BuildUpdateCommand buildUpdateCommand);
     void manageCommand(SetUpCommand setUpCommand);
+    void manageCommand(QuitCommand quitCommand);
 }
 

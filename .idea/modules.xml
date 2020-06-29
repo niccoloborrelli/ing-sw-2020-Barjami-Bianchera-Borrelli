@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ing-sw-2020-Barjami-Bianchera-Borrelli.iml" filepath="$PROJECT_DIR$/.idea/ing-sw-2020-Barjami-Bianchera-Borrelli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaFxIngSw.iml" filepath="$PROJECT_DIR$/JavaFxIngSw.iml" />
     </modules>
   </component>
 </project>

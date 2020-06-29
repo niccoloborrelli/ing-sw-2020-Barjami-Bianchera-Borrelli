@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,35 +233,45 @@ public class GraphicInterface {
     public void buildBoard(){
             //IMPORTS GRAPHICAL RESOURCES
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-
+            Path layoutPath = Paths.get("src/main/resources/Cliff.obj");
+            File file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("Cliff.obj").getFile()));
+            importer.read(file);
             MeshView[] tempMesh = importer.getImport();
             MeshView cliff=tempMesh[0];
 
+            layoutPath = Paths.get("src/main/resources/Islands.obj");
+            file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("Islands.obj").getFile()));
+            importer.read(file);
             tempMesh = importer.getImport();
             MeshView islands=tempMesh[0];
 
+            layoutPath = Paths.get("src/main/resources/Board.obj");
+            file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("Board.obj").getFile()));
+            importer.read(file);
             tempMesh = importer.getImport();
             MeshView board=tempMesh[0];
 
+            layoutPath = Paths.get("src/main/resources/Sea.obj");
+            file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("Sea.obj").getFile()));
+            importer.read(file);
             tempMesh = importer.getImport();
             MeshView sea=tempMesh[0];
 
+            layoutPath = Paths.get("src/main/resources/InnerWalls.obj");
+            file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("InnerWalls.obj").getFile()));
+            importer.read(file);
             tempMesh = importer.getImport();
             MeshView innerWalls=tempMesh[0];
 
+            layoutPath = Paths.get("src/main/resources/OuterWall1.obj");
+            file=new File(layoutPath.toUri());
             importer.clear();
-            importer.read(new File(classLoader.getResource("OuterWall1.obj").getFile()));
+            importer.read(file);
             tempMesh = importer.getImport();
             MeshView outerWalls=tempMesh[0];
 
@@ -340,8 +352,8 @@ public class GraphicInterface {
 
         public Pawn createMaleWorker(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-            File file = new File(classLoader.getResource("MaleBuilder.obj").getFile());
+            Path layoutPath = Paths.get("src/main/resources/MaleBuilder.obj");
+            File file=new File(layoutPath.toUri());
             importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
@@ -351,9 +363,11 @@ public class GraphicInterface {
 
         public Pawn createFemaleWorker(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
             importer.clear();
-            importer.read(new File(classLoader.getResource("FemaleBuilder_Blue.obj").getFile()));
+            Path layoutPath = Paths.get("src/main/resources/FemaleBuilder_Blue.obj");
+            File file=new File(layoutPath.toUri());
+            importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
             correctSize(tempMesh,50,50,50);
@@ -362,9 +376,10 @@ public class GraphicInterface {
 
         public MeshView createBuildingType1(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             importer.clear();
-            importer.read(new File(classLoader.getResource("BuildingBlock01.obj").getFile()));
+            Path layoutPath = Paths.get("src/main/resources/BuildingBlock01.obj");
+            File file=new File(layoutPath.toUri());
+            importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
             correctSize(tempMesh,15.5,15.5,15.5);
@@ -375,9 +390,11 @@ public class GraphicInterface {
         }
         public MeshView createDome(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
             importer.clear();
-            importer.read(new File(classLoader.getResource("Dome.obj").getFile()));
+            Path layoutPath = Paths.get("src/main/resources/Dome.obj");
+            File file=new File(layoutPath.toUri());
+            importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
             correctSize(tempMesh,15.5,15.5,15.5);
@@ -391,7 +408,9 @@ public class GraphicInterface {
             ObjModelImporter importer = new ObjModelImporter();
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             importer.clear();
-            importer.read(new File(classLoader.getResource("BuildingBlock02.obj").getFile()));
+            Path layoutPath = Paths.get("src/main/resources/BuildingBlock02.obj");
+            File file=new File(layoutPath.toUri());
+            importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
             correctSize(tempMesh,15.5,15.5,15.5);
@@ -405,7 +424,9 @@ public class GraphicInterface {
             ObjModelImporter importer = new ObjModelImporter();
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             importer.clear();
-            importer.read(new File(classLoader.getResource("BuildingBlock03.obj").getFile()));
+            Path layoutPath = Paths.get("src/main/resources/BuildingBlock03.obj");
+            File file=new File(layoutPath.toUri());
+            importer.read(file);
             MeshView[] temp = importer.getImport();
             MeshView tempMesh=temp[0];
             correctSize(tempMesh,15.5,15.5,15.5);

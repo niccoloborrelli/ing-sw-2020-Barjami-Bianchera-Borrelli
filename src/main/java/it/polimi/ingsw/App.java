@@ -28,7 +28,6 @@ import java.util.List;
  */
 
 public class App extends Application {
-
     private static Group title;
     private static Group gods;
     private static Group selectionName;
@@ -55,6 +54,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         Socket socket = new Socket("localhost", 60100);
         CommandGUIManager commandGUIManager = new CommandGUIManager(socket);
         DeliveryMessage deliveryMessage = commandGUIManager.getDeliveryMessage();
@@ -519,10 +519,6 @@ public class App extends Application {
 
     public void setCommandGUIManager(CommandGUIManager commandGUIManager) {
         this.commandGUIManager = commandGUIManager;
-    }
-
-    public static void main(String[] args) throws IOException {
-        launch();
     }
 
 

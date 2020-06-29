@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.FinalCommunication.ENDGAME;
+
 public class EndGameState extends State {
 
     EndGameState(Player player) {
@@ -10,7 +12,7 @@ public class EndGameState extends State {
     public void onStateTransition() {
         LastChange uselessInput = player.getLastChange();
         uselessInput.setCode(3);
-        uselessInput.setSpecification("endGame");
+        uselessInput.setSpecification(ENDGAME);
         player.notifyController();
     }
 

@@ -97,6 +97,12 @@ public class CommandGUIManager implements Command {
         setUpCommand.execute(graphicInterface);
     }
 
+    @Override
+    public void manageCommand(QuitCommand quitCommand) {
+        deliveryMessage.quitGame();
+        quitCommand.execute(graphicInterface);
+    }
+
     public void manageCommand(SentenceBottomRequestCommand sentenceBottomRequestCommand){
         sentenceBottomRequestCommand.execute(graphicInterface);
 
@@ -178,5 +184,7 @@ public class CommandGUIManager implements Command {
         showAvCellsList.clear();
         buildUpdateCommand.execute(graphicInterface);
     }
+
+
 }
 

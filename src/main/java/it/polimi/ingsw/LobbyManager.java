@@ -72,9 +72,11 @@ public class LobbyManager {
     }
 
     private void createLocalHub(HandlerHub handlerHub, List<Player> playerList) {
+        System.out.print("Ho creato il game");
         for(Player p: playerList){
             Handler handler = globalHub.getHandlerControllerHashMap().get(p.getController());
             handlerHub.getHandlerControllerHashMap().put(p.getController(), handler);
+            handlerHub.setGeneral(false);
             p.getController().setHandlerHub(handlerHub);
             handler.setHandlerHub(handlerHub);
             globalHub.getHandlerControllerHashMap().remove(p.getController());

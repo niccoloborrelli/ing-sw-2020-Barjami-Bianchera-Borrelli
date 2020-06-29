@@ -9,9 +9,20 @@ import static it.polimi.ingsw.FinalCommunication.*;
 public class HandlerHub {
 
     private HashMap<Controller, Handler> handlerControllerHashMap;
+    boolean general;
+
 
     public HandlerHub() {
         handlerControllerHashMap = new HashMap<>();
+        general = true;
+    }
+
+    public boolean isGeneral() {
+        return general;
+    }
+
+    public void setGeneral(boolean general) {
+        this.general = general;
     }
 
     public HashMap<Controller, Handler> getHandlerControllerHashMap() {
@@ -25,35 +36,31 @@ public class HandlerHub {
     }
 
     public void quitGame(Handler handler){
-        for(Handler leftHandler: handlerControllerHashMap.values()){
-            try {
+        if(!general){
+            for(Handler leftHandler: handlerControllerHashMap.values()) {
                 if(!leftHandler.equals(handler))
-                    leftHandler.communicate(PREFIX + endMessage);
-                leftHandler.setEndGame(true);
-                leftHandler.getSc().close();
+                    findControllerFromHandler(handler).communicateDisconnectionMessage();
+                try {
+                    leftHandler.setEndGame(true);
+                    leftHandler.getSc().close();
+                } catch (IOException ignored) {
+                }
+            }
+            handlerControllerHashMap.clear();
+        }else{
+            try {
+                handler.setEndGame(true);
+                handler.getSc().close();
             } catch (IOException ignored) {
             }
+            handlerControllerHashMap.remove(findControllerFromHandler(handler));
+            }
 
-            //handlerControllerHashMap.remove(findControllerFromHandler(leftHandler));
-        }
     }
 
     public void callController(Handler handler, String message){
         Controller controller = findControllerFromHandler(handler);
         controller.giveInputToModel(message);
-    }
-
-    public void updateEndGame(String message){
-        for(Handler handler: handlerControllerHashMap.values()) {
-            handler.communicate(message);
-            try {
-                handler.setEndGame(true);
-                Socket sc = handler.getSc();
-                handler.join();
-                sc.close();
-            } catch (IOException | InterruptedException ignored) {
-            }
-        }
     }
 
     public void sendData(String message, Controller controller, int typeCommunication){

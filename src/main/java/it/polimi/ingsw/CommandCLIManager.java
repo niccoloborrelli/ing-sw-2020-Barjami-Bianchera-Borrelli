@@ -73,5 +73,11 @@ public class CommandCLIManager implements Command{
         setUpCommand.execute(field);
     }
 
+    @Override
+    public void manageCommand(QuitCommand quitCommand) {
+        deliveryMessage.quitGame();
+        quitCommand.execute(field);
+    }
+
 
 }
