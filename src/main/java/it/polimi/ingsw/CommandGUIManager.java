@@ -12,6 +12,10 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommandGUIManager implements Command {
 
+    /**
+     * Manages every possible command that could generate client or server side.
+     */
+
     private DeliveryMessage deliveryMessage;
     private GraphicInterface graphicInterface;
     private List<ShowAvCells> showAvCellsList;
@@ -34,6 +38,7 @@ public class CommandGUIManager implements Command {
     public DeliveryMessage getDeliveryMessage() {
         return deliveryMessage;
     }
+
 
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
         if(pawnChosen == null && pawnSelected!=null) {
@@ -60,8 +65,12 @@ public class CommandGUIManager implements Command {
     private void showCells(){
         String indexOfPawn = pawnChosen.execute().substring(1);
         int pawnSelected = Integer.parseInt(indexOfPawn);
-        if(showAvCellsList.get(pawnSelected) != null)
-            showAvCellsList.get(pawnSelected).execute(graphicInterface);
+        System.out.println("Il pawn selezionato è: " + pawnSelected);
+        System.out.println("La size è: " + showAvCellsList.size());
+        if(pawnSelected<showAvCellsList.size()) {
+            if (showAvCellsList.get(pawnSelected) != null)
+                showAvCellsList.get(pawnSelected).execute(graphicInterface);
+        }
     }
 
     public void manageCommand(GeneralStringRequestCommand generalString){
@@ -105,6 +114,7 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(ShowAvCells showAvCells) {
+        System.out.print("Ci sono dentro");
         showAvCellsList.add(showAvCells);
     }
 
@@ -141,12 +151,15 @@ public class CommandGUIManager implements Command {
         }else if(limitedOptionsCommand.getSpecification().equals(PRE_LOBBY)){
             TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, WAITING_PLAYER);
             switchingScene.add(transitionSceneCommand);
-        }if(limitedOptionsCommand.getSpecification().equals(GODCHOICE)){
+        }else if(limitedOptionsCommand.getSpecification().equals(GODCHOICE)) {
             TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, GODCHOICE);
             switchingScene.add(transitionSceneCommand);
-        }
 
-        limitedOptionsCommand.execute(app);
+        }
+        if(limitedOptionsCommand.getSpecification().equals(POWER))
+            limitedOptionsCommand.execute(graphicInterface);
+        else
+            limitedOptionsCommand.execute(app);
     }
 
     @Override
@@ -156,11 +169,13 @@ public class CommandGUIManager implements Command {
 
     @Override
     public void manageCommand(MoveUpdateCommand moveUpdateCommand) {
+        showAvCellsList.clear();
         moveUpdateCommand.execute(graphicInterface);
     }
 
     @Override
     public void manageCommand(BuildUpdateCommand buildUpdateCommand) {
+        showAvCellsList.clear();
         buildUpdateCommand.execute(graphicInterface);
     }
 }

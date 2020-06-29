@@ -1,6 +1,5 @@
 package it.polimi.ingsw;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static it.polimi.ingsw.ColorConverter.*;
@@ -10,6 +9,10 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 
 public class Field{
+
+    /**
+     * Represents the CLI interface. It's composed by a game field.
+     */
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
     public static final String ANSI_RESET = "\u001B[0m";
@@ -32,6 +35,10 @@ public class Field{
         loadEmpty();
         createAll();
     }
+
+    /**
+     * Permits the correct creations of all the game field.
+     */
 
     private void loadEmpty() {
         blankSpaces();
@@ -126,11 +133,19 @@ public class Field{
         plot();
     }
 
+    /**
+     * Empties all spaces.
+     */
+
     private void blankSpaces() {
         for (int row = MINROW; row < ROW_CLI; row++)
             for (int column = MINCOLUMN; column < COLUMN_CLI; column++)
                 field[row][column] = " ";
     }
+
+    /**
+     *
+     */
 
     private void outsideNumbers() {
         for (int i = 2, number = 0; i < ROW_CLI - 1; i = i + 2, number++)
@@ -222,31 +237,44 @@ public class Field{
     }
      */
 
+    /**
+     * Prints the sentence passed.
+     * @param sentence is sentence passed.
+     */
+
     public void printSentence(String sentence){
         System.out.println(sentence);
     }
 
+    /**
+     * Prints the list of choices, depending by event.
+     * @param stringList contains choices.
+     * @param specification specified event.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
 
     public void printChoices(List<String> stringList, String specification, String playerName, String playerColor) {
         String data = null;
+        String prefix = playerColor + playerName + ANSI_RESET;
         switch (specification) {
             case POWER:
-                data = getActivationPhrase(stringList,playerName, playerColor);
+                data = prefix + getActivationPhrase(stringList);
                 break;
             case PRE_LOBBY:
                 data = getPreLobbyPhrase(stringList);
                 break;
             case COLOR:
-                data = getColorPhrase(stringList, playerName);
+                data = getColorPhrase(stringList);
                 break;
-            case "godChoice":
-                data = getGodChoicePhrase(stringList, playerName, playerColor);
+            case GODCHOICE:
+                data = prefix + getGodChoicePhrase(stringList);
                 break;
-            case "godSet":
-                data = getGodSetPhrase(stringList, playerName, playerColor);
+            case GODSET:
+                data = prefix + getGodSetPhrase(stringList, playerName, playerColor);
                 break;
             case GOD:
-                data = getGodPowers(stringList, playerName, playerColor);
+                data = prefix + getGodPowers(stringList);
                 break;
             case HELP:
                 data = getHelp(stringList);
@@ -256,34 +284,5 @@ public class Field{
         System.out.println(data);
     }
 
-    public void updateGameField(String worker, List<Integer> integerList, String specification, String playerName, String playerColor) {
-        System.out.println(updateField(integerList.get(2), integerList.get(3), playerName, playerColor, specification));
-        switch (specification) {
-            case WORKERSETTING:
-                viewSetup(integerList.get(2), integerList.get(3), worker, playerColor);
-                break;
-            case MOVE:
-            case DELETED:
-                viewMove(worker, integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3), playerColor);
-                break;
-            case BUILD:
-                viewBuild(integerList.get(0), integerList.get(1), integerList.get(2), integerList.get(3));
-                break;
-        }
-    }
-/*
-    public void printChoices(String worker, List<HashMap<String, String>> hashMap, String specification, String playerName, String playerColor){
-        String data = null;
-        switch (specification){
-            case MOVE:
-            case BUILD:
-                data =getActionPhrase(worker, hashMap, specification, playerName, playerColor);
-                break;
-        }
-
-        System.out.println(data);
-    }
-
- */
 }
 

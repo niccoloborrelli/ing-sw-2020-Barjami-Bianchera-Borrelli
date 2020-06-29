@@ -6,6 +6,10 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 public class LimitedOptionsCommand extends ReplyCommand {
 
+    /**
+     * Represents a limited possibility of choosing options.
+     */
+
     private List<String> options;
     private String specification;
     private String playerName;
@@ -22,9 +26,21 @@ public class LimitedOptionsCommand extends ReplyCommand {
         return specification;
     }
 
+    /**
+     * Sets visible determined buttons in GUI.
+     * @param gui is where buttons are set visible.
+     */
+
     @Override
     public void execute(GraphicInterface gui) {
+        if(specification.equals(POWER))
+            gui.showPower();
     }
+
+    /**
+     * Depending of event permits the creation of scene with limited possibilities.
+     * @param app is where scene are set.
+     */
 
     public void execute(App app){
         switch (specification) {
@@ -39,6 +55,12 @@ public class LimitedOptionsCommand extends ReplyCommand {
                 break;
         }
     }
+
+    /**
+     * Prints list of choices.
+     * @param field permits to print list of choices.
+     */
+
 
     @Override
     public void execute(Field field) {

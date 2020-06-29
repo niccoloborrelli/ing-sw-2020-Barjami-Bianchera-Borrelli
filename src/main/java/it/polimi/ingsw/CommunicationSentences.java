@@ -6,6 +6,9 @@ import static it.polimi.ingsw.Field.ANSI_RESET;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommunicationSentences {
+    /**
+     * Represents the creation center of sentences to print.
+     */
 
     private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one " +
             "insert ";
@@ -59,20 +62,30 @@ public class CommunicationSentences {
     private static int errorIndex;
 
 
-    public static String getLostPhrase(String playerName, String playerColor){
-        String prefix = playerColor + playerName + ANSI_RESET;
-
-        return prefix + lost;
+    /**
+     * @return a phrase of enemy losing.
+     */
+    public static String getLostPhrase(){
+        return lost;
     }
 
-    public static String getEndTurnPhrase(String playerName, String playerColor){
-        String prefix = playerColor + playerName + ANSI_RESET;
+    /**
+     * Chooses a sentence that represents the end of turn.
+     * @return a sentence that represents the end of turn.
+     */
+
+    public static String getEndTurnPhrase(){
         String phrase = endTurnSentences.get(endTurnIndex);
 
         endTurnIndex = addIndexOfList(endTurnSentences, endTurnIndex);
 
-        return prefix + phrase;
+        return phrase;
     }
+
+    /**
+     * Chooses a sentence that represents an error.
+     * @return a sentence that represents an error.
+     */
 
     public static String getErrorPhrase(){
         String phrase = errorSentence.get(errorIndex);
@@ -81,36 +94,63 @@ public class CommunicationSentences {
         return phrase;
     }
 
-    public static String getActivationPhrase(List<String> stringList, String playerName, String playerColor){
+    /**
+     * Chooses a sentence that represents a request of power activation.
+     * @return a sentence that represents a request of power activation.
+     */
+
+    public static String getActivationPhrase(List<String> stringList){
         String phrase = activationPowerSentence.get(activationIndex);
         activationIndex++;
         String choiceSent = formToActivatePower + buildChoiceSent(stringList, otherwise, ",");
-        String prefix = playerColor + playerName + ANSI_RESET;
 
         activationIndex = addIndexOfList(activationPowerSentence, activationIndex);
 
-        return prefix + ". " + phrase + choiceSent;
+        return ". " + phrase + choiceSent;
     }
+
+    /**
+     * Chooses a sentence that represents the beginning of game.
+     * @return a sentence that representsthe beginning of game.
+     */
 
     public static String getPreLobbyPhrase(List<String> stringList){
         return welcomeToSantorini + preLobbySent +  buildChoiceSent(stringList, otherwise, ",");
     }
 
-    public static String getColorPhrase(List<String> stringList, String playerName){
+    /**
+     * Chooses a sentence that represents a list of color.
+     * @return a sentence that represents a list of color.
+     */
+
+    public static String getColorPhrase(List<String> stringList){
         return colorSent + buildChoiceSent(stringList, otherwise, ",");
     }
 
-    public static String getGodChoicePhrase(List<String> stringList, String playerName, String playerColor){
-        String prefix = playerColor + playerName + ANSI_RESET;
+    /**
+     * Chooses a sentence that represents a list of available god.
+     * @return a sentence that represents a list of available god.
+     */
+
+    public static String getGodChoicePhrase(List<String> stringList){
         if(stringList.size()>1)
-            return prefix + "," + godChoiceSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
-        else return prefix + ", "  + stringList.get(0) + godChosen1;
+            return  "," + godChoiceSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
+        else return ", "  + stringList.get(0) + godChosen1;
     }
 
+    /**
+     * Chooses a sentence that represents the entire god set.
+     * @return a sentence that represents th entire god set.
+     */
+
     public static String getGodSetPhrase(List<String> stringList, String playerName, String playerColor){
-        String prefix = playerColor + playerName + ANSI_RESET;
-        return prefix + "," + godSetSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
+        return "," + godSetSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
     }
+
+    /**
+     * Builds a sentence that represents a choice from determined strings.
+     * @return a sentence that represents a choice from determined strings .
+     */
 
     private static String buildChoiceSent(List<String> stringList, String conjunction, String punctuation){
         if(stringList.size()<=2)
@@ -122,6 +162,16 @@ public class CommunicationSentences {
             return stringBuilder.toString();
         }
     }
+
+    /**
+     * Creates a sentence that represents an update of game field.
+     * @param newRow is row in which update are done.
+     * @param newColumn is column in which update are done.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     * @param specification specified event.
+     * @return a sentence that represents an update of game field.
+     */
 
     public static String updateField(int newRow, int newColumn, String playerName, String playerColor, String specification){
         String sentence;
@@ -136,6 +186,16 @@ public class CommunicationSentences {
         return prefix + sentence;
     }
 
+    /**
+     * Creates a sentence that represents an action.
+     * @param worker is worker that could do the action.
+     * @param hashMapList contains the available spaces in which do an action.
+     * @param specification specified the event
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     * @return a sentence that represents an action.
+     */
+
     public static String getActionPhrase(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor) {
         String phrase = actionSentences.get(actionIndex);
         String prefix = setup + playerColor + playerName + ANSI_RESET;
@@ -144,6 +204,16 @@ public class CommunicationSentences {
 
         return buildAvailablePhrase(prefix, phrase, specification, worker, hashMapList);
     }
+
+    /**
+     * Creates a sentence that represents available spaces in which do an action.
+     * @param prefix is the prefix of sentence.
+     * @param phrase is phrase that represents the action.
+     * @param specification specified the event.
+     * @param worker is worker that could do the action..
+     * @param hashMapList contains the available spaces in which make an action.
+     * @return a sentence that represents available spaces in which do an action.
+     */
 
     private static String buildAvailablePhrase(String prefix, String phrase, String specification, String worker, List<HashMap<String, String>> hashMapList){
         String beginOfPhrase = prefix +  insertWorker(phrase + specification + actionSentences.get(actionIndex), worker);
@@ -154,10 +224,22 @@ public class CommunicationSentences {
         return beginOfPhrase + "\n" + endOfPhrase;
     }
 
+    /**
+     * Insert worker in a sentence.
+     * @param content is content of sentence.
+     * @param number is number of worker.
+     * @return sentence with worker inserted.
+     */
     private static String insertWorker(String content, String number){
         int index = content.lastIndexOf("worker");
         return content.substring(0, index+6) + " " + number  + content.substring(index+6);
     }
+
+    /**
+     * Builds a sentence that contains spaces.
+     * @param hashMapList contains spaces to put in sentence.
+     * @return a sentence that contains spaces
+     */
 
     private static String findSpaces(List<HashMap<String, String>> hashMapList){
         Comparator<HashMap<String, String>> comparator = createComparator();
@@ -168,6 +250,13 @@ public class CommunicationSentences {
         }
         return s.toString();
     }
+
+    /**
+     * Picks the last string in hash map.
+     * @param hashMap contains strings.
+     * @param key is a boolean. If true it must search keys, otherwise values.
+     * @return last string searched.
+     */
 
     private static String lastString(HashMap<String, String> hashMap, boolean key){
         String last = null;
@@ -182,6 +271,11 @@ public class CommunicationSentences {
         return last;
 
     }
+
+    /**
+     * Compares strings.
+     * @return value of comparison.
+     */
 
     private static Comparator<HashMap<String, String>> createComparator(){
         return new Comparator<HashMap<String, String>>() {
@@ -204,27 +298,46 @@ public class CommunicationSentences {
         };
     }
 
-    public static String getGodPowers(List<String> stringList, String playerName, String playerColor){
-        String prefix = playerColor + playerName + ANSI_RESET;
+    /**
+     * Builds a sentence with list of string that represents god powers.
+     * @param stringList is list of powers.
+     * @return a sentence with list of string that represents god powers.
+     */
+
+    public static String getGodPowers(List<String> stringList){
         String built;
         if(stringList.size()>1)
             built = godsPowers + buildChoiceSent(stringList, "", "");
         else
             built = singlePower + stringList.get(0);
 
-        return prefix  + built;
+        return built;
     }
+
+    /**
+     * Creates a sentence that contains possible client actions.
+     * @param stringList contains possible client actions.
+     * @return a sentence that contains possible client actions.
+     */
 
     public static String getHelp(List<String> stringList){
         return buildChoiceSent(stringList, "", "");
     }
 
+    /**
+     * Creates all sentences pre-formed.
+     */
+
     public static void createAll(){
         createBaseActionSentence();
         createBaseActivationPowerSentence();
         createBaseEndTurnSentence();
-        createBaseErrorEndTurnSentence();
+        createBaseErrorSentence();
     }
+
+    /**
+     * Creates base end turn sentences.
+     */
 
     private static void createBaseEndTurnSentence(){
         endTurnIndex = 0;
@@ -234,7 +347,11 @@ public class CommunicationSentences {
         endTurnSentences.add(endSent3);
     }
 
-    private static void createBaseErrorEndTurnSentence(){
+    /**
+     * Creates base error sentences.
+     */
+
+    private static void createBaseErrorSentence(){
         errorIndex = 0;
         errorSentence = new ArrayList<>();
         errorSentence.add(errorSent1);
@@ -243,6 +360,10 @@ public class CommunicationSentences {
 
     }
 
+    /**
+     * Creates base activation powers sentences.
+     */
+
     private static void createBaseActivationPowerSentence(){
         activationIndex = 0;
         activationPowerSentence = new ArrayList<>();
@@ -250,6 +371,10 @@ public class CommunicationSentences {
         activationPowerSentence.add(activateSent2);
         activationPowerSentence.add(activateSent3);
     }
+
+    /**
+     * Creates base action sentences.
+     */
 
     private static void createBaseActionSentence(){
         actionIndex = 0;
@@ -260,6 +385,13 @@ public class CommunicationSentences {
         actionSentences.add(actionSent2_2);
     }
 
+    /**
+     * Calculates next index of a list.
+     * @param stringList is list controlled.
+     * @param index is initial index.
+     * @return next index of a list.
+     */
+
     private static int addIndexOfList(List<String> stringList, int index){
         if(index<stringList.size()-1)
             index++;
@@ -269,11 +401,20 @@ public class CommunicationSentences {
         return index;
     }
 
+    /**
+     * Builds a particular sentence depending of event.
+     * @param specification specified event.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     * @return a particular sentence depending of event.
+     */
+
     public static String printParticularSentence(String specification, String playerName, String playerColor) {
         String data = null;
+        String prefix = playerColor + playerName + ANSI_RESET;
         switch (specification) {
             case ENDTURN:
-                data = getEndTurnPhrase(playerName, playerColor);
+                data = prefix + getEndTurnPhrase();
                 break;
             case ERROR:
                 data = getErrorPhrase();
@@ -285,13 +426,12 @@ public class CommunicationSentences {
                 data = lose;
                 break;
             case LOST:
-                data = getLostPhrase(playerName, playerColor);
+                data = prefix  + getLostPhrase();
                 break;
             case NAME:
                 data = nameSent;
                 break;
             case SET_UP:
-                System.out.println("Giusto");
                 data = setup;
                 break;
             case DISCONNECTION:
@@ -304,6 +444,16 @@ public class CommunicationSentences {
 
         return data;
     }
+
+    /**
+     * Builds a sentence that represents a list of choices.
+     * @param worker is worker that could do a choice.
+     * @param hashMap contains possible choices.
+     * @param specification specified event.
+     * @param playerName is player name
+     * @param playerColor is player color.
+     * @return a sentence that represents a list of choices.
+     */
 
     public static String printChoices(String worker, List<HashMap<String, String>> hashMap, String specification, String playerName, String playerColor) {
         String data = null;

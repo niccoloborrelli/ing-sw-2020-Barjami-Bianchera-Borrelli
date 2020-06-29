@@ -23,6 +23,7 @@ public class Worker {
     private boolean cantBuildDome;
     private boolean cantBuildUnder;
     private boolean mustBuildDome;
+    private boolean canBuildOnlyInTheFirstPlace;
 
     public Worker() {
         cantMoveUp=false;
@@ -38,6 +39,7 @@ public class Worker {
         possibleBuilding = new ArrayList<>();
         possibleMovements = new ArrayList<>();
         workerSpace = null;
+        canBuildOnlyInTheFirstPlace = false;
     }
 
     //metodo da richiamare alla fine di ogni turno su worker
@@ -54,6 +56,7 @@ public class Worker {
         cantBuildFirstSpace=false;
         cantMoveFirstSpace=false;
         mustBuildDome=false;
+        canBuildOnlyInTheFirstPlace = false;
         clearLists();
     }
 
@@ -223,6 +226,14 @@ public class Worker {
 
     public void setMustBuildDome(boolean mustBuildDome) {
         this.mustBuildDome = mustBuildDome;
+    }
+
+    public boolean isCanBuildOnlyInTheFirstPlace() {
+        return canBuildOnlyInTheFirstPlace;
+    }
+
+    public void setCanBuildOnlyInTheFirstPlace(boolean canBuildOnlyInTheFirstPlace) {
+        this.canBuildOnlyInTheFirstPlace = canBuildOnlyInTheFirstPlace;
     }
 }
 

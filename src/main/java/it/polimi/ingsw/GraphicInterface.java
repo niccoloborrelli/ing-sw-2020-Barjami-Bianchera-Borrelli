@@ -498,6 +498,7 @@ public class GraphicInterface {
                         if(pawns.size()==0)
                             valuableId=false;
                     }
+                    positionMesh(0,0,0,pawn.getWorkerMesh());
                     pawn.getWorkerMesh().setMaterial(colorCreation(color));
                     Cell cell=grid[row][column];
                     cell.setWorker(pawn);

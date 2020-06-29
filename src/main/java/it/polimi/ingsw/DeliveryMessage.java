@@ -22,6 +22,11 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 public class DeliveryMessage {
 
+    /**
+     * This class permits the correct switching of incoming packets between interfaces with a previous de-parsing.
+     * It permits also the correct formalization of messages sent by client.
+     */
+
     private static final String ACTION = "w";
     private static final String SPECIAL_CHAR1 = "+";
     private static final String SPECIAL_CHAR2 = "-";
@@ -628,7 +633,7 @@ public class DeliveryMessage {
     }
 
     /**
-     * Sends to interface information to print a particular sentence.
+     * Creates command depending of event represented and sends it to the command manager.
      * @param specification specifies what type of message to send is.
      * @param playerName is player name.
      * @param playerColor is player color.
@@ -640,14 +645,15 @@ public class DeliveryMessage {
             command.manageCommand(transitionSceneCommand);
         }else if(specification.equals(SET_UP)) {
             command.manageCommand(new SetUpCommand(specification,playerName, playerColor));
-        }else {
+        }else if(specification.equals(LOSE) || specification.equals(LOST) || specification.equals(WIN) || specification.equals(ENDGAME)) {
+            command.manageCommand(new PopUpCommand(playerName, playerColor, specification));
             SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
             command.manageCommand(sentenceBottomRequestCommand);
         }
     }
 
     /**
-     * Sends to interface information to print choices.
+     * Creates command with a limited options and sends it to the command manager.
      * @param stringList contains choices.
      * @param specification specifies what type of message to send is.
      * @param playerName is player name.
@@ -660,7 +666,7 @@ public class DeliveryMessage {
     }
 
     /**
-     * Sends to interface information to print choices with 2 parameters.
+     * Creates command with a list of cell available and sends it to the command manager..
      * @param worker is worker that could do these choice.
      * @param hashMapList contains choices.
      * @param specification specifies what type of message to send is.
@@ -674,7 +680,7 @@ public class DeliveryMessage {
     }
 
     /**
-     * Sends to interface information to update game field.
+     * Creates an update command depending of event.
      * @param worker is worker that causes this update.
      * @param integerList contains information of updating.
      * @param specification specifies what type of message to send is.
@@ -700,27 +706,53 @@ public class DeliveryMessage {
         }
     }
 
+    /**
+     * Creates an update command due to a movement.
+     * @param integerList contains parameters of movement.
+     * @param worker is worker that caused this update.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
+
     private void createMoveUpdateCommand(List<Integer> integerList, String worker, String playerName, String playerColor){
         MoveUpdateCommand moveUpdateCommand = new MoveUpdateCommand(integerList, worker, playerName, playerColor);
         command.manageCommand(moveUpdateCommand);
     }
+
+    /**
+     * Creates an update command due to a building.
+     * @param integerList contains parameters of building.
+     * @param playerName is player name.
+     * @param playerColor is player color.
+     */
 
     private void createBuildUpdateCommand(List<Integer> integerList, String playerName, String playerColor){
         BuildUpdateCommand buildUpdateCommand = new BuildUpdateCommand(integerList, playerName, playerColor);
         command.manageCommand(buildUpdateCommand);
     }
 
+    /**
+     * Creates a command that represents a worker setting.
+     * @param integerList is parameters of setting.
+     * @param worker is worker that has to set.
+     * @param playerColor is player color.
+     */
+
     private void createSetUpCommand(List<Integer> integerList, String worker, String playerColor){
         SettingPawnCommand settingPawnCommand = new SettingPawnCommand(integerList, worker, playerColor);
         command.manageCommand(settingPawnCommand);
     }
 
+    /**
+     * Creates a command that represents a removing action.
+     * @param integerList contains parameters of removing.
+     */
+
+
     private void createRemoveWorkerCommand(List<Integer> integerList){
         RemovingCommand removingCommand = new RemovingCommand(integerList);
         command.manageCommand(removingCommand);
     }
-
-
 
     /**
      * Starts reading messages.

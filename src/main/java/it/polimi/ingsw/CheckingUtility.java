@@ -332,6 +332,9 @@ public class CheckingUtility {
         if(worker.isCantBuild()) {
             spaceList.clear();
         }else{
+            if(worker.isCanBuildOnlyInTheFirstPlace())
+                cantBuildOtherPlace(spaceList, worker, space);
+
             if(worker.isCantBuildDome()) {
                 cantBuildDOME(spaceList, space);
             }
@@ -342,6 +345,18 @@ public class CheckingUtility {
                 cantBuildPerimeter(spaceList, space);
             }
         }
+    }
+
+    /**
+     * Removes space if it isn't  worker's last built space.
+     * @param spaceList is list of valid spaces
+     * @param worker is worker controlled.
+     * @param space is space checked.
+     */
+
+    private static void cantBuildOtherPlace(List<Space> spaceList, Worker worker, Space space){
+        if(!worker.getLastSpaceBuilt().equals(space))
+            spaceList.remove(space);
     }
 
     /**

@@ -106,8 +106,10 @@ public class AdditionalBuildFlow extends FlowChanger {
             worker.setCantBuildFirstSpace(true);
         else if(noPerimeter)
             worker.setCantBuildPerimeter(true);
-        else if(noDome)
+        else if(noDome) {
+            worker.setCanBuildOnlyInTheFirstPlace(true);
             worker.setCantBuildDome(true);
+        }
     }
 
     private boolean playerCanBuildAndNotGoUp(Player player){
