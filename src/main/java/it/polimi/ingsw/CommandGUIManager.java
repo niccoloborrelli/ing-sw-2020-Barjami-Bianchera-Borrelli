@@ -1,11 +1,9 @@
 package it.polimi.ingsw;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static it.polimi.ingsw.CommunicationSentences.createAll;
 import static it.polimi.ingsw.FinalCommunication.*;
@@ -19,7 +17,8 @@ public class CommandGUIManager implements Command {
     private DeliveryMessage deliveryMessage;
     private GraphicInterface graphicInterface;
     private List<ShowAvCells> showAvCellsList;
-    private List<ReplyCommand> replyCommandList;
+    private List<SettingPawnCommand> settingPawnCommands;
+    private List<RemovingCommand> removingCommandList;
     private List<TransitionSceneCommand> switchingScene;
     private App app;
     SelectPawnRequestCommand pawnChosen;
@@ -29,7 +28,8 @@ public class CommandGUIManager implements Command {
         deliveryMessage.setCommand(this);
         showAvCellsList = new ArrayList<>();
         pawnChosen = null;
-        replyCommandList = new ArrayList<>();
+        settingPawnCommands = new ArrayList<>();
+        removingCommandList = new ArrayList<>();
         switchingScene = new ArrayList<>();
         createAll();
     }
@@ -43,11 +43,13 @@ public class CommandGUIManager implements Command {
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
         if(pawnChosen == null && pawnSelected!=null) {
             pawnChosen = pawnSelected;
+            System.out.println(pawnChosen.execute());
             if(showAvCellsList.size()>0)
                 showCells();
         }else {
             graphicInterface.resetColorBoard();
             sendActionToServer(cellSelected);
+            pawnChosen = null;
         }
     }
 
@@ -65,8 +67,6 @@ public class CommandGUIManager implements Command {
     private void showCells(){
         String indexOfPawn = pawnChosen.execute().substring(1);
         int pawnSelected = Integer.parseInt(indexOfPawn);
-        System.out.println("Il pawn selezionato è: " + pawnSelected);
-        System.out.println("La size è: " + showAvCellsList.size());
         if(pawnSelected<showAvCellsList.size()) {
             if (showAvCellsList.get(pawnSelected) != null)
                 showAvCellsList.get(pawnSelected).execute(graphicInterface);
@@ -94,7 +94,8 @@ public class CommandGUIManager implements Command {
     public void manageCommand(SetUpCommand setUpCommand){
         if(graphicInterface==null)
             app.set3DGui();
-        setUpCommand.execute(graphicInterface);
+        if(!graphicInterface.isSetAllsWorker())
+            setUpCommand.execute(graphicInterface);
     }
 
     @Override
@@ -109,23 +110,19 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(PopUpCommand popUpCommand){
-        for(ReplyCommand replyCommand: replyCommandList)
-            replyCommand.execute(graphicInterface);
+        for(RemovingCommand removingCommand: removingCommandList)
+            removingCommand.execute(graphicInterface);
+        removingCommandList.clear();
         popUpCommand.execute(graphicInterface);
     }
 
-    public void manageAction(ReplyCommand replyCommand, String specification, String playerName, String playerColor){
-        //graphicInterface.printBottom(createActionPhrase(specification, playerName, playerColor));
-        replyCommand.execute(graphicInterface);
-    }
-
     public void manageCommand(ShowAvCells showAvCells) {
-        System.out.print("Ci sono dentro");
+        System.out.println("Aggiunte le cell");
         showAvCellsList.add(showAvCells);
     }
 
     public void manageCommand(RemovingCommand removingCommand){
-        replyCommandList.add(removingCommand);
+        removingCommandList.add(removingCommand);
     }
 
     public void setGraphicInterface(GraphicInterface graphicInterface) {
@@ -139,14 +136,21 @@ public class CommandGUIManager implements Command {
     public void manageCommand(SettingPawnCommand settingPawnCommand){
         if(graphicInterface==null)
             app.set3DGui();
-        if(replyCommandList.size()==4){
-            for(ReplyCommand replyCommand: replyCommandList)
-                replyCommand.execute(graphicInterface);
-            replyCommandList.clear();
-        }else if(replyCommandList.size()==2){
-            replyCommandList.add(settingPawnCommand);
+        if(settingPawnCommands.size()==1 && removingCommandList.size()==2){
+            settingPawnCommands.add(settingPawnCommand);
+            createSwap();
+            settingPawnCommands.clear();
+            removingCommandList.clear();
+            showAvCellsList.clear();
+        }else if(removingCommandList.size()==2){
+            settingPawnCommands.add(settingPawnCommand);
         }else
             settingPawnCommand.execute(graphicInterface);
+    }
+
+    private void createSwap(){
+        graphicInterface.move(settingPawnCommands.get(0).getRow(), settingPawnCommands.get(0).getColumn(),
+                settingPawnCommands.get(1).getRow(), settingPawnCommands.get(1).getColumn(), settingPawnCommands.get(1).getWorker());
     }
 
     @Override

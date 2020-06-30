@@ -136,10 +136,16 @@ public class Controller{
             else
                 pickChosenPower(message);
         }else if(operation.equals(QUIT)) {
-            communicateDisconnectionMessage();
+            if(!checkEndGame())
+                communicateDisconnectionMessage();
             handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this));
+
         }
 
+    }
+
+    private boolean checkEndGame(){
+        return player.getStateManager().getTurnManager().isEndGame();
     }
 
      public void communicateDisconnectionMessage(){
@@ -582,6 +588,7 @@ public class Controller{
         LastChange lastChange = player.getLastChange();
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        System.out.println("B" + data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
@@ -593,6 +600,7 @@ public class Controller{
     public void update(LastChange lastChange){
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
+        System.out.println("A" + data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 

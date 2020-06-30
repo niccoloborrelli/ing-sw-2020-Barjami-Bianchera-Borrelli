@@ -22,7 +22,15 @@
             <artifactId>javafx-controls</artifactId>
             <version>11.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>jimObjModelImporterJFX</groupId>
+            <artifactId>jimObjModelImporterJFX</artifactId>
+            <scope>system</scope>
+            <version>0.8</version>
+            <systemPath>${basedir}\src\lib\jimObjModelImporterJFX.jar</systemPath>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

@@ -16,6 +16,17 @@ public class SettingPawnCommand extends ReplyCommand {
         this.playerColor = playerColor;
     }
 
+    public String getWorker() {
+        return worker;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
 
     @Override
     public void execute(GraphicInterface gui) {

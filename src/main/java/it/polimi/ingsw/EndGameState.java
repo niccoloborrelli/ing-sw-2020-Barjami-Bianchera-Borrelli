@@ -10,6 +10,8 @@ public class EndGameState extends State {
 
     @Override
     public void onStateTransition() {
+        if(player.isHasWon())
+            player.notifyWin();
         LastChange uselessInput = player.getLastChange();
         uselessInput.setCode(3);
         uselessInput.setSpecification(ENDGAME);

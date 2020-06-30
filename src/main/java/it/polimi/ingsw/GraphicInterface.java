@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -15,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 import java.io.File;
@@ -23,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 public class GraphicInterface {
         public static MeshView tolto;
@@ -53,11 +57,18 @@ public class GraphicInterface {
         private Label bottomLabel;
         private boolean valuableId;
         private boolean firstHasAlreadyCome;
+        private boolean setAllsWorker;
         private List <Pawn> pawns;
         private ToolBar powerToolbar;
 
+
+
     public void setCommandGUIManager(CommandGUIManager commandGUIManager) {
         this.commandGUIManager = commandGUIManager;
+    }
+
+    public boolean isSetAllsWorker() {
+        return setAllsWorker;
     }
 
     private CommandGUIManager commandGUIManager;
@@ -67,14 +78,19 @@ public class GraphicInterface {
             root.setDepthTest(DepthTest.ENABLE);
             buildBodySystem();
             buildCamera();
-            //Scene scene = new Scene(pane,800,600,true);
+
             Scene scene = primaryStage.getScene();
             scene.setFill(javafx.scene.paint.Color.GREY);
             handleMouse(scene);
             primaryStage.setTitle("Santorini");
             primaryStage.getScene().setRoot(pane);
-            //primaryStage.setScene(scene);
-            //primaryStage.show();
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    GeneralStringRequestCommand quitCommand=new GeneralStringRequestCommand("quit");
+                    commandGUIManager.manageCommand(quitCommand);
+                }
+            });
+
             mouseFactorX = 180.0 / scene.getWidth();
             mouseFactorY = 180.0 / scene.getHeight();
         }
@@ -103,10 +119,15 @@ public class GraphicInterface {
 
         private void createSideSubscene(){
             Button deselect=new Button("Deselect");
-
             deselect.setOnMouseClicked(e -> {
                 DeselectWorkerRequestCommand deseselectCommnad=new DeselectWorkerRequestCommand();
                 commandGUIManager.manageCommand(deseselectCommnad);
+            });
+
+            Button quit=new Button("QUIT");
+            quit.setOnMouseClicked(e -> {
+                GeneralStringRequestCommand quitCommand=new GeneralStringRequestCommand("quit");
+                commandGUIManager.manageCommand(quitCommand);
             });
 
             Image image=new Image("AAA.png");
@@ -134,17 +155,13 @@ public class GraphicInterface {
 
             powerToolbar=new ToolBar(imageView,imageView2);
             powerToolbar.setOrientation(Orientation.HORIZONTAL);
-            ToolBar toolBar=new ToolBar(deselect,powerToolbar);
+            ToolBar toolBar=new ToolBar(quit,deselect,powerToolbar);
             toolBar.setOrientation(Orientation.VERTICAL);
             powerToolbar.setVisible(false);
             sideSubScene=new SubScene(toolBar,100,100,true,SceneAntialiasing.BALANCED);
             pane.setRight(sideSubScene);
 
             sideSubScene.heightProperty().bind(pane.heightProperty().divide(1.12));
-            /*
-            sideSubScene.widthProperty().bind(pane.widthProperty().divide(7));
-            */
-
         }
 
         private void createBottomSubscene(){
@@ -177,9 +194,15 @@ public class GraphicInterface {
 
         public void printPopUp(String popUpString){
             mainSubScene.setOpacity(0.5);
-            popUpLabel.setText(popUpString);
-            popUpLabel.setCenterShape(true);
-            popUpSubScene.setVisible(true);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    popUpLabel.setText(popUpString);
+                    popUpLabel.setCenterShape(true);
+                    popUpSubScene.setVisible(true);
+                }
+            });
+            Platform.runLater(t);
         }
 
         private void buildCamera() {
@@ -191,32 +214,39 @@ public class GraphicInterface {
         }
 
     public void workerCreation(){
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                valuableId=true;
-                Pawn pawn;
-                if(!firstHasAlreadyCome){
-                    pawns=new ArrayList<Pawn>();
-                    pawn = createMaleWorker();
-                    pawn.setIdNumber(0);
-                    firstHasAlreadyCome=true;
-                    positionMesh(750,-58,300,pawn.getWorkerMesh());
+            Thread t =  new Thread((new Runnable() {
+                @Override
+                public void run() {
+                    valuableId=true;
+                    Pawn pawn;
+                    if(!firstHasAlreadyCome){
+                        pawns=new ArrayList<Pawn>();
+                        pawn = createMaleWorker();
+                        pawn.setIdNumber(0);
+                        firstHasAlreadyCome=true;
+                        positionMesh(750,-58,300,pawn.getWorkerMesh());
+                    }
+                    else {
+                        pawn = createFemaleWorker();
+                        pawn.setIdNumber(1);
+                        positionMesh(-450,-80,750,pawn.getWorkerMesh());
+                        setAllsWorker = true;
+                    }
+                    pawn.getWorkerMesh().setOnMouseClicked(mouseEvent -> {
+                        SelectPawnRequestCommand selectPawnRequestCommand = new SelectPawnRequestCommand(pawn.getIdNumber());
+                        SelectCellRequestCommand selectCellRequestCommand = new SelectCellRequestCommand(100,100);
+                        commandGUIManager.selectAction(selectPawnRequestCommand,selectCellRequestCommand);
+                    });
+                    pawns.add(pawn);
+                    world.getChildren().add(pawn.getWorkerMesh());
                 }
-                else {
-                    pawn = createFemaleWorker();
-                    pawn.setIdNumber(1);
-                    positionMesh(-450,-80,750,pawn.getWorkerMesh());
-                }
-                pawn.getWorkerMesh().setOnMouseClicked(mouseEvent -> {
-                    SelectPawnRequestCommand selectPawnRequestCommand = new SelectPawnRequestCommand(pawn.getIdNumber());
-                    SelectCellRequestCommand selectCellRequestCommand = new SelectCellRequestCommand(100,100);
-                    commandGUIManager.selectAction(selectPawnRequestCommand,selectCellRequestCommand);
-                });
-                pawns.add(pawn);
-                world.getChildren().add(pawn.getWorkerMesh());
-            }
-        });
+            }));
+        Platform.runLater(t);
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
     private void positionMesh(int x,int y,int z,MeshView meshView){
@@ -498,6 +528,7 @@ public class GraphicInterface {
             pawn2=newPosition.removeWorker();
             newPosition.setWorker(pawn);
             oldPosition.setWorker(pawn2);
+
         }
 
         public void setPawn(int row,int column,String color,String gender){

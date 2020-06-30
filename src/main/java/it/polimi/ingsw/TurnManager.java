@@ -8,6 +8,7 @@ import static it.polimi.ingsw.ColorConverter.*;
 
 public class TurnManager {
 
+    private boolean endGame;
     private List<Player> players;
     private List<String> notAllowedNames;
     private List<String> allowedColors;
@@ -23,6 +24,11 @@ public class TurnManager {
         notAllowedNames = new ArrayList<>();
         players = new ArrayList<>();
         availableGods = new ArrayList<>();
+        endGame = false;
+    }
+
+    public boolean isEndGame() {
+        return endGame;
     }
 
     public List<Player> getPlayers() {
@@ -81,7 +87,7 @@ public class TurnManager {
                 if (p.isInGame()) {
                     p.getWinCondition().checkHasWon(p);
                     if(p.isHasWon()){
-                        p.notifyWin();
+                        endGame = true;
                         setEndGame();
                         break;
                     }

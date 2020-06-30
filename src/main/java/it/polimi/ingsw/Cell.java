@@ -6,6 +6,8 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.MeshView;
 
+import static java.lang.Thread.sleep;
+
 public class Cell {
     private VBox vBox;
     private Pawn worker;
@@ -34,6 +36,7 @@ public class Cell {
     private void createCommand(){
         SelectPawnRequestCommand selectPawnRequestCommand=null;
         if(worker!=null) {
+            System.out.print("Hai toccato una cell con un worker sopra");
             selectPawnRequestCommand = new SelectPawnRequestCommand(worker.getIdNumber());
         }
         SelectCellRequestCommand selectCellRequestCommand=new SelectCellRequestCommand(row,column);
@@ -58,22 +61,26 @@ public class Cell {
 
     public void setWorker(Pawn worker){
         this.worker=worker;
-        Platform.runLater(() -> {
-            if(worker!=null) {
-                MeshView meshWorker;
-                meshWorker = worker.getWorkerMesh();
-                vBox.getChildren().addAll(meshWorker);
-                if (buildingLvl3 != null) {
-                    meshWorker.setTranslateY(-55);
-                } else if (buildingLvl2 != null) {
-                    meshWorker.setTranslateY(-55);
-                } else if (buildingLvl1 != null) {
-                    meshWorker.setTranslateY(-37);
-                } else if (buildingLvl1 == null) {
-                    meshWorker.setTranslateY(-3);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(worker!=null) {
+                    MeshView meshWorker;
+                    meshWorker = worker.getWorkerMesh();
+                    vBox.getChildren().addAll(meshWorker);
+                    if (buildingLvl3 != null) {
+                        meshWorker.setTranslateY(-55);
+                    } else if (buildingLvl2 != null) {
+                        meshWorker.setTranslateY(-55);
+                    } else if (buildingLvl1 != null) {
+                        meshWorker.setTranslateY(-37);
+                    } else if (buildingLvl1 == null) {
+                        meshWorker.setTranslateY(-3);
+                    }
                 }
             }
         });
+        Platform.runLater(t);
 
     }
 
@@ -93,14 +100,16 @@ public class Cell {
 
     public Pawn removeWorker(){
         Pawn temp=worker;
-        Platform.runLater(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("Dentro il thread di Remove Worker");
                 if(worker!=null)
                     vBox.getChildren().remove(worker.getWorkerMesh());
+                worker=null;
             }
         });
-        this.worker=null;
+        Platform.runLater(t);
         return temp;
     }
 
@@ -167,6 +176,7 @@ public class Cell {
     }
 
     public void lightenUp(PhongMaterial lightenedUpMaterial){
+        System.out.println("Sto accendendo la casella\n");
         base.setMaterial(lightenedUpMaterial);
         if(buildingLvl1!=null)
             buildingLvl1.setMaterial(lightenedUpMaterial);

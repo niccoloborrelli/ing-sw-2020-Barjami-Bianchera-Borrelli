@@ -640,13 +640,14 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String specification, String playerName, String playerColor){
-        if(specification.equals(NAME) || specification.equals(COLOR)){
+        if(specification.equals(NAME)){
             TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(playerName, playerColor, specification);
             command.manageCommand(transitionSceneCommand);
         }else if(specification.equals(SET_UP)) {
             command.manageCommand(new SetUpCommand(specification,playerName, playerColor));
         }else if(specification.equals(LOSE) || specification.equals(LOST) || specification.equals(WIN) || specification.equals(ENDGAME)) {
             command.manageCommand(new PopUpCommand(playerName, playerColor, specification));
+        }else if(specification.equals(ERROR) || specification.equals(ENDTURN)) {
             SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
             command.manageCommand(sentenceBottomRequestCommand);
         }
@@ -675,6 +676,7 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
+        System.out.println("Arrivate le cell\n");
         ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
         command.manageCommand(showAvCells);
     }

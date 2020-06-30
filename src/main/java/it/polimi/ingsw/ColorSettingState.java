@@ -24,6 +24,8 @@ public class ColorSettingState extends State {
         }
         if(!colorSetted) {
             uselessInputNotify();
+            onStateTransition();
+
         }
     }
 
@@ -40,6 +42,7 @@ public class ColorSettingState extends State {
             player.notifyController();
         }
     }
+
 
     public String toString(){
         return "ColorSettingState";
