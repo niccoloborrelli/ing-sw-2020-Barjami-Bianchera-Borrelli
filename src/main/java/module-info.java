@@ -3,5 +3,6 @@ module it.polimi.ingsw {
     requires jimObjModelImporterJFX;
     requires java.xml;
     requires java.prefs;
+    requires commons.io;
     exports it.polimi.ingsw;
 }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+/*package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -187,4 +187,4 @@ class ReadyForActionStateTest {
         ready.onStateTransition();
     }
 
-}
+}*/

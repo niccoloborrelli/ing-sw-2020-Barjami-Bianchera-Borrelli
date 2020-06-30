@@ -59,14 +59,14 @@ public class Cell {
         return worker;
     }
 
-    public void setWorker(Pawn worker){
-        this.worker=worker;
+    public void setWorker(Pawn pawn) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if(worker!=null) {
+                if (pawn != null) {
+                    worker = pawn;
                     MeshView meshWorker;
-                    meshWorker = worker.getWorkerMesh();
+                    meshWorker = pawn.getWorkerMesh();
                     vBox.getChildren().addAll(meshWorker);
                     if (buildingLvl3 != null) {
                         meshWorker.setTranslateY(-55);
@@ -81,7 +81,6 @@ public class Cell {
             }
         });
         Platform.runLater(t);
-
     }
 
     public void setBuildingLvl1(MeshView base){
@@ -176,7 +175,6 @@ public class Cell {
     }
 
     public void lightenUp(PhongMaterial lightenedUpMaterial){
-        System.out.println("Sto accendendo la casella\n");
         base.setMaterial(lightenedUpMaterial);
         if(buildingLvl1!=null)
             buildingLvl1.setMaterial(lightenedUpMaterial);

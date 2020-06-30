@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class TableXML {
      * If  flag doesn't exist in this class, finish state would be considered wrong and not added to table.
      */
 
-    private File inputFile;
+    private InputStream inputFile;
     private Object flagClass;  // VEDERE SE FARE UNA LISTA OPPURE NO
     private static final int INVALID_PRIORITY = -50;
     private static final int INDEX_BEGIN = 0;
@@ -46,7 +47,7 @@ public class TableXML {
     private static final String PRIORITY = "priority";
     private static final String PACKAGE_NAME = "it.polimi.ingsw.";
 
-    public TableXML(File inputFile, Object flagClass) {
+    public TableXML(InputStream inputFile, Object flagClass) {
         this.flagClass = flagClass;
         this.inputFile = inputFile;
     }
@@ -72,7 +73,6 @@ public class TableXML {
         Document document = null;
 
         document = documentBuilder.parse(inputFile);
-
 
         document.normalize();
 

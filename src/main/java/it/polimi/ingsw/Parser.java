@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +20,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 public class Parser {
-    File inputFile;
-    public Parser(File input){
+
+    InputStream inputFile;
+    public Parser(InputStream input){
         this.inputFile=input;
     }
-
     public HashMap<String, List<String>> createHashRepresentation(String target){
         try
         {

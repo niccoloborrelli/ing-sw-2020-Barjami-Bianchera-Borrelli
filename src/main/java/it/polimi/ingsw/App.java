@@ -76,7 +76,6 @@ public class App extends Application {
         GraphicsContext ggods = godSelection.getGraphicsContext2D();
         GraphicsContext gname = nameSelection.getGraphicsContext2D();
         GraphicsContext gcolor = colorSelection.getGraphicsContext2D();
-
         Image titleWater = new Image("title_water.png");
         Image logo = new Image("santorini-logo.png");
         Image titleIsland = new Image("title_island.png");
@@ -196,7 +195,6 @@ public class App extends Application {
         insertTextField(textFieldName);
         insertTextField(textFieldColor);
 
-
         root.getChildren().addAll(canvas, players2, players3);
         root2.getChildren().addAll(godSelection, apolloImg, artemisImg, athenaImg, atlasImg, chronusImg, demeterImg,
                 hephaestusImg, hestiaImg, hypnusImg, minotaurImg, panImg, persephoneImg, prometheusImg, zeusImg);
@@ -212,6 +210,8 @@ public class App extends Application {
         //selectionColor = new Scene(root4);
         //stage.setScene(title);
         Scene scene = new Scene(title);
+
+
         stage.setScene(scene);
         stage.show();
 
@@ -248,6 +248,7 @@ public class App extends Application {
             });
         }
     }
+
 
     private void createCard(ImageView imageView, int row, int column, List<ImageView> list){
         imageView.setFitWidth(imageView.getImage().getWidth()/6);
@@ -316,7 +317,6 @@ public class App extends Application {
         text.setFitHeight(askPlayers.getHeight()/2);
         text.setX(365);
         text.setY(550);
-
         return text;
     }
 

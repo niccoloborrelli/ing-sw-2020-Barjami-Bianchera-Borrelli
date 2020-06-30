@@ -21,7 +21,7 @@
 		</finishState>
 	</startState>
 	<startState id= "ReadyForActionState">
-		<finishState id="EndTurnState">
+		<finishState id="EndGameState">
 			<condition>
 				<flag>InGame</flag>
 				<expectedValue>false</expectedValue>
@@ -53,6 +53,12 @@
 			</condition>
 			<priority>0</priority>
 		</finishState>
+		<finishState id="EndGameState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
+		</finishState>
 	</startState>
 	<startState id="EndTurnState">
 		<finishState id="GodSetState">
@@ -64,7 +70,7 @@
 				<flag>Challenger</flag>
 				<expectedValue>true</expectedValue>
 			</condition>
-			<priority>7</priority>
+			<priority>6</priority>
 		</finishState>
 		<finishState id="GodChoiceState">
 			<condition>
@@ -79,7 +85,7 @@
 				<flag>Challenger</flag>
 				<expectedValue>false</expectedValue>
 			</condition>
-			<priority>6</priority>
+			<priority>5</priority>
 		</finishState>
 		<finishState id="GodChoiceState">
 			<condition>
@@ -94,7 +100,7 @@
 				<flag>Challenger</flag>
 				<expectedValue>true</expectedValue>
 			</condition>
-			<priority>5</priority>
+			<priority>4</priority>
 		</finishState>
 		<finishState id= "WorkerSettingState">
 			<condition>
@@ -113,7 +119,7 @@
 				<flag>Challenger</flag>
 				<expectedValue>true</expectedValue>
 			</condition>
-			<priority>4</priority>
+			<priority>3</priority>
 		</finishState>
 		<finishState id= "WorkerSettingState">
 			<condition>
@@ -136,7 +142,7 @@
 				<flag>Challenger</flag>
 				<expectedValue>false</expectedValue>
 			</condition>
-			<priority>4</priority>
+			<priority>3</priority>
 		</finishState>
 		<finishState id="ReadyForActionState">
 			<condition>
@@ -148,6 +154,12 @@
 				<expectedValue>true</expectedValue>
 			</condition>
 			<priority>1</priority>
+		</finishState>
+		<finishState id="EndGameState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>false</expectedValue>
+			</condition>
 		</finishState>
 	</startState>
 </Table>

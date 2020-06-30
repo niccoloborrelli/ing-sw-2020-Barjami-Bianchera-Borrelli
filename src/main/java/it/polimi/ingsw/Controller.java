@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -186,7 +187,9 @@ public class Controller{
      */
 
     private void createPowerGodMap(){
-        Parser parser = new Parser(new File("C:\\Users\\Yoshi\\Desktop\\Gods.txt"));
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("Gods.txt");
+        Parser parser=new Parser(file);
         powerGodMap = parser.createHashRepresentation("Description");
     }
 
@@ -924,8 +927,8 @@ public class Controller{
      * Parses and creates god map.
      */
     public void createGodMap(){
-        Path layoutPath = Paths.get("src/main/resources/Gods.txt");
-        File file=new File(layoutPath.toUri());
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("Gods.txt");
         Parser parser=new Parser(file);
         this.godMap=parser.createHashRepresentation("Powers");
     }
@@ -950,8 +953,8 @@ public class Controller{
      * @throws ParserConfigurationException if method doesn't success to parse file.
      */
     public void createFluxTable() throws IOException, SAXException, ParserConfigurationException {
-        Path layoutPath = Paths.get("src/main/resources/table.txt");
-        File file=new File(layoutPath.toUri());
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("table.txt");
         TableXML tableXML = new TableXML(file,player);
         HashMap<State, List<Line>> table = tableXML.readXML(player.getStateManager().getStateHashMap());
         player.getStateManager().setTable(table);

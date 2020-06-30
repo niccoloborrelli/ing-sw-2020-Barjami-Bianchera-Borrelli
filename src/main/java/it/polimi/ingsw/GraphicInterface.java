@@ -17,9 +17,12 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.apache.commons.io.FileUtils;
+
 
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,7 +81,6 @@ public class GraphicInterface {
             root.setDepthTest(DepthTest.ENABLE);
             buildBodySystem();
             buildCamera();
-
             Scene scene = primaryStage.getScene();
             scene.setFill(javafx.scene.paint.Color.GREY);
             handleMouse(scene);
@@ -90,7 +92,6 @@ public class GraphicInterface {
                     commandGUIManager.manageCommand(quitCommand);
                 }
             });
-
             mouseFactorX = 180.0 / scene.getWidth();
             mouseFactorY = 180.0 / scene.getHeight();
         }
@@ -259,51 +260,42 @@ public class GraphicInterface {
             powerToolbar.setVisible(true);
         }
 
+    public MeshView createMesh(ObjModelImporter importer,String s){
+        ClassLoader classLoader=ClassLoader.getSystemClassLoader();
+        InputStream inputStream;
+        File file1;
+        MeshView[] tempMesh =null;
+        importer.clear();
+        inputStream = classLoader.getResourceAsStream(s);
+        try {
+            file1 = File.createTempFile("xxx", ".tmp");
+            FileUtils.copyInputStreamToFile(inputStream, file1);
+            importer.read(file1);
+            tempMesh = importer.getImport();
+            file1.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tempMesh[0];
+    }
 
     public void buildBoard(){
             //IMPORTS GRAPHICAL RESOURCES
+
+
             ObjModelImporter importer = new ObjModelImporter();
-            Path layoutPath = Paths.get("src/main/resources/Cliff.obj");
-            File file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            MeshView[] tempMesh = importer.getImport();
-            MeshView cliff=tempMesh[0];
 
-            layoutPath = Paths.get("src/main/resources/Islands.obj");
-            file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            tempMesh = importer.getImport();
-            MeshView islands=tempMesh[0];
+            MeshView cliff=createMesh(importer,"Cliff.obj");
 
-            layoutPath = Paths.get("src/main/resources/Board.obj");
-            file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            tempMesh = importer.getImport();
-            MeshView board=tempMesh[0];
+            MeshView islands=createMesh(importer,"Islands.obj");
 
-            layoutPath = Paths.get("src/main/resources/Sea.obj");
-            file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            tempMesh = importer.getImport();
-            MeshView sea=tempMesh[0];
+            MeshView board=createMesh(importer,"Board.obj");
 
-            layoutPath = Paths.get("src/main/resources/InnerWalls.obj");
-            file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            tempMesh = importer.getImport();
-            MeshView innerWalls=tempMesh[0];
+            MeshView sea=createMesh(importer,"Sea.obj");;
 
-            layoutPath = Paths.get("src/main/resources/OuterWall1.obj");
-            file=new File(layoutPath.toUri());
-            importer.clear();
-            importer.read(file);
-            tempMesh = importer.getImport();
-            MeshView outerWalls=tempMesh[0];
+            MeshView innerWalls=createMesh(importer,"InnerWalls.obj");;
+
+            MeshView outerWalls=createMesh(importer,"OuterWall1.obj");;
 
             //ADJUST THE DIMENSION OF THE RESOURCES
             correctSize(outerWalls,DECORATIONSDIM,DECORATIONSDIM,DECORATIONSDIM);
@@ -382,24 +374,16 @@ public class GraphicInterface {
 
         public Pawn createMaleWorker(){
             ObjModelImporter importer = new ObjModelImporter();
-            Path layoutPath = Paths.get("src/main/resources/MaleBuilder.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            importer.clear();
+            MeshView tempMesh=createMesh(importer,"MaleBuilder.obj");;
             correctSize(tempMesh,50,50,50);
             return new Pawn(tempMesh);
         }
 
         public Pawn createFemaleWorker(){
             ObjModelImporter importer = new ObjModelImporter();
-
             importer.clear();
-            Path layoutPath = Paths.get("src/main/resources/FemaleBuilder_Blue.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            MeshView tempMesh=createMesh(importer,"FemaleBuilder_Blue.obj");;
             correctSize(tempMesh,50,50,50);
             return new Pawn(tempMesh);
         }
@@ -407,11 +391,7 @@ public class GraphicInterface {
         public MeshView createBuildingType1(){
             ObjModelImporter importer = new ObjModelImporter();
             importer.clear();
-            Path layoutPath = Paths.get("src/main/resources/BuildingBlock01.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            MeshView tempMesh=createMesh(importer,"BuildingBlock01.obj");;
             correctSize(tempMesh,15.5,15.5,15.5);
             PhongMaterial materialBase = new PhongMaterial();
             materialBase.setDiffuseColor(javafx.scene.paint.Color.rgb(240,250,250));
@@ -420,13 +400,8 @@ public class GraphicInterface {
         }
         public MeshView createDome(){
             ObjModelImporter importer = new ObjModelImporter();
-
             importer.clear();
-            Path layoutPath = Paths.get("src/main/resources/Dome.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            MeshView tempMesh=createMesh(importer,"Dome.obj");;
             correctSize(tempMesh,15.5,15.5,15.5);
             PhongMaterial materialBase = new PhongMaterial();
             materialBase.setDiffuseColor(javafx.scene.paint.Color.BLUE);
@@ -436,13 +411,8 @@ public class GraphicInterface {
 
         public MeshView createBuildingType2(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             importer.clear();
-            Path layoutPath = Paths.get("src/main/resources/BuildingBlock02.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            MeshView tempMesh=createMesh(importer,"BuildingBlock02.obj");;
             correctSize(tempMesh,15.5,15.5,15.5);
             PhongMaterial materialBase = new PhongMaterial();
             materialBase.setDiffuseColor(javafx.scene.paint.Color.rgb(240,250,250));
@@ -452,13 +422,8 @@ public class GraphicInterface {
 
         public MeshView createBuildingType3(){
             ObjModelImporter importer = new ObjModelImporter();
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             importer.clear();
-            Path layoutPath = Paths.get("src/main/resources/BuildingBlock03.obj");
-            File file=new File(layoutPath.toUri());
-            importer.read(file);
-            MeshView[] temp = importer.getImport();
-            MeshView tempMesh=temp[0];
+            MeshView tempMesh=createMesh(importer,"BuildingBlock03.obj");
             correctSize(tempMesh,15.5,15.5,15.5);
             PhongMaterial materialBase = new PhongMaterial();
             materialBase.setDiffuseColor(javafx.scene.paint.Color.rgb(240,250,250));
