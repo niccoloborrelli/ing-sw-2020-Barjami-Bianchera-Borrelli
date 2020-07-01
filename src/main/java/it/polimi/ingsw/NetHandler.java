@@ -59,7 +59,7 @@ public class NetHandler {
                     String message = dataInputStream.readUTF();
                     deliveryMessage.receive(message);
                 } catch (IOException e) {
-                    deliveryMessage.quitGame();
+                    deliveryMessage.quitGame(false);
                 }
                 try {
                     sleep(400);
@@ -74,7 +74,7 @@ public class NetHandler {
             dataOutputStream.writeUTF(message);
             dataOutputStream.flush();
         } catch (IOException e) {
-            deliveryMessage.quitGame();
+            deliveryMessage.quitGame(false);
         }
     }
 }

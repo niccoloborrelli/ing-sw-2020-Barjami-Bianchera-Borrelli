@@ -1,4 +1,4 @@
-/*package it.polimi.ingsw;
+package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -70,6 +70,8 @@ class ReadyForActionStateTest {
         State ready = player1.getStateManager().getState("ReadyForActionState");
         ready.onStateTransition();
         ready.onInput(visitor);
+        serverSocket.close();
+        socket.close();
     }
 
     @Test
@@ -120,8 +122,10 @@ class ReadyForActionStateTest {
 
         State ready = player1.getStateManager().getState("ReadyForActionState");
         ready.onStateTransition();
+        serverSocket.close();
+        socket.close();
     }
-
+/*
     @Test
     void onStateTransitionTest2() throws IOException, NoSuchMethodException, ClassNotFoundException, ParserConfigurationException, SAXException {
         ServerSocket serverSocket = new ServerSocket(60105);
@@ -186,5 +190,5 @@ class ReadyForActionStateTest {
         player2.getStateManager().setCurrent_state(player2.getStateManager().getState("ColorSettingState"));
         ready.onStateTransition();
     }
-
-}*/
+*/
+}

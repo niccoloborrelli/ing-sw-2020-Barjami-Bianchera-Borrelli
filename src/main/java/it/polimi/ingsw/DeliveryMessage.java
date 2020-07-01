@@ -197,6 +197,7 @@ public class DeliveryMessage {
         String playerName = findPlayerAttribute(doc, NAME);
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
+        System.out.println(message);
 
         if (code == UPDATE_TO_PRINT || code == UPDATE_ENDGAME) {
             sendToInterface(specification, playerName, playerColor);
@@ -578,11 +579,12 @@ public class DeliveryMessage {
      * Closed every socket and sends a message that indicates the end of game.
      */
 
-    public void quitGame() {
+    public void quitGame(boolean awareness) {
         try {
             netHandler.getSocket().close();
             netHandler.setEndGame(true);
-            sendToInterface(DISCONNECTION, null, null);
+            if(!awareness)
+                sendToInterface(DISCONNECTION, null, null);
         }catch(IOException ignored) {}
 
     }
@@ -604,7 +606,7 @@ public class DeliveryMessage {
             doc = db.parse(is);
             doc.normalize();
         } catch (ParserConfigurationException | IOException | SAXException e) { //bisogna vedere come gestirle
-            quitGame();
+            quitGame(false);
         }
         return doc;
     }
@@ -650,6 +652,9 @@ public class DeliveryMessage {
         }else if(specification.equals(ERROR) || specification.equals(ENDTURN)) {
             SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
             command.manageCommand(sentenceBottomRequestCommand);
+        }else if(specification.equals(DISCONNECTION)){
+            command.manageCommand(new QuitCommand());
+            quitGame(true);
         }
     }
 
@@ -676,7 +681,6 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
-        System.out.println("Arrivate le cell\n");
         ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
         command.manageCommand(showAvCells);
     }

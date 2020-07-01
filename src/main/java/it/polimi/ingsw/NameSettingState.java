@@ -26,6 +26,7 @@ public class NameSettingState extends State {
         }
         if(!nameSetted) {
             uselessInputNotify();
+            nameNotify();
         }
     }
 

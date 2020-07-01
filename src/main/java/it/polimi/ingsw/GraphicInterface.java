@@ -88,12 +88,19 @@ public class GraphicInterface {
             primaryStage.getScene().setRoot(pane);
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {
-                    GeneralStringRequestCommand quitCommand=new GeneralStringRequestCommand("quit");
-                    commandGUIManager.manageCommand(quitCommand);
+                    //GeneralStringRequestCommand quitCommand=new GeneralStringRequestCommand("quit");
+                    //commandGUIManager.manageCommand(quitCommand);
+                    ExitCommand exitCommand = new ExitCommand();
+                    commandGUIManager.manageCommand(exitCommand);
+                    Platform.exit();
                 }
             });
             mouseFactorX = 180.0 / scene.getWidth();
             mouseFactorY = 180.0 / scene.getHeight();
+        }
+
+        public void quitApplication(){
+            Platform.exit();
         }
 
         public void printBottom(String bottomString){
@@ -494,6 +501,10 @@ public class GraphicInterface {
             newPosition.setWorker(pawn);
             oldPosition.setWorker(pawn2);
 
+        }
+
+        public void remove(int row, int column){
+            grid[row][column].removeWorker();
         }
 
         public void setPawn(int row,int column,String color,String gender){

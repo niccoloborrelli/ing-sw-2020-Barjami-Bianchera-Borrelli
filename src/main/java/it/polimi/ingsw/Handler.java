@@ -52,13 +52,18 @@ public class Handler extends Thread {
                     String message = dataInputStream.readUTF();
                     handlerHub.callController(this, message);
                 } catch (IOException e) {
-                    handlerHub.quitGame(this);
+                    if(!endGame) {
+                        System.out.println("Qualcuno si è disconnesso per sbaglio");
+                        endGame = true;
+                        handlerHub.quitGame(this, false);
+                    }
                 }
                 try {
                     sleep(400);
                 } catch (InterruptedException ignored) {
                 }
             }
+            System.out.println("Finito l'handler");
         });
     }
 

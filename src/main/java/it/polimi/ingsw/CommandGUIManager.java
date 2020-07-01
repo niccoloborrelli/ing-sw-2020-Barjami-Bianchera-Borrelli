@@ -100,8 +100,11 @@ public class CommandGUIManager implements Command {
 
     @Override
     public void manageCommand(QuitCommand quitCommand) {
-        deliveryMessage.quitGame();
-        quitCommand.execute(graphicInterface);
+        deliveryMessage.quitGame(true);
+        if(graphicInterface!=null)
+            quitCommand.execute(graphicInterface);
+        else
+            quitCommand.execute(app);
     }
 
     public void manageCommand(SentenceBottomRequestCommand sentenceBottomRequestCommand){
@@ -110,14 +113,14 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(PopUpCommand popUpCommand){
-        for(RemovingCommand removingCommand: removingCommandList)
+        for(RemovingCommand removingCommand: removingCommandList) {
             removingCommand.execute(graphicInterface);
+        }
         removingCommandList.clear();
         popUpCommand.execute(graphicInterface);
     }
 
     public void manageCommand(ShowAvCells showAvCells) {
-        System.out.println("Aggiunte le cell");
         showAvCellsList.add(showAvCells);
     }
 
@@ -187,6 +190,11 @@ public class CommandGUIManager implements Command {
     public void manageCommand(BuildUpdateCommand buildUpdateCommand) {
         showAvCellsList.clear();
         buildUpdateCommand.execute(graphicInterface);
+    }
+
+    @Override
+    public void manageCommand(ExitCommand exitCommand){
+        deliveryMessage.quitGame(true);
     }
 
 

@@ -77,7 +77,7 @@ public class Field{
         row = 2 * row + 2;
         column = 4 * column + 4;
         if (hasDome == 1)
-            field[row][column] = ANSI_BLUE.escape() + "C";
+            field[row][column] = ANSI_BLUE.escape() + "D";
         else
             field[row][column] = ANSI_BLUE.escape() + level;
         plot();
@@ -156,10 +156,10 @@ public class Field{
     }
 
     private void firstMargins() {
-        field[FIRST_ROW_CLI][FIRST_COLUMN_CLI] = " ┌";
+        field[FIRST_ROW_CLI][FIRST_COLUMN_CLI] = " |";
         for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
-            field[FIRST_ROW_CLI][j] = "┬";
-        field[FIRST_ROW_CLI][COLUMN_CLI - 1] = "┐";
+            field[FIRST_ROW_CLI][j] = "|";
+        field[FIRST_ROW_CLI][COLUMN_CLI - 1] = "|";
     }
 
     private void horizontalMargins() {
@@ -172,24 +172,24 @@ public class Field{
 
     private void middleMargins() {
         for (int i = 3; i < ROW_CLI - 2; i = i + 2) {
-            field[i][FIRST_COLUMN_CLI] = " ├";
+            field[i][FIRST_COLUMN_CLI] = " |";
             for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
                 field[i][j] = "+";
-            field[i][COLUMN_CLI - 1] = "┤";
+            field[i][COLUMN_CLI - 1] = "|";
         }
     }
 
     private void finalMargins() {
-        field[ROW_CLI - 1][FIRST_COLUMN_CLI] = " └";
+        field[ROW_CLI - 1][FIRST_COLUMN_CLI] = " |";
         for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
-            field[ROW_CLI - 1][j] = "┴";
-        field[ROW_CLI - 1][COLUMN_CLI - 1] = "┘";
+            field[ROW_CLI - 1][j] = "|";
+        field[ROW_CLI - 1][COLUMN_CLI - 1] = "|";
     }
 
     private void verticalMargins() {
         for (int i = 2; i < ROW_CLI - 1; i = i + 2)
             for (int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + 4)
-                field[i][j] = "│   ";
+                field[i][j] = "|" + "   ";
     }
 
     private void startingLevels() {

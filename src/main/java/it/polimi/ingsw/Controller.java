@@ -29,9 +29,6 @@ public class Controller{
 
     private static final int ADJUSTMENT_INDEX_OF = 1;
 
-    private static final int BROADCAST = 0;
-    private static final int SINGLE_COMMUNICATION = 1;
-    private static final int ALL_NOT_ME = 2;
 
     private static final String HELP_PHRASE = "-help : It gives you a list of possible operations you can always require";
     private static final String WHAT_TO_DO_PHRASE = "-whatToDo : It gives you the last significant message, which contains indication for what you have to do";
@@ -90,7 +87,7 @@ public class Controller{
             try {
                 player.onInput(visitor);
             }catch (IOException e){
-                handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this));
+                handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this), true);
             }
         }else
             executeSpecialRequest(message);
@@ -139,19 +136,28 @@ public class Controller{
         }else if(operation.equals(QUIT)) {
             if(!checkEndGame())
                 communicateDisconnectionMessage();
-            handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this));
+            handlerHub.quitGame(handlerHub.getHandlerControllerHashMap().get(this), true);
 
         }
 
     }
 
+    /**
+     * Checks if game is ended.
+     * @return true if it is, false otherwise.
+     */
+
     private boolean checkEndGame(){
         return player.getStateManager().getTurnManager().isEndGame();
     }
 
-     public void communicateDisconnectionMessage(){
+    /**
+     * Communicates a message of disconnection.
+     */
+
+    public void communicateDisconnectionMessage(){
         LastChange lastChange = new LastChange();
-        lastChange.setCode(0);
+        lastChange.setCode(UPDATE_TO_PRINT);
         lastChange.setSpecification(DISCONNECTION);
         player.notify(lastChange);
     }
@@ -326,7 +332,7 @@ public class Controller{
     /**
      * Finds space information in message and convert it in a existing space (if possibile).
      * Otherwise, it creates an invalid space.
-     * @param message is messagge receveid.
+     * @param message is message received.
      * @return corresponding space from board if coordinates are valid, otherwise an invalid space.
      */
 
@@ -657,7 +663,9 @@ public class Controller{
                 message = buildUpdateGameFieldMessage(lastChange);
                 break;
             case UPDATE_ENDGAME:
-                sendLostToOthers(codeInString, playerString, specification);
+                message = buildUpdateToPrintMessage();
+                if(lastChange.getSpecification().equals(WIN) || lastChange.getSpecification().equals(LOSE))
+                    sendLostToOthers(codeInString, playerString, lastChange.getSpecification());
                 break;
 
         }

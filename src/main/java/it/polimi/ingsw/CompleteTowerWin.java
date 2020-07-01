@@ -34,7 +34,7 @@ public class CompleteTowerWin extends PowerWinDecorator {
         int completeTower = 0;
         for(int row = MINROW; row < DIM; row++)
             for(int column = MINCOLUMN; column < DIM; column++)
-                if(player.getIslandBoard().getSpace(row, column).getLevel() == DOME_LEVEL)
+                if(player.getIslandBoard().getSpace(row, column).getLevel() == DOME_LEVEL&&player.getIslandBoard().getSpace(row, column).HasDome())
                     completeTower++;
         if(completeTower >= COMPLETE_TOWER_TO_WIN) {
             player.setHasWon(true);

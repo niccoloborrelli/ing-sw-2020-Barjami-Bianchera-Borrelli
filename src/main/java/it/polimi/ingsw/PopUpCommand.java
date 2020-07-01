@@ -32,10 +32,11 @@ public class PopUpCommand extends ReplyCommand {
                 sentence = won;
                 break;
             case LOSE:
+                System.out.println("Mi sa che ho perso");
                 sentence = lose;
                 break;
             case LOST:
-                sentence = getLostPhrase();
+                sentence = playerName + getLostPhrase();
                 break;
             default:
                 sentence = "";

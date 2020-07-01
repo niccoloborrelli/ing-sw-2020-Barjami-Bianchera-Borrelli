@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.LOSE;
+
 public class ReadyForActionState extends State {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
@@ -60,11 +62,11 @@ public class ReadyForActionState extends State {
 
     private void loseProcedure() throws IOException {
         player.setInGame(false);
+        deleteWorkersFromBoard();
         LastChange lastChange = player.getLastChange();
         lastChange.setCode(3);
-        lastChange.setSpecification("lose");
+        lastChange.setSpecification(LOSE);
         player.notifyController();
-        deleteWorkersFromBoard();
         player.getStateManager().setNextState(player);
     }
 

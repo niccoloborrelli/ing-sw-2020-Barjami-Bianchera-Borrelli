@@ -49,6 +49,10 @@ public abstract class State {
         this.allowedInputs = allowedInputs;
     }
 
+
+    /**
+     *method for notifying of useless input
+     **/
     public void uselessInputNotify(){
         LastChange uselessInput = new LastChange();
         uselessInput.setCode(0);

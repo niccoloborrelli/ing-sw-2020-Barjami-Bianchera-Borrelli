@@ -19,6 +19,7 @@ public class CommunicationSentences {
     private static final String setup = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
             "Second _ is the row of space and third _ is the column\n";
     public static final String disconnection = "Somebody crashed. You're gonna be disconnected. Press any button.";
+    public static final String disconnectionGui = "Somebody crashed\n. Press quit to exit.";
     public static final String endGame = "Game finished. Press any button";
     private static final String endSent1 = ", good job! Your turn is finished. Look at your enemies to understand their strategy.";
     private static final String endSent2 = ", well done! Now you can rest.";
@@ -43,8 +44,7 @@ public class CommunicationSentences {
     private static final String MOVE = "move";
     private static final String BUILD = "build";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
-    public static final String lose = "You lost! Your God lashes out in rage. Run away while you can.\n" +
-            "Now you can watch others winning.";
+    public static final String lose = "You lost!\nYour God lashes out in rage.";
     private static final String lost = " lost! One less enemy.";
     private static final String actionSent1_1 = " Choose carefully. Decide who would ";
     private static final String actionSent1_2 = ", worker can do it in these places:";
