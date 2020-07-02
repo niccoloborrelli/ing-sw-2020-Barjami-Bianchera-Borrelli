@@ -4,7 +4,7 @@ package it.polimi.ingsw;
 import java.io.IOException;
 
 public class MainClass {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args){
         if(args[0].equals("CLIClient")){
             new Thread() {
                 @Override

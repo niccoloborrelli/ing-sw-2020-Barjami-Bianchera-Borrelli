@@ -382,7 +382,6 @@ public class App extends Application {
     }
 
     public void setNameStage(){
-
         Platform.runLater(()  -> {
                     if (!selectionName.getChildren().contains(quit))
                         selectionName.getChildren().add(quit);
@@ -401,6 +400,8 @@ public class App extends Application {
     }
 
     public void setColorStage(List<String> colorList){
+        Object objectCanvas = selectionColor.getChildren().get(0);
+        selectionColor.getChildren().removeIf(s-> !s.equals(objectCanvas));
         List<ImageView> colors = new ArrayList<>();
         HashMap<ImageView, String> buttonToColor = new HashMap<>();
 
@@ -410,31 +411,46 @@ public class App extends Application {
                     ImageView buttonRed = new ImageView(colorRed);
                     insertColorButton(1, buttonRed, colors);
                     buttonToColor.put(buttonRed, RED_COLOR);
-                    Platform.runLater(() -> selectionColor.getChildren().add(buttonRed));
+                    Platform.runLater(() -> {
+                        if (!selectionColor.getChildren().contains(buttonRed))
+                                selectionColor.getChildren().add(buttonRed);
+                    });
                     break;
                 case GREY_COLOR:
                     ImageView buttonGrey = new ImageView(colorGrey);
                     insertColorButton(2, buttonGrey, colors);
                     buttonToColor.put(buttonGrey, GREY_COLOR);
-                    Platform.runLater(() -> selectionColor.getChildren().add(buttonGrey));
+                    Platform.runLater(() -> {
+                        if (!selectionColor.getChildren().contains(buttonGrey))
+                                selectionColor.getChildren().add(buttonGrey);
+                    });
                     break;
                 case PURPLE_COLOR:
                     ImageView buttonPurple = new ImageView(colorPurple);
                     insertColorButton(3, buttonPurple, colors);
                     buttonToColor.put(buttonPurple, PURPLE_COLOR);
-                    Platform.runLater(() -> selectionColor.getChildren().add(buttonPurple));
+                    Platform.runLater(() -> {
+                        if(!selectionColor.getChildren().contains(buttonPurple))
+                                selectionColor.getChildren().add(buttonPurple);
+                    });
                     break;
                 case CYAN_COLOR:
                     ImageView buttonCyan = new ImageView(colorCyan);
                     insertColorButton(4, buttonCyan, colors);
                     buttonToColor.put(buttonCyan, CYAN_COLOR);
-                    Platform.runLater(() -> selectionColor.getChildren().add(buttonCyan));
+                    Platform.runLater(() -> {
+                        if (!selectionColor.getChildren().contains(buttonCyan))
+                                selectionColor.getChildren().add(buttonCyan);
+                    });
                     break;
                 case WHITE_COLOR:
                     ImageView buttonWhite = new ImageView(colorWhite);
                     insertColorButton(5, buttonWhite, colors);
                     buttonToColor.put(buttonWhite, WHITE_COLOR);
-                    Platform.runLater(() -> selectionColor.getChildren().add(buttonWhite));
+                    Platform.runLater(() ->{
+                        if(!selectionColor.getChildren().contains(buttonWhite))
+                                selectionColor.getChildren().add(buttonWhite);
+                    });
             }
         }
 
@@ -449,7 +465,10 @@ public class App extends Application {
             });
         }
 
-        Platform.runLater(() -> selectionColor.getChildren().add(quit));
+        Platform.runLater(() -> {
+            if(!selectionColor.getChildren().contains(quit))
+                selectionColor.getChildren().add(quit);
+                });
         stage.getScene().setRoot(selectionColor);
 
         quit.setOnMouseEntered(mouseEvent ->  selectionColor.setCursor(Cursor.HAND));
@@ -629,7 +648,18 @@ public class App extends Application {
         GraphicsContext gwaitcolor = waitingColor.getGraphicsContext2D();
         createWaitScene(COLOR, gwaitcolor);
         root.getChildren().add(waitingColor);
+        Platform.runLater(() -> root.getChildren().add(quit));
+
         stage.getScene().setRoot(root);
+
+        quit.setOnMouseEntered(mouseEvent ->  root.setCursor(Cursor.HAND));
+
+        quit.setOnMouseExited(mouseEvent -> root.setCursor(Cursor.DEFAULT));
+
+        quit.setOnMouseClicked(mouseEvent -> {
+            GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(QUIT);
+            commandGUIManager.manageCommand(generalStringRequestCommand);
+        });
     }
 
     public void setWaitingPlayer(){
@@ -638,7 +668,18 @@ public class App extends Application {
         GraphicsContext gwaitplayer = waitingPlayer.getGraphicsContext2D();
         createWaitScene(PLAYER, gwaitplayer);
         root.getChildren().add(waitingPlayer);
+        Platform.runLater(() -> root.getChildren().add(quit));
+
         stage.getScene().setRoot(root);
+
+        quit.setOnMouseEntered(mouseEvent ->  root.setCursor(Cursor.HAND));
+
+        quit.setOnMouseExited(mouseEvent -> root.setCursor(Cursor.DEFAULT));
+
+        quit.setOnMouseClicked(mouseEvent -> {
+            GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(QUIT);
+            commandGUIManager.manageCommand(generalStringRequestCommand);
+        });
     }
 
     public void setWaitingGame(){
@@ -647,7 +688,18 @@ public class App extends Application {
         GraphicsContext gwaitgame = waitingGame.getGraphicsContext2D();
         createWaitScene(PLAYER, gwaitgame);
         root.getChildren().add(waitingGame);
+        Platform.runLater(() -> root.getChildren().add(quit));
+
         stage.getScene().setRoot(root);
+
+        quit.setOnMouseEntered(mouseEvent ->  root.setCursor(Cursor.HAND));
+
+        quit.setOnMouseExited(mouseEvent -> root.setCursor(Cursor.DEFAULT));
+
+        quit.setOnMouseClicked(mouseEvent -> {
+            GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(QUIT);
+            commandGUIManager.manageCommand(generalStringRequestCommand);
+        });
     }
 
     public void createWaitScene(String string, GraphicsContext context){

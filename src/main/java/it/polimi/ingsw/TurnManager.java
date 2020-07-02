@@ -97,14 +97,17 @@ public class TurnManager {
 
     private void setEndGame(){
         for(Player player: players) {
-            player.setInGame(false);
-            try {
-                player.getStateManager().setNextState(player);
-            } catch (IOException e) {
-                player.getStateManager().setCurrent_state(new EndGameState(player)); //vedere se cambiarlo in set next state
+            if(player.isInGame()) {
+                player.setInGame(false);
                 try {
-                    player.getState().onStateTransition();
-                } catch (IOException ignored) {
+
+                    player.getStateManager().setNextState(player);
+                } catch (IOException e) {
+                    player.getStateManager().setCurrent_state(new EndGameState(player)); //vedere se cambiarlo in set next state
+                    try {
+                        player.getState().onStateTransition();
+                    } catch (IOException ignored) {
+                    }
                 }
             }
         }
@@ -126,7 +129,10 @@ public class TurnManager {
             }
 
             try {
-                nextPlayer.getStateManager().setNextState(nextPlayer);
+                if(nextPlayer.isInGame())
+                    nextPlayer.getStateManager().setNextState(nextPlayer);
+                else
+                    setNextPlayer(nextPlayer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -135,7 +141,7 @@ public class TurnManager {
 
     private boolean allPlayerWait(){
         for(Player player: players){
-            if(!player.getState().equals(player.getStateManager().getStateHashMap().get("EndTurnState"))) {
+            if(!player.getState().equals(player.getStateManager().getStateHashMap().get("EndTurnState"))&&!player.getState().equals(player.getStateManager().getStateHashMap().get("EndGameState"))) {
                 return false;
             }
         }

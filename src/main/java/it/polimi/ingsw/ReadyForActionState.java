@@ -73,6 +73,7 @@ public class ReadyForActionState extends State {
         lastChange.setSpecification(LOSE);
         player.notifyController();
         player.getStateManager().setNextState(player);
+        player.getStateManager().getTurnManager().setNextPlayer(player);
     }
 
     private void deleteWorkersFromBoard(){

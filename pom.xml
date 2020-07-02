@@ -40,6 +40,7 @@
             <version>11.0.2</version>
             <classifier>mac</classifier>
         </dependency>
+
         <dependency>
             <groupId>jimObjModelImporterJFX</groupId>
             <artifactId>jimObjModelImporterJFX</artifactId>

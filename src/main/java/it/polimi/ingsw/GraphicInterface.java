@@ -511,7 +511,7 @@ public class GraphicInterface {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    Pawn pawn;
+                    Pawn pawn=null;
                     if(!valuableId) {
                         if (gender.equals("A"))
                             pawn = createFemaleWorker();
@@ -521,11 +521,26 @@ public class GraphicInterface {
                         pawn.setIdNumber(100);
                     }
                     else {
-                        pawn = pawns.get(0);
-                        pawns.remove(0);
+                        if(gender.equals("A")) {
+                            pawn = pawns.get(0);
+                            pawns.remove(0);
+                        }
+                        else if(gender.equals("B")) {
+
+                            if(pawns.size()>1) {
+                                pawn = pawns.get(1);
+                                pawns.remove(1);
+                            }
+                            else {
+                                pawn = pawns.get(0);
+                                pawns.remove(0);
+                            }
+                        }
+                        //pawns.remove(pawn);
                         if(pawns.size()==0)
                             valuableId=false;
                     }
+
                     positionMesh(0,0,0,pawn.getWorkerMesh());
                     pawn.getWorkerMesh().setMaterial(colorCreation(color));
                     Cell cell=grid[row][column];
