@@ -137,15 +137,12 @@ class DeliveryMessageTest {
         strings.add(prefix+strangeCode+player1+specification+message);
         strings.add(prefix+code+player1+specification1+message);
 
-
-
-
-
         Thread client = new Thread(()->{
             try {
                 Socket sc = new Socket("localhost", 62100);
                 CommandCLIManager commandCLIManager = new CommandCLIManager(sc);
                 commandCLIManager.getDeliveryMessage().startReading();
+                sc.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

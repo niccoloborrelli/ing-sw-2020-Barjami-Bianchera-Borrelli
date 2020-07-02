@@ -29,14 +29,16 @@ public class PopUpCommand extends ReplyCommand {
         String sentence;
         switch (specification) {
             case WIN:
-                sentence = won;
+                sentence = wonReduce;
                 break;
             case LOSE:
-                System.out.println("Mi sa che ho perso");
-                sentence = lose;
+                sentence = loseReduce;
                 break;
             case LOST:
-                sentence = playerName + getLostPhrase();
+                sentence = playerName + lostReduce;
+                break;
+            case ENDGAME:
+                sentence = endgameGUI;
                 break;
             default:
                 sentence = "";
@@ -53,7 +55,7 @@ public class PopUpCommand extends ReplyCommand {
 
     @Override
     public void execute(Field field) {
-        String sentence = printParticularSentence(specification, playerName, playerColor);
-        field.printSentence(sentence);
+        String sentence = printParticularSentence(specification);
+        field.printSentence(playerColor + playerName + ANSI_RESET + sentence);
     }
 }

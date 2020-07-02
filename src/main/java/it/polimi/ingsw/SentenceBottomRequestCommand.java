@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.CommunicationSentences.ANSI_RESET;
 import static it.polimi.ingsw.CommunicationSentences.printParticularSentence;
 
 public class SentenceBottomRequestCommand extends ReplyCommand {
@@ -29,8 +30,8 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
     @Override
     public void execute(GraphicInterface graphicInterface) {
         if(graphicInterface!=null) {
-            String sentence = printParticularSentence(specification, playerName, playerColor);
-            graphicInterface.printBottom(sentence);
+            String sentence = printParticularSentence(specification);
+            graphicInterface.printBottom(playerName + sentence);
         }
     }
 
@@ -41,8 +42,8 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
 
     @Override
     public void execute(Field field) {
-        String sentence =  printParticularSentence(specification, playerName, playerColor);
-        field.printSentence(sentence);
+        String sentence =  printParticularSentence(specification);
+        field.printSentence(playerColor + playerName + ANSI_RESET + sentence);
     }
 
 }

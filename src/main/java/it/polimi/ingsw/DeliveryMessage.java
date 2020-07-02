@@ -198,6 +198,7 @@ public class DeliveryMessage {
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
         if (code == UPDATE_TO_PRINT || code == UPDATE_ENDGAME) {
+            System.out.println(message);
             sendToInterface(specification, playerName, playerColor);
         } else if (code == UPDATE_CHOICE) {
             decodePossibleChoice(doc, specification, playerName, playerColor);
@@ -698,6 +699,13 @@ public class DeliveryMessage {
 
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
         if(command!=null) {
+            if(specification.equals(MOVE)) {
+                SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, WAITING_MOVE);
+                command.manageCommand(sentenceBottomRequestCommand);
+            }else if(specification.equals(BUILD)){
+                SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, WAITING_BUILD);
+                command.manageCommand(sentenceBottomRequestCommand);
+            }
             ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
             command.manageCommand(showAvCells);
         }

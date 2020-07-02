@@ -13,6 +13,7 @@ public class Accepter {
      * player state to PreLobbyState
      */
     public void accept() throws IOException {
+
         ServerSocket serverSocket = new ServerSocket(60100);
         HandlerHub globalHub = new HandlerHub();
         LobbyManager lobbyManager = new LobbyManager(globalHub);

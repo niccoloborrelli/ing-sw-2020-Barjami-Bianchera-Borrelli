@@ -906,10 +906,11 @@ public class Controller{
         String specification;
         String message = generateField("", MESSAGE);
 
-        if(typeOfLost.equals(LOSE))
+        if(typeOfLost.equals(LOSE)) {
             specification = generateField(LOST, SPECIFICATION);
-        else
+        }else {
             specification = generateField(LOSE, SPECIFICATION);
+        }
 
         String data = generateField(code + player + specification + message, DATA);
         handlerHub.sendData(data, this, ALL_NOT_ME);

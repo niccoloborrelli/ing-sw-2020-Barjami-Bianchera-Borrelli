@@ -2,7 +2,6 @@ package it.polimi.ingsw;
 
 import java.util.*;
 
-import static it.polimi.ingsw.Field.ANSI_RESET;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommunicationSentences {
@@ -10,6 +9,9 @@ public class CommunicationSentences {
      * Represents the creation center of sentences to print.
      */
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    private static final String waiting_move = "It's time to move. Hurry up!";
+    private static final String waiting_build = "You have to build. Come on!";
     private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one " +
             "insert ";
     private static final String welcomeToSantorini = "Welcome to Santorini.\nGods sanctioned you as chosen one.\n" +
@@ -24,9 +26,9 @@ public class CommunicationSentences {
     private static final String endSent1 = ", good job! Your turn is finished. Look at your enemies to understand their strategy.";
     private static final String endSent2 = ", well done! Now you can rest.";
     private static final String endSent3 = ", your turn ended. Who knows if your enemies will fall in your trap.";
-    private static final String errorSent1 = "You wrote an invalid input. Try again";
-    private static final String errorSent2 = "Be careful. A minimum error could ruin your strategy";
-    private static final String errorSent3 = "Come on. You're the boss. You can't make a mistake like this";
+    private static final String errorSent1 = " , you wrote an invalid input. Try again";
+    private static final String errorSent2 = ", be careful. A minimum error could ruin your strategy";
+    private static final String errorSent3 = ", come on. You're the boss. You can't make a mistake like this";
     private static final String activateSent1 = "God gave you his power. You can use it!";
     private static final String activateSent2 = "Now, it's your choice. Do you want to use your God power?";
     private static final String activateSent3 = "Be careful. God power could be a double-edge sword. ";
@@ -44,14 +46,18 @@ public class CommunicationSentences {
     private static final String MOVE = "move";
     private static final String BUILD = "build";
     public static final String won = "Congratulations, you won! You conquered Santorini. God thanks you.";
+    public static final String wonReduce = "Congratulations,\n you won!";
     public static final String lose = "You lost!\nYour God lashes out in rage.";
+    public static final String loseReduce = "You lost!\nShame on you";
     private static final String lost = " lost! One less enemy.";
+    public static final String lostReduce = " lost!";
     private static final String actionSent1_1 = " Choose carefully. Decide who would ";
     private static final String actionSent1_2 = ", worker can do it in these places:";
     private static final String actionSent2_1 = ", worker can ";
     private static final String actionSent2_2 = " in these places:";
     private static final String godChosen1 = " chose you. ";
     private static final String removed = " removed his worker due to his defeat";
+    public static final String endgameGUI = "Press quit when game is finished.";
     private static List<String> actionSentences;
     private static int actionIndex;
     private static List<String> endTurnSentences;
@@ -404,17 +410,15 @@ public class CommunicationSentences {
     /**
      * Builds a particular sentence depending of event.
      * @param specification specified event.
-     * @param playerName is player name.
-     * @param playerColor is player color.
      * @return a particular sentence depending of event.
      */
 
-    public static String printParticularSentence(String specification, String playerName, String playerColor) {
+    public static String printParticularSentence(String specification) {
         String data = null;
-        String prefix = playerColor + playerName + ANSI_RESET;
+
         switch (specification) {
             case ENDTURN:
-                data = prefix + getEndTurnPhrase();
+                data = getEndTurnPhrase();
                 break;
             case ERROR:
                 data = getErrorPhrase();
@@ -426,7 +430,7 @@ public class CommunicationSentences {
                 data = lose;
                 break;
             case LOST:
-                data = prefix  + getLostPhrase();
+                data = getLostPhrase();
                 break;
             case NAME:
                 data = nameSent;
@@ -439,6 +443,12 @@ public class CommunicationSentences {
                 break;
             case ENDGAME:
                 data = endGame;
+                break;
+            case WAITING_MOVE:
+                data = waiting_move;
+                break;
+            case WAITING_BUILD:
+                data = waiting_build;
                 break;
         }
 

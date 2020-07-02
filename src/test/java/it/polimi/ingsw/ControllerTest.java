@@ -1,4 +1,4 @@
-/*
+
 package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
@@ -209,6 +209,7 @@ class ControllerTest {
         t.start();
         client.start();
         t.join();
+
     }
 
     @Test
@@ -265,6 +266,7 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
+
     }
 
     @Test
@@ -313,6 +315,7 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
+
     }
 
     @Test
@@ -348,6 +351,7 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
+
     }
 
     @Test
@@ -382,6 +386,7 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
+
     }
 
     @Test
@@ -416,6 +421,7 @@ class ControllerTest {
         t1.start();
         t2.start();
         t1.join();
+
     }
 
     private Thread clientThread(){
@@ -464,4 +470,3 @@ class ControllerTest {
     }
 }
 
- */

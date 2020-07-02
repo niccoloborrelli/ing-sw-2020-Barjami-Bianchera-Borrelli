@@ -32,13 +32,6 @@
 		</finishState>
 	</startState>
 	<startState id= "ActionState">
-		<finishState id= "EndTurnState">
-			<condition>
-				<flag>HasWon</flag>
-				<expectedValue>true</expectedValue>
-			</condition>
-			<priority>3</priority>
-		</finishState>
 		<finishState id= "ReadyForActionState">
 			<condition>
 				<flag>Action</flag>
@@ -47,6 +40,10 @@
 			<priority>2</priority>
 		</finishState>
 		<finishState id= "EndTurnState">
+			<condition>
+				<flag>InGame</flag>
+				<expectedValue>true</expectedValue>
+			</condition>
 			<condition>
 				<flag>Action</flag>
 				<expectedValue>false</expectedValue>

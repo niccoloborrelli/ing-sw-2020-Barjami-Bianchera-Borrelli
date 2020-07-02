@@ -43,7 +43,6 @@ public class CommandGUIManager implements Command {
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
         if(pawnChosen == null && pawnSelected!=null) {
             pawnChosen = pawnSelected;
-            System.out.println(pawnChosen.execute());
             if(showAvCellsList.size()>0)
                 showCells();
         }else {
@@ -117,6 +116,7 @@ public class CommandGUIManager implements Command {
             removingCommand.execute(graphicInterface);
         }
         removingCommandList.clear();
+        showAvCellsList.clear();
         popUpCommand.execute(graphicInterface);
     }
 
@@ -165,7 +165,7 @@ public class CommandGUIManager implements Command {
             TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, WAITING_PLAYER);
             switchingScene.add(transitionSceneCommand);
         }else if(limitedOptionsCommand.getSpecification().equals(GODCHOICE)) {
-            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, GODCHOICE);
+            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(null, null, WAITING_GAME);
             switchingScene.add(transitionSceneCommand);
 
         }

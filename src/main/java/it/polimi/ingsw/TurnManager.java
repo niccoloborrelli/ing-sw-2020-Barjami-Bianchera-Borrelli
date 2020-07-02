@@ -100,7 +100,6 @@ public class TurnManager {
             if(player.isInGame()) {
                 player.setInGame(false);
                 try {
-
                     player.getStateManager().setNextState(player);
                 } catch (IOException e) {
                     player.getStateManager().setCurrent_state(new EndGameState(player)); //vedere se cambiarlo in set next state

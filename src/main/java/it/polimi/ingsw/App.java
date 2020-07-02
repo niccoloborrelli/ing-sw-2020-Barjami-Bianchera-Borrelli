@@ -65,12 +65,20 @@ public class App extends Application {
     private Image colorPurple = loadImage(PURPLE_BUTTON);
     private Image colorWhite =  loadImage(WHITE_BUTTON);
     private CommandGUIManager commandGUIManager;
-    Socket socket;
 
     @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
-        Socket socket = new Socket("localhost", 60100);
-        CommandGUIManager commandGUIManager = new CommandGUIManager(socket);
+    public void start(Stage stage){
+        Socket socket;
+        try {
+            socket = new Socket("localhost", 60100);
+            commandGUIManager = new CommandGUIManager(socket);
+        }
+        catch (IOException e){
+            Platform.exit();
+            return;
+        }
+
+
         DeliveryMessage deliveryMessage = commandGUIManager.getDeliveryMessage();
         new Thread(deliveryMessage::startReading).start();
         commandGUIManager.setApp(this);

@@ -10,11 +10,7 @@ public class MainClass {
                 @Override
                 public void run() {
                     AAAClient CLIclient=new AAAClient();
-                    try {
-                        CLIclient.runCLI();
-                    } catch (IOException e) {
-                       // e.printStackTrace();
-                    }
+                    CLIclient.runCLI();
                 }
             }.start();
         }
@@ -33,11 +29,7 @@ public class MainClass {
                 @Override
                 public void run() {
                     AAAServer server=new AAAServer();
-                    try {
-                        server.runServer();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    server.runServer();
                 }
             }.start();
         }

@@ -15,7 +15,6 @@ public class Field{
      */
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
-    public static final String ANSI_RESET = "\u001B[0m";
 
 
     /*
