@@ -9,6 +9,10 @@ import static java.lang.Thread.sleep;
 
 public class NetHandler {
 
+    /**
+     * Receives and sends message to server.
+     */
+
     private DeliveryMessage deliveryMessage;
     private Socket socket;
     private DataOutputStream dataOutputStream;
@@ -41,6 +45,10 @@ public class NetHandler {
         this.endGame = endGame;
     }
 
+    /**
+     * Creates and starts reading thread.
+     */
+
     public void handle(){
         Thread reading = createReadingThread();
 
@@ -51,6 +59,11 @@ public class NetHandler {
         } catch (InterruptedException ignored) {
         }
     }
+
+    /**
+     * Creates the thread that will receive messages from server.
+     * @return the thread that will receive messages from server
+     */
 
     private Thread createReadingThread(){
         return new Thread(() -> {
@@ -68,6 +81,11 @@ public class NetHandler {
             }
         });
     }
+
+    /**
+     * Sends the message to server. If socket is closed, quit the game.
+     * @param message is message to send.
+     */
 
     public void sendMessage(String message){
         try {

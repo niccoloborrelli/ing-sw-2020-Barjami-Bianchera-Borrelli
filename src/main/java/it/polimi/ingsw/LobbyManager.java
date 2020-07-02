@@ -41,11 +41,17 @@ public class LobbyManager {
     }
 
     private boolean canAddPlayer(Lobby l, Player player, int numberOfPlayers){
-        for (Player p: l.getPlayers()) {
-            if(globalHub.getHandlerControllerHashMap().get(p.getController()).getSc().isClosed())
-                return false;
-        }
-        return l.getNumberOfPlayers() == numberOfPlayers && l.getPlayers().size() < l.getNumberOfPlayers() && !l.getPlayers().contains(player);
+            for (Player p : l.getPlayers()) {
+                try {
+                    if (!globalHub.getHandlerControllerHashMap().get(p.getController()).getSc().isConnected())
+                        return false;
+                }
+                catch (Exception e){
+                    return false;
+                }
+            }
+            return l.getNumberOfPlayers() == numberOfPlayers && l.getPlayers().size() < l.getNumberOfPlayers() && !l.getPlayers().contains(player);
+
     }
 
     private boolean lobbyFull(Lobby lobby){

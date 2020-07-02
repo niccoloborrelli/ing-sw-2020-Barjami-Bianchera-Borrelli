@@ -5,8 +5,17 @@ import static java.lang.Thread.sleep;
 
 public class QuitCommand extends ReplyCommand {
 
+    /**
+     * Represents a command who invoke a quit.
+     */
+
+
+    /**
+     * Closes the window.
+     * @param app is the interface.
+     */
+
     public void execute(App app){
-        System.out.println("Ora mi ammazzo");
         app.setOnExitStage();
         try {
             sleep(7000);
@@ -14,6 +23,11 @@ public class QuitCommand extends ReplyCommand {
         }
         app.quitApplication();
     }
+
+    /**
+     * Adverts client and closes the interface.
+     * @param gui is the interface.
+     */
 
     @Override
     public void execute(GraphicInterface gui) {
@@ -26,6 +40,10 @@ public class QuitCommand extends ReplyCommand {
 
     }
 
+    /**
+     * Adverts client of quit.
+     * @param field
+     */
 
     @Override
     public void execute(Field field) {

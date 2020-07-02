@@ -7,6 +7,10 @@ import static it.polimi.ingsw.FinalCommunication.BUILD;
 
 public class BuildUpdateCommand extends ReplyCommand {
 
+    /**
+     * Represents a update command caused by a build in the game field.
+     */
+
     private int row;
     private int column;
     private int level;
@@ -23,11 +27,20 @@ public class BuildUpdateCommand extends ReplyCommand {
         this.playerColor = playerColor;
     }
 
+    /**
+     * Updates with a build the graphic interface.
+     * @param gui is graphic interface.
+     */
 
     @Override
     public void execute(GraphicInterface gui) {
         gui.build(row, column, level, dome);
     }
+
+    /**
+     * Prints a sentence and show the build in the field.
+     * @param field is the field.
+     */
 
 
     @Override

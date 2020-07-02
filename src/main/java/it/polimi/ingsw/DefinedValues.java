@@ -16,6 +16,6 @@ public class DefinedValues {
     protected static final int FIRST_COLUMN_CLI = 1;
     protected static final int SECOND_COLUMN_CLI = 5;
     protected static final int COMPLETE_TOWER_TO_WIN = 5;
-    protected static final int DOME_LEVEL = 4;
+    protected static final int DOME_LEVEL = 3;
     protected static final int JUMP_LEVELS_TO_WIN = 2;
 }

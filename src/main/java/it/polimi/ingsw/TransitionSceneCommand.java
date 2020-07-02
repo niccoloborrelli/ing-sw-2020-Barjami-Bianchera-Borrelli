@@ -3,6 +3,9 @@ package it.polimi.ingsw;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class TransitionSceneCommand extends ReplyCommand {
+    /**
+     * Represents a transition of moments in the game.
+     */
 
     private String playerName;
     private String playerColor;
@@ -14,22 +17,39 @@ public class TransitionSceneCommand extends ReplyCommand {
         this.specification = specification;
     }
 
+
     @Override
     public void execute(GraphicInterface gui) {
     }
 
+    /**
+     * Sets different scene depending of information.
+     * @param app
+     */
     public void execute(App app){
-        if(specification.equals(NAME))
-            app.setNameStage();
-        else if(specification.equals(GODSET))
-            app.setGodsStage();
-        else if(specification.equals(WAITING_COLOR))
-            app.setWaitingColor();
-        else if(specification.equals(WAITING_PLAYER))
-            app.setWaitingPlayer();
-        else if(specification.equals(WAITING_GAME))
-            app.setWaitingGame();
+        switch (specification) {
+            case NAME:
+                app.setNameStage();
+                break;
+            case GODSET:
+                app.setGodsStage();
+                break;
+            case WAITING_COLOR:
+                app.setWaitingColor();
+                break;
+            case WAITING_PLAYER:
+                app.setWaitingPlayer();
+                break;
+            case WAITING_GAME:
+                app.setWaitingGame();
+                break;
+        }
     }
+
+    /**
+     * Prints a specific sentence depending of information of command.
+     * @param field is the interface.
+     */
 
     @Override
     public void execute(Field field) {

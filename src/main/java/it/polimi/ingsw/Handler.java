@@ -8,6 +8,10 @@ import java.net.Socket;
 
 public class Handler extends Thread {
 
+    /**
+     * Receives and sends messages to client.
+     */
+
     private Socket sc;
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
@@ -34,6 +38,10 @@ public class Handler extends Thread {
         this.endGame = endGame;
     }
 
+    /**
+     * Creates and start thread of reading.
+     */
+
     public void handle(){
         Thread reading = createReadingThread();
 
@@ -45,6 +53,10 @@ public class Handler extends Thread {
         }
     }
 
+    /**
+     * Creates the thread that will read client messages.
+     * @return the thread that will read client messages.
+     */
     private Thread createReadingThread(){
         return new Thread(() -> {
             while (!endGame){
@@ -53,7 +65,6 @@ public class Handler extends Thread {
                     handlerHub.callController(this, message);
                 } catch (IOException e) {
                     if(!endGame) {
-                        System.out.println("Qualcuno si è disconnesso per sbaglio");
                         endGame = true;
                         handlerHub.quitGame(this, false);
                     }
@@ -63,10 +74,13 @@ public class Handler extends Thread {
                 } catch (InterruptedException ignored) {
                 }
             }
-            System.out.println("Finito l'handler");
         });
     }
 
+    /**
+     * Sends this message to client.
+     * @param message is message sent.
+     */
     public void communicate(String message){
         try {
             dataOutputStream.writeUTF(message);

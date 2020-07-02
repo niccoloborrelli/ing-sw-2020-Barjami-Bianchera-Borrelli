@@ -5,22 +5,26 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class AAAClient {
-    
+import static java.lang.Thread.sleep;
 
-    public static void main(String[] args) throws IOException {
+public class AAAClient {
+
+
+    public void runCLI() throws IOException{
         Scanner scanner = new Scanner(System.in);
         Socket socket = new Socket("localhost", 60100);
+        manageCLI(socket,scanner);
+
+    }
+
+    private void manageCLI(Socket socket,Scanner scanner) throws IOException {
         CommandCLIManager commandCLIManager = new CommandCLIManager(socket);
         DeliveryMessage deliveryMessage = commandCLIManager.getDeliveryMessage();
-
         new Thread(deliveryMessage::startReading).start();
-
         do {
             String input = scanner.nextLine();
             GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(input);
             commandCLIManager.manageCommand(generalStringRequestCommand);
         } while (!socket.isClosed());
-
     }
 }

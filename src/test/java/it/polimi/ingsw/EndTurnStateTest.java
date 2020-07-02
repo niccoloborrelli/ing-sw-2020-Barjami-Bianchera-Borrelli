@@ -43,5 +43,8 @@ class EndTurnStateTest {
         player1.getStateManager().setCurrent_state(endTurn1);
         endTurn1.onStateTransition();
 
+        serverSocket.close();
+        socket.close();
+
     }
 }

@@ -4,11 +4,18 @@ import java.io.IOException;
 import java.util.List;
 
 public class ColorSettingState extends State {
+
+    /**
+     * In this states a player choose his representative color.
+     */
+
     private static final String COLORMESSAGE="color";
     ColorSettingState(Player player) {
         super(player);
     }
 
+
+    @Override
     public void onInput(Visitor visitor) throws IOException {
         boolean colorSetted=false;
         String input=visitor.visit(this);

@@ -1,3 +1,4 @@
+/*
 package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.lang.Thread.activeCount;
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -111,6 +113,8 @@ class ControllerTest {
                 Handler handler = new Handler(clientSocket, handlerHub);
                 handlerHub.getHandlerControllerHashMap().put(controller, handler);
                 controller.setHandlerHub(handlerHub);
+                controller.createGodMap();
+                controller.createPowerGodMap();
                 Player player = new Player();
                 player.setLastChange(new LastChange());
                 player.getLastChange().setCode(0);
@@ -122,11 +126,13 @@ class ControllerTest {
                 String message2 =  "<data><code>0</code><message><string>-god</string></message></data>";
                 String message3 = "<data><code>0</code><message><string>-god Atlas</string></message></data>";
                 String message4 = "<data><code>0</code><message><string>-godAtlas</string></message></data>";
+                String message5 = "<data><code>0</code><message><string>quit</string></message></data>";
 
                 controller.giveInputToModel(message1);
                 controller.giveInputToModel(message2);
                 controller.giveInputToModel(message3);
                 controller.giveInputToModel(message4);
+                controller.giveInputToModel(message5);
 
                 serverSocket.close();
                 clientSocket.close();
@@ -141,6 +147,7 @@ class ControllerTest {
         server.join();
 
     }
+
 
 
 
@@ -377,6 +384,40 @@ class ControllerTest {
         t1.join();
     }
 
+    @Test
+    void updateTest6() throws InterruptedException {
+        Thread t1 = new Thread(()->{
+            try {
+                ServerSocket serverSocket = new ServerSocket(62100);
+                Player player = new Player();
+                player.setPlayerName("Steve");
+                player.setPlayerColor("red");
+
+                Controller controller = createSetUp(serverSocket);
+
+                controller.setPlayer(player);
+
+
+                LastChange lastChange = new LastChange();
+                lastChange.setSpecification("win");
+                lastChange.setCode(3);
+
+                controller.update(lastChange);
+
+                serverSocket.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        Thread t2 = clientThread();
+
+        t1.start();
+        t2.start();
+        t1.join();
+    }
+
     private Thread clientThread(){
        return new Thread(()-> {
             try {
@@ -385,6 +426,7 @@ class ControllerTest {
                 DeliveryMessage deliveryMessage = new DeliveryMessage(socket);
                 deliveryMessage.startReading();
                 sleep(300);
+                socket.close();
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -421,3 +463,5 @@ class ControllerTest {
         controller.decoratePlayer(player);
     }
 }
+
+ */

@@ -5,8 +5,14 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
+import static it.polimi.ingsw.FinalCommunication.NAME;
+import static it.polimi.ingsw.FinalCommunication.UPDATE_TO_PRINT;
+
 public class NameSettingState extends State {
-    private static final String MESSAGENAME="name";
+    /**
+     * In this class a name is registered, if it's correct.
+     */
+
     NameSettingState(Player player) {
         super(player);
     }
@@ -46,8 +52,8 @@ public class NameSettingState extends State {
 
     private void nameNotify(){
         LastChange inputExpected = player.getLastChange();
-        inputExpected.setCode(0);
-        inputExpected.setSpecification(MESSAGENAME);
+        inputExpected.setCode(UPDATE_TO_PRINT);
+        inputExpected.setSpecification(NAME);
         player.notifyController();
     }
 }

@@ -24,6 +24,12 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 public class Controller{
 
+    /**
+     * Represent the core of "C" in MVC pattern.
+     * It's the center of traducing and packing message from server, unpacking message from client and
+     * it decides which message goes to which client.
+     */
+
     private static final int INT_IF_BOOLEAN_TRUE = 1;
     private static final int INT_IF_BOOLEAN_FALSE = 0;
 
@@ -192,7 +198,7 @@ public class Controller{
      * Creates the hash map that contains name and power of every God.
      */
 
-    private void createPowerGodMap(){
+    public void createPowerGodMap(){
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         InputStream file = classLoader.getResourceAsStream("Gods.txt");
         Parser parser=new Parser(file);
@@ -215,6 +221,10 @@ public class Controller{
         if(powerGodMap==null)
             createPowerGodMap();
 
+        System.out.println(index);
+        System.out.println(powerGodMap.size());
+        System.out.println(request.substring(index));
+        System.out.println(powerGodMap.get(request.substring(index)).size());
         if (powerGodMap.get(request.substring(index)) != null) {
             lastChange.getStringList().add(powerGodMap.get(request.substring(index)).get(FIRST_INDEX));
             update(lastChange);

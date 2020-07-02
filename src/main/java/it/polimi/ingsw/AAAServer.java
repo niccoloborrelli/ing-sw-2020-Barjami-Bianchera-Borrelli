@@ -9,7 +9,7 @@ import java.util.zip.ZipInputStream;
 
 public class AAAServer {
 
-    public static void main(String[] args) throws IOException {
+    public void runServer() throws IOException {
         Accepter accepter = new Accepter();
         accepter.accept();
     }

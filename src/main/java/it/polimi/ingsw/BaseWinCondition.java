@@ -18,6 +18,12 @@ public class BaseWinCondition extends WinConditionAB {
                 player.setHasWon(true);
     }
 
+    /**
+     * Finds which worker moved in its turn.
+     * @param player is worker's player.
+     * @return worker moved in this turn if it exists, otherwise null.
+     */
+
     private Worker getWorkerChosen(Player player){
         for(Worker worker: player.getWorkers()) {
             if(worker.isMovedThisTurn())

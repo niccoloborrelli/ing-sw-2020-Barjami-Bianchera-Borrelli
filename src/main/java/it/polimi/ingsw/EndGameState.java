@@ -1,10 +1,17 @@
 package it.polimi.ingsw;
 
 import static it.polimi.ingsw.FinalCommunication.ENDGAME;
+import static it.polimi.ingsw.FinalCommunication.UPDATE_ENDGAME;
 
 public class EndGameState extends State {
 
-    EndGameState(Player player) {
+    /**
+     * Represents the end of the game.
+     * In this state no player can do something.
+     * @param player
+     */
+
+    public EndGameState(Player player) {
         super(player);
     }
 
@@ -13,7 +20,7 @@ public class EndGameState extends State {
         if(player.isHasWon())
             player.notifyWin();
         LastChange uselessInput = player.getLastChange();
-        uselessInput.setCode(3);
+        uselessInput.setCode(UPDATE_ENDGAME);
         uselessInput.setSpecification(ENDGAME);
         player.notifyController();
     }

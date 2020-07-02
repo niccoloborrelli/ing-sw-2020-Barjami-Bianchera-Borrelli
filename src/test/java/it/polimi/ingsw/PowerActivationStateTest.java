@@ -1,4 +1,4 @@
-/*package it.polimi.ingsw;
+package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -41,10 +42,12 @@ class PowerActivationStateTest {
         player2.setStateManager(stateManager);
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        //TableXML tableXML = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player1);
-       // HashMap<State, List<Line>> table = tableXML.readXML(player1.getStateManager().getStateHashMap());
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, player1);
+        HashMap<State, List<Line>> table = tableXML.readXML(player1.getStateManager().getStateHashMap());
         player1.getStateManager().setTable(table);
-        //TableXML tableXML2 = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player2);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, player2);
         HashMap<State, List<Line>> table2 = tableXML2.readXML(player2.getStateManager().getStateHashMap());
         player2.getStateManager().setTable(table2);
 
@@ -137,6 +140,9 @@ class PowerActivationStateTest {
         islandBoard.getSpace(2,2).setOccupator(worker2);
 
         activationState.onStateTransition();
+
+        serverSocket.close();
+        socket.close();
     }
 
     @Test
@@ -162,10 +168,12 @@ class PowerActivationStateTest {
         player2.setStateManager(stateManager);
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        TableXML tableXML = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player1);
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, player1);
         HashMap<State, List<Line>> table = tableXML.readXML(player1.getStateManager().getStateHashMap());
         player1.getStateManager().setTable(table);
-        TableXML tableXML2 = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player2);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, player2);
         HashMap<State, List<Line>> table2 = tableXML2.readXML(player2.getStateManager().getStateHashMap());
         player2.getStateManager().setTable(table2);
 
@@ -205,5 +213,8 @@ class PowerActivationStateTest {
         player1.getStateManager().setCurrent_state(activationState);
         player2.getStateManager().setCurrent_state(player2.getStateManager().getState("ColorSettingState"));
         activationState.onStateTransition();
+
+        serverSocket.close();
+        socket.close();
     }
-}*/
+}

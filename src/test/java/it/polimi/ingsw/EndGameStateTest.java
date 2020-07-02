@@ -13,10 +13,12 @@ class EndGameStateTest {
     @Test
     void onStateTransition() throws IOException {
         ServerSocket serverSocket = new ServerSocket(62100);
+        StateManager stateManager = new StateManager();
         Socket socket = new Socket("localhost", 62100);
         Socket client = serverSocket.accept();
         Controller controller = new Controller();
         Player player = new Player();
+        player.setHasWon(true);
         HandlerHub handlerHub = new HandlerHub();
         handlerHub.getHandlerControllerHashMap().put(controller, new Handler(client, handlerHub));
         controller.setHandlerHub(handlerHub);
@@ -24,7 +26,13 @@ class EndGameStateTest {
         controller.setPlayer(player);
 
         State state = new EndGameState(player);
-        state.onStateTransition();
+        stateManager.getStateHashMap().put(state.toString(), state);
+        synchronized (player) {
+            state.onStateTransition();
+        }
+
+        socket.close();
+        serverSocket.close();
 
     }
 }

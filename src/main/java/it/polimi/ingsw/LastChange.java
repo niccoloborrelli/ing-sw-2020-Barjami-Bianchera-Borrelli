@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LastChange {
+    /**
+     * Contains information of various possible situation.
+     * It's used for notify.
+     */
     List<Space> listSpace;
     List<Integer> integerList;
     List<String> stringList;

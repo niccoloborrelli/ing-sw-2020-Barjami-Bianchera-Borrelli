@@ -4,7 +4,9 @@ import static it.polimi.ingsw.CommunicationSentences.printParticularSentence;
 
 public class SentenceBottomRequestCommand extends ReplyCommand {
 
-    //private static final String SET_UP = "Choose positions for your worker.";
+    /**
+     * Represents a reply with a sentence to print.
+     */
     private String playerColor;
     private String playerName;
     private String specification;
@@ -19,6 +21,11 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
         return specification;
     }
 
+    /**
+     * Prints a phrase determined by information in command in bottom of interface.
+     * @param graphicInterface is interface.
+     */
+
     @Override
     public void execute(GraphicInterface graphicInterface) {
         if(graphicInterface!=null) {
@@ -27,6 +34,10 @@ public class SentenceBottomRequestCommand extends ReplyCommand {
         }
     }
 
+    /**
+     * Print a sentence determined by information in command.
+     * @param field is the interface.
+     */
 
     @Override
     public void execute(Field field) {

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static it.polimi.ingsw.FinalCommunication.*;
+import static java.lang.Thread.sleep;
 
 /**
  * JavaFX App
@@ -58,11 +59,16 @@ public class App extends Application {
     private Image askPlayers = loadImage(ASKER);
     private Image quitGame = loadImage(QUIT_GAME);
     private ImageView quit = new ImageView(quitGame);
+    private Image colorRed = loadImage(RED_BUTTON);
+    private Image colorGrey = loadImage(GREY_BUTTON);
+    private Image colorCyan = loadImage(CYAN_BUTTON);
+    private Image colorPurple = loadImage(PURPLE_BUTTON);
+    private Image colorWhite =  loadImage(WHITE_BUTTON);
     private CommandGUIManager commandGUIManager;
+    Socket socket;
 
     @Override
-    public void start(Stage stage) throws IOException {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    public void start(Stage stage) throws IOException, InterruptedException {
         Socket socket = new Socket("localhost", 60100);
         CommandGUIManager commandGUIManager = new CommandGUIManager(socket);
         DeliveryMessage deliveryMessage = commandGUIManager.getDeliveryMessage();
@@ -79,8 +85,8 @@ public class App extends Application {
         Group root5 = new Group();
         Canvas canvas = new Canvas(1024, 700);
         Canvas godSelection = new Canvas(1024, 700);
-        Canvas nameSelection = new Canvas(1024,700);
-        Canvas colorSelection = new Canvas(1024,700);
+        Canvas nameSelection = new Canvas(1024, 700);
+        Canvas colorSelection = new Canvas(1024, 700);
         Canvas onExit = new Canvas(1024, 700);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         GraphicsContext ggods = godSelection.getGraphicsContext2D();
@@ -100,25 +106,19 @@ public class App extends Application {
         Image titleGrass = loadImage(TITLE_GRASS);
         Image boatRight = loadImage(TITLE_BOAT);
 
-        Image colorRed = loadImage(RED_BUTTON);
-        Image colorGrey = loadImage(GREY_BUTTON);
-        Image colorCyan = loadImage(CYAN_BUTTON);
-        Image colorPurple = loadImage(PURPLE_BUTTON);
-        Image colorWhite =  loadImage(WHITE_BUTTON);
-
         //title screen setup
         gc.drawImage(titleWater, 0, 150, titleWater.getWidth(), titleWater.getHeight());
-        gc.drawImage(logo, 290, 10, logo.getWidth()/2.5, logo.getHeight()/2.5);
-        gc.drawImage(farIsland, 300, 245, farIsland.getWidth()/2, farIsland.getHeight()/2);
-        gc.drawImage(titlePoseidon, 60, 120, titlePoseidon.getWidth()/2, titlePoseidon.getHeight()/2);
-        gc.drawImage(titleAfrodite, 720, 140, titleAfrodite.getWidth()/2, titleAfrodite.getHeight()/2);
-        gc.drawImage(titleIsland, 250, 180, titleIsland.getWidth()/1.5, titleIsland.getHeight()/1.5);
-        gc.drawImage(poseidonHand, 265, 330, poseidonHand.getWidth()/2, poseidonHand.getHeight()/2);
-        gc.drawImage(leftTopCloud, 200, 40, leftTopCloud.getWidth()/5, leftTopCloud.getHeight()/5);
-        gc.drawImage(rightTopCloud, 745, 40, rightTopCloud.getWidth()/5, rightTopCloud.getHeight()/5);
-        gc.drawImage(titleGrass, 0, 480, titleGrass.getWidth()/1.86 - 8,titleGrass.getHeight()/2);
+        gc.drawImage(logo, 290, 10, logo.getWidth() / 2.5, logo.getHeight() / 2.5);
+        gc.drawImage(farIsland, 300, 245, farIsland.getWidth() / 2, farIsland.getHeight() / 2);
+        gc.drawImage(titlePoseidon, 60, 120, titlePoseidon.getWidth() / 2, titlePoseidon.getHeight() / 2);
+        gc.drawImage(titleAfrodite, 720, 140, titleAfrodite.getWidth() / 2, titleAfrodite.getHeight() / 2);
+        gc.drawImage(titleIsland, 250, 180, titleIsland.getWidth() / 1.5, titleIsland.getHeight() / 1.5);
+        gc.drawImage(poseidonHand, 265, 330, poseidonHand.getWidth() / 2, poseidonHand.getHeight() / 2);
+        gc.drawImage(leftTopCloud, 200, 40, leftTopCloud.getWidth() / 5, leftTopCloud.getHeight() / 5);
+        gc.drawImage(rightTopCloud, 745, 40, rightTopCloud.getWidth() / 5, rightTopCloud.getHeight() / 5);
+        gc.drawImage(titleGrass, 0, 480, titleGrass.getWidth() / 1.86 - 8, titleGrass.getHeight() / 2);
         gc.drawImage(boatRight, 640, 300, boatRight.getWidth(), boatRight.getHeight());
-        gc.drawImage(askPlayers, 380, 570, askPlayers.getWidth()/2, askPlayers.getHeight()/2);
+        gc.drawImage(askPlayers, 380, 570, askPlayers.getWidth() / 2, askPlayers.getHeight() / 2);
         gc.setStroke(Color.WHITE);
         gc.setFont(Font.font("", FontWeight.SEMI_BOLD, 18));
         gc.strokeText(HOW_MANY_PLAYERS, 405, 600);
@@ -142,62 +142,62 @@ public class App extends Application {
         ggods.drawImage(background, 0, 0, 1024, 700);
 
         ImageView apolloImg = new ImageView(apollo);
-        createCard(apolloImg, 1,1, cards);
+        createCard(apolloImg, 1, 1, cards);
         cardToName.put(apolloImg, APOLLO);
 
         ImageView artemisImg = new ImageView(artemis);
-        createCard(artemisImg, 1,2, cards);
+        createCard(artemisImg, 1, 2, cards);
         cardToName.put(artemisImg, ARTEMIS);
 
         ImageView athenaImg = new ImageView(athena);
-        createCard(athenaImg, 1,3, cards);
+        createCard(athenaImg, 1, 3, cards);
         cardToName.put(athenaImg, ATHENA);
 
         ImageView atlasImg = new ImageView(atlas);
-        createCard(atlasImg, 1,4, cards);
+        createCard(atlasImg, 1, 4, cards);
         cardToName.put(atlasImg, ATLAS);
 
         ImageView chronusImg = new ImageView(chronus);
-        createCard(chronusImg, 1,5, cards);
+        createCard(chronusImg, 1, 5, cards);
         cardToName.put(chronusImg, CHRONUS);
 
         ImageView demeterImg = new ImageView(demeter);
-        createCard(demeterImg, 1,6, cards);
+        createCard(demeterImg, 1, 6, cards);
         cardToName.put(demeterImg, DEMETER);
 
         ImageView hephaestusImg = new ImageView(hephaestus);
-        createCard(hephaestusImg, 1,7, cards);
+        createCard(hephaestusImg, 1, 7, cards);
         cardToName.put(hephaestusImg, HEPHAESTUS);
 
         ImageView hestiaImg = new ImageView(hestia);
-        createCard(hestiaImg, 2,1, cards);
+        createCard(hestiaImg, 2, 1, cards);
         cardToName.put(hestiaImg, HESTIA);
 
         ImageView hypnusImg = new ImageView(hypnus);
-        createCard(hypnusImg, 2,2, cards);
+        createCard(hypnusImg, 2, 2, cards);
         cardToName.put(hypnusImg, HYPNUS);
 
         ImageView minotaurImg = new ImageView(minotaur);
-        createCard(minotaurImg, 2,3, cards);
+        createCard(minotaurImg, 2, 3, cards);
         cardToName.put(minotaurImg, MINOTAUR);
 
         ImageView panImg = new ImageView(pan);
-        createCard(panImg, 2,4, cards);
+        createCard(panImg, 2, 4, cards);
         cardToName.put(panImg, PAN);
 
         ImageView persephoneImg = new ImageView(persephone);
-        createCard(persephoneImg, 2,5, cards);
+        createCard(persephoneImg, 2, 5, cards);
         cardToName.put(persephoneImg, PERSEPHONE);
 
         ImageView prometheusImg = new ImageView(prometheus);
-        createCard(prometheusImg, 2,6, cards);
+        createCard(prometheusImg, 2, 6, cards);
         cardToName.put(prometheusImg, PROMETHEUS);
 
         ImageView zeusImg = new ImageView(zeus);
-        createCard(zeusImg, 2,7, cards);
+        createCard(zeusImg, 2, 7, cards);
         cardToName.put(zeusImg, ZEUS);
 
-        ggods.drawImage(askPlayers, 335, 320, askPlayers.getWidth()/1.5, askPlayers.getHeight()/2);
+        ggods.drawImage(askPlayers, 335, 320, askPlayers.getWidth() / 1.5, askPlayers.getHeight() / 2);
         ggods.setStroke(Color.WHITE);
         ggods.setFont(new Font("", 18));
         ggods.strokeText(CHOOSE_GODS, 363, 349);
@@ -210,34 +210,14 @@ public class App extends Application {
         ImageView textColor = insertQuestion(gcolor, COLOR, background, askPlayers);
         TextField textFieldName = new TextField();
         insertTextField(textFieldName);
-        List<ImageView> colors = new ArrayList<>();
-        HashMap<ImageView, String> buttonToColor = new HashMap<>();
-        ImageView buttonRed = new ImageView(colorRed);
-        insertColorButton(1, buttonRed, colors);
-        buttonToColor.put(buttonRed, RED_COLOR);
 
-        ImageView buttonGrey = new ImageView(colorGrey);
-        insertColorButton(2, buttonGrey, colors);
-        buttonToColor.put(buttonGrey, GREY_COLOR);
-
-        ImageView buttonPurple = new ImageView(colorPurple);
-        insertColorButton(3, buttonPurple, colors);
-        buttonToColor.put(buttonPurple, PURPLE_COLOR);
-
-        ImageView buttonCyan = new ImageView(colorCyan);
-        insertColorButton(4, buttonCyan, colors);
-        buttonToColor.put(buttonCyan, CYAN_COLOR);
-
-        ImageView buttonWhite = new ImageView(colorWhite);
-        insertColorButton(5, buttonWhite, colors);
-        buttonToColor.put(buttonWhite, WHITE_COLOR);
 
         //quit
         quitButton(quit);
 
         //exit
         gexit.drawImage(background, 0, 0, 1024, 700);
-        gexit.drawImage(askPlayers, 335, 320, askPlayers.getWidth()/1.5, askPlayers.getHeight()/2);
+        gexit.drawImage(askPlayers, 335, 320, askPlayers.getWidth() / 1.5, askPlayers.getHeight() / 2);
         gexit.setStroke(Color.WHITE);
         gexit.setFont(new Font("", 18));
         gexit.strokeText(DISCONNECTED, 363, 349);
@@ -246,7 +226,7 @@ public class App extends Application {
         root2.getChildren().addAll(godSelection, apolloImg, artemisImg, athenaImg, atlasImg, chronusImg, demeterImg,
                 hephaestusImg, hestiaImg, hypnusImg, minotaurImg, panImg, persephoneImg, prometheusImg, zeusImg);
         root3.getChildren().addAll(nameSelection, textName, textFieldName);
-        root4.getChildren().addAll(colorSelection, buttonCyan, buttonGrey, buttonPurple, buttonRed, buttonWhite);
+        root4.getChildren().add(colorSelection);
         root5.getChildren().addAll(onExit);
         title = root;
         gods = root2;
@@ -257,7 +237,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
-        for (ImageView img: buttons) {
+        for (ImageView img : buttons) {
             img.setOnMouseEntered(mouseEvent -> title.setCursor(Cursor.HAND));
 
             img.setOnMouseExited(mouseEvent -> title.setCursor(Cursor.DEFAULT));
@@ -273,30 +253,19 @@ public class App extends Application {
             commandGUIManager.manageCommand(generalStringRequestCommand);
         });
 
-        for (ImageView img: colors){
-            img.setOnMouseEntered(mouseEvent ->  selectionColor.setCursor(Cursor.HAND));
-
-            img.setOnMouseExited(mouseEvent -> selectionColor.setCursor(Cursor.DEFAULT));
-
-            img.setOnMouseClicked(mouseEvent -> {
-                GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(buttonToColor.get(img));
-                commandGUIManager.manageCommand(generalStringRequestCommand);
-            });
-        }
-
-        for (ImageView img: cards) {
+        for (ImageView img : cards) {
             img.setOnMouseEntered(mouseEvent -> gods.setCursor(Cursor.HAND));
 
             img.setOnMouseExited(mouseEvent -> gods.setCursor(Cursor.DEFAULT));
 
-            img.setOnMouseClicked(mouseEvent-> {
+            img.setOnMouseClicked(mouseEvent -> {
                 img.setEffect(colorAdjust);
                 GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(cardToName.get(img));
                 commandGUIManager.manageCommand(generalStringRequestCommand);
             });
         }
 
-        quit.setOnMouseEntered(mouseEvent ->  title.setCursor(Cursor.HAND));
+        quit.setOnMouseEntered(mouseEvent -> title.setCursor(Cursor.HAND));
 
         quit.setOnMouseExited(mouseEvent -> title.setCursor(Cursor.DEFAULT));
 
@@ -306,8 +275,6 @@ public class App extends Application {
         });
 
         stage.setOnCloseRequest(we -> {
-            //GeneralStringRequestCommand quitCommand = new GeneralStringRequestCommand(QUIT);
-            //commandGUIManager.manageCommand(quitCommand);
             ExitCommand exitCommand = new ExitCommand();
             commandGUIManager.manageCommand(exitCommand);
             Platform.exit();
@@ -353,6 +320,7 @@ public class App extends Application {
                 break;
         }
         list.add(imageView);
+
     }
 
     private void createButton(ImageView imageView, int players, HashMap<ImageView, Integer> hashMap){
@@ -414,7 +382,12 @@ public class App extends Application {
     }
 
     public void setNameStage(){
-        Platform.runLater(() -> selectionName.getChildren().add(quit));
+
+        Platform.runLater(()  -> {
+                    if (!selectionName.getChildren().contains(quit))
+                        selectionName.getChildren().add(quit);
+                });
+
         stage.getScene().setRoot(selectionName);
 
         quit.setOnMouseEntered(mouseEvent ->  selectionName.setCursor(Cursor.HAND));
@@ -427,7 +400,55 @@ public class App extends Application {
         });
     }
 
-    public void setColorStage(){
+    public void setColorStage(List<String> colorList){
+        List<ImageView> colors = new ArrayList<>();
+        HashMap<ImageView, String> buttonToColor = new HashMap<>();
+
+        for (String s: colorList) {
+            switch (s) {
+                case RED_COLOR:
+                    ImageView buttonRed = new ImageView(colorRed);
+                    insertColorButton(1, buttonRed, colors);
+                    buttonToColor.put(buttonRed, RED_COLOR);
+                    Platform.runLater(() -> selectionColor.getChildren().add(buttonRed));
+                    break;
+                case GREY_COLOR:
+                    ImageView buttonGrey = new ImageView(colorGrey);
+                    insertColorButton(2, buttonGrey, colors);
+                    buttonToColor.put(buttonGrey, GREY_COLOR);
+                    Platform.runLater(() -> selectionColor.getChildren().add(buttonGrey));
+                    break;
+                case PURPLE_COLOR:
+                    ImageView buttonPurple = new ImageView(colorPurple);
+                    insertColorButton(3, buttonPurple, colors);
+                    buttonToColor.put(buttonPurple, PURPLE_COLOR);
+                    Platform.runLater(() -> selectionColor.getChildren().add(buttonPurple));
+                    break;
+                case CYAN_COLOR:
+                    ImageView buttonCyan = new ImageView(colorCyan);
+                    insertColorButton(4, buttonCyan, colors);
+                    buttonToColor.put(buttonCyan, CYAN_COLOR);
+                    Platform.runLater(() -> selectionColor.getChildren().add(buttonCyan));
+                    break;
+                case WHITE_COLOR:
+                    ImageView buttonWhite = new ImageView(colorWhite);
+                    insertColorButton(5, buttonWhite, colors);
+                    buttonToColor.put(buttonWhite, WHITE_COLOR);
+                    Platform.runLater(() -> selectionColor.getChildren().add(buttonWhite));
+            }
+        }
+
+        for (ImageView img: colors){
+            img.setOnMouseEntered(mouseEvent ->  selectionColor.setCursor(Cursor.HAND));
+
+            img.setOnMouseExited(mouseEvent -> selectionColor.setCursor(Cursor.DEFAULT));
+
+            img.setOnMouseClicked(mouseEvent -> {
+                GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(buttonToColor.get(img));
+                commandGUIManager.manageCommand(generalStringRequestCommand);
+            });
+        }
+
         Platform.runLater(() -> selectionColor.getChildren().add(quit));
         stage.getScene().setRoot(selectionColor);
 

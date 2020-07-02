@@ -46,6 +46,24 @@ public class TableXML {
     private static final String CONDITION = "condition";
     private static final String PRIORITY = "priority";
     private static final String PACKAGE_NAME = "it.polimi.ingsw.";
+    private static final String CHALLENGER = "Challenger";
+    private static final String IS_CHALLENGER = "isChallenger";
+    private static final String INGAME = "InGame";
+    private static final String IS_INGAME = "isInGame";
+    private static final String HAS_WON = "HasWon";
+    private static final String IS_WON = "isHasWon";
+    private static final String ACTION = "Action";
+    private static final String HAS_ACTION = "hasAction";
+    private static final String VALID_GOD = "ValidGod";
+    private static final String IS_VALID_GOD = "isValidGod";
+    private static final String WORKER_PLACED = "WorkerPlaced";
+    private static final String IS_WORKER_PLACED = "isWorkerPlaced";
+    private static final String GOD_SET_FORMED = "GodSetFormed";
+    private static final String IS_GOD_SET_FORMED = "isGodSetFormed";
+    private static final String LAST_GOD = "LastGod";
+    private static final String IS_LAST_GOD = "isLastGod";
+    private static final String CHALLENGER_WORKER_SET = "ChallengerWorkerSet";
+    private static final String IS_CHALLENGER_WORKER_SET = "isChallengerWorkerSet";
 
     public TableXML(InputStream inputFile, Object flagClass) {
         this.flagClass = flagClass;
@@ -269,32 +287,32 @@ public class TableXML {
         String nameMethod = null;
 
         switch (el.getElementsByTagName(FLAG).item(0).getTextContent()) {
-            case "Challenger":
-                nameMethod =  "isChallenger";
+            case CHALLENGER:
+                nameMethod =  IS_CHALLENGER;
                 break;
-            case "InGame":
-                nameMethod = "isInGame";
+            case INGAME:
+                nameMethod = IS_INGAME;
                 break;
-            case "HasWon":
-                nameMethod =  "isHasWon";
+            case HAS_WON:
+                nameMethod =  IS_WON;
                 break;
-            case "Action":
-                nameMethod = "hasAction";
+            case ACTION:
+                nameMethod = HAS_ACTION;
                 break;
-            case "ValidGod":
-                nameMethod =  "isValidGod";
+            case VALID_GOD:
+                nameMethod =  IS_VALID_GOD;
                 break;
-            case "WorkerPlaced":
-                nameMethod = "isWorkerPlaced";
+            case WORKER_PLACED:
+                nameMethod = IS_WORKER_PLACED;
                 break;
-            case "GodSetFormed":
-                nameMethod = "isGodSetFormed";
+            case GOD_SET_FORMED:
+                nameMethod = IS_GOD_SET_FORMED;
                 break;
-            case "LastGod":
-                nameMethod = "isLastGod";
+            case LAST_GOD:
+                nameMethod = IS_LAST_GOD;
                 break;
-            case "ChallengerWorkerSet":
-                nameMethod = "isChallengerWorkerSet";
+            case CHALLENGER_WORKER_SET:
+                nameMethod = IS_CHALLENGER_WORKER_SET;
                 break;
 
         }

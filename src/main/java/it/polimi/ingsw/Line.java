@@ -6,6 +6,10 @@ import java.util.HashMap;
 
 public class Line {
 
+    /**
+     * Represents a line of a table.
+     */
+
 
     private final int MINIMUM_LEVEL_OF_PRIORITY = 0;
     private State finishState;

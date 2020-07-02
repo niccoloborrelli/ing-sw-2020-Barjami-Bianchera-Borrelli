@@ -45,7 +45,7 @@ public class LimitedOptionsCommand extends ReplyCommand {
     public void execute(App app){
         switch (specification) {
             case COLOR:
-                app.setColorStage();
+                app.setColorStage(options);
                 break;
             case GODCHOICE:
                 app.changeGods(options);

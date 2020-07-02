@@ -4,6 +4,10 @@ import java.util.List;
 
 public class SettingPawnCommand extends ReplyCommand {
 
+    /**
+     * Represents a reply to a request of a setting pawn.
+     */
+
     String worker;
     String playerColor;
     private int row;
@@ -28,11 +32,20 @@ public class SettingPawnCommand extends ReplyCommand {
         return column;
     }
 
+    /**
+     * Sets a pawn with the information of the command.
+     * @param gui is the interface.
+     */
+
     @Override
     public void execute(GraphicInterface gui) {
         gui.setPawn(row, column,playerColor,worker);
     }
 
+    /**
+     * Sets a pawn with the information of the command.
+     * @param field is the interface.
+     */
     @Override
     public void execute(Field field) {
         field.viewSetup(row, column, worker, playerColor);

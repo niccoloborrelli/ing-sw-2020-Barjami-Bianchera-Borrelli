@@ -1,9 +1,15 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.FinalCommunication.*;
+
 public class EndTurnState extends State {
 
-    private static final String ENDTURNSPECIFICATION="endTurn";
-    EndTurnState(Player player) {
+    /**
+     * Represents the end of turn.
+     * In this state players can do almost nothing.
+     */
+
+    public EndTurnState(Player player) {
         super(player);
     }
 
@@ -30,15 +36,15 @@ public class EndTurnState extends State {
 
     private void resetPlayerActions(){
         if(player.getActionsToPerform().size()==0) {
-            player.getActionsToPerform().add("move");
-            player.getActionsToPerform().add("build");
+            player.getActionsToPerform().add(MOVE);
+            player.getActionsToPerform().add(BUILD);
         }
     }
 
     private void notifyTurnFinished(){
         LastChange finishedTurn = player.getLastChange();
         finishedTurn.setCode(0);
-        finishedTurn.setSpecification(ENDTURNSPECIFICATION);
+        finishedTurn.setSpecification(ENDTURN);
         player.notifyController();
     }
 

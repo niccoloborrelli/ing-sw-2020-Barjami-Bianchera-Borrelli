@@ -197,8 +197,6 @@ public class DeliveryMessage {
         String playerName = findPlayerAttribute(doc, NAME);
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
-        System.out.println(message);
-
         if (code == UPDATE_TO_PRINT || code == UPDATE_ENDGAME) {
             sendToInterface(specification, playerName, playerColor);
         } else if (code == UPDATE_CHOICE) {
@@ -268,6 +266,10 @@ public class DeliveryMessage {
         }else {
             sendToInterface(worker, hashMapList, specification, playerName, playerColor);
         }
+    }
+
+    public NetHandler getNetHandler() {
+        return netHandler;
     }
 
     /**
@@ -642,19 +644,31 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String specification, String playerName, String playerColor){
-        if(specification.equals(NAME)){
-            TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(playerName, playerColor, specification);
-            command.manageCommand(transitionSceneCommand);
-        }else if(specification.equals(SET_UP)) {
-            command.manageCommand(new SetUpCommand(specification,playerName, playerColor));
-        }else if(specification.equals(LOSE) || specification.equals(LOST) || specification.equals(WIN) || specification.equals(ENDGAME)) {
-            command.manageCommand(new PopUpCommand(playerName, playerColor, specification));
-        }else if(specification.equals(ERROR) || specification.equals(ENDTURN)) {
-            SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
-            command.manageCommand(sentenceBottomRequestCommand);
-        }else if(specification.equals(DISCONNECTION)){
-            command.manageCommand(new QuitCommand());
-            quitGame(true);
+        if(command!=null) {
+            switch (specification) {
+                case NAME:
+                    TransitionSceneCommand transitionSceneCommand = new TransitionSceneCommand(playerName, playerColor, specification);
+                    command.manageCommand(transitionSceneCommand);
+                    break;
+                case SET_UP:
+                    command.manageCommand(new SetUpCommand(specification, playerName, playerColor));
+                    break;
+                case LOSE:
+                case LOST:
+                case WIN:
+                case ENDGAME:
+                    command.manageCommand(new PopUpCommand(playerName, playerColor, specification));
+                    break;
+                case ERROR:
+                case ENDTURN:
+                    SentenceBottomRequestCommand sentenceBottomRequestCommand = new SentenceBottomRequestCommand(playerColor, playerName, specification);
+                    command.manageCommand(sentenceBottomRequestCommand);
+                    break;
+                case DISCONNECTION:
+                    command.manageCommand(new QuitCommand());
+                    quitGame(true);
+                    break;
+            }
         }
     }
 
@@ -667,8 +681,10 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(List<String> stringList, String specification, String playerName, String playerColor){
-        LimitedOptionsCommand limitedOptionsCommand = new LimitedOptionsCommand(stringList, specification, playerName, playerColor);
-        command.manageCommand(limitedOptionsCommand);
+        if(command!=null) {
+            LimitedOptionsCommand limitedOptionsCommand = new LimitedOptionsCommand(stringList, specification, playerName, playerColor);
+            command.manageCommand(limitedOptionsCommand);
+        }
     }
 
     /**
@@ -681,8 +697,10 @@ public class DeliveryMessage {
      */
 
     private void sendToInterface(String worker, List<HashMap<String, String>> hashMapList, String specification, String playerName, String playerColor){
-        ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
-        command.manageCommand(showAvCells);
+        if(command!=null) {
+            ShowAvCells showAvCells = new ShowAvCells(specification, playerName, playerColor, worker, hashMapList);
+            command.manageCommand(showAvCells);
+        }
     }
 
     /**
@@ -695,7 +713,8 @@ public class DeliveryMessage {
      */
 
     public void sendToInterface(String worker, String specification, List<Integer> integerList, String playerName, String playerColor){
-        switch (specification){
+        if(command!=null){
+        switch (specification) {
             case MOVE:
                 createMoveUpdateCommand(integerList, worker, playerName, playerColor);
                 break;
@@ -709,6 +728,7 @@ public class DeliveryMessage {
                 createRemoveWorkerCommand(integerList);
                 break;
 
+        }
         }
     }
 

@@ -78,6 +78,7 @@ public class CommandCLIManager implements Command{
         System.out.println("Vediamo se si disconnette da solo");
         deliveryMessage.quitGame(true);
         quitCommand.execute(field);
+
     }
 
     @Override

@@ -54,7 +54,9 @@ class ActionStateTest {
 
         int oldSize = player.getActionsToPerform().size();
 
-        actionState.onStateTransition();
+        synchronized (player) {
+            actionState.onStateTransition();
+        }
 
         assertTrue(player.getActionsToPerform().size()==oldSize-1 && player.getWorkers().get(0).getWorkerSpace().equals(islandBoard.getSpace(2,1)) &&
                 islandBoard.getSpace(0,0).getOccupator()==null && actionState.getActingWorker().equals(player.getWorkers().get(0)) &&
@@ -109,7 +111,9 @@ class ActionStateTest {
 
             int oldSize = player.getActionsToPerform().size();
 
+        synchronized (player) {
             actionState.onStateTransition();
+        }
 
             assertTrue(player.getActionsToPerform().size()==oldSize-1 && player.getWorkers().get(0).getWorkerSpace().equals(islandBoard.getSpace(0,0)) &&
                     islandBoard.getSpace(2,1).getOccupator()==null && islandBoard.getSpace(2,1).getLevel()==1);
@@ -160,7 +164,9 @@ class ActionStateTest {
         islandBoard.getSpace(2, 1).setLevel(3);
         player.setLastReceivedInput(workerSpaceCouple);
 
-        actionState.onStateTransition();
+        synchronized (player) {
+            actionState.onStateTransition();
+        }
 
         assertTrue(islandBoard.getSpace(2, 1).HasDome());
 
@@ -211,7 +217,9 @@ class ActionStateTest {
         player.getWorkers().get(0).setMustBuildDome(true);
         player.setLastReceivedInput(workerSpaceCouple);
 
-        actionState.onStateTransition();
+        synchronized (player) {
+            actionState.onStateTransition();
+        }
 
         assertTrue(islandBoard.getSpace(2, 1).HasDome());
     }
@@ -261,7 +269,9 @@ class ActionStateTest {
         workerSpaceCouple.setSpace(islandBoard.getSpace(2,1));
         player.setLastReceivedInput(workerSpaceCouple);
 
-        actionState.onStateTransition();
+        synchronized (player) {
+            actionState.onStateTransition();
+        }
 
         assertTrue(player.isHasWon());
 

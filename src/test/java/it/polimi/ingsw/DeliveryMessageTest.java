@@ -123,6 +123,7 @@ class DeliveryMessageTest {
         String player6 = "<player><name>I</name><color>purple</color></player>";
         String player7 = "<player><name>I</name><color>evviva</color></player>";
         String specification = "<specification>endTurn</specification>";
+        String specification1 = "<specification>disconnection</specification>";
         String message = "</data>";
 
         strings.add(prefix+code+specification+message);
@@ -134,6 +135,7 @@ class DeliveryMessageTest {
         strings.add(prefix+code+player6+specification+message);
         strings.add(prefix+code+player7+specification+message);
         strings.add(prefix+strangeCode+player1+specification+message);
+        strings.add(prefix+code+player1+specification1+message);
 
 
 
@@ -142,8 +144,8 @@ class DeliveryMessageTest {
         Thread client = new Thread(()->{
             try {
                 Socket sc = new Socket("localhost", 62100);
-                DeliveryMessage deliveryMessage = new DeliveryMessage(sc);
-                deliveryMessage.startReading();
+                CommandCLIManager commandCLIManager = new CommandCLIManager(sc);
+                commandCLIManager.getDeliveryMessage().startReading();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -179,8 +181,8 @@ class DeliveryMessageTest {
         Thread client = new Thread(()->{
             try {
                 Socket sc = new Socket("localhost", 62100);
-                DeliveryMessage deliveryMessage = new DeliveryMessage(sc);
-                deliveryMessage.startReading();
+                CommandCLIManager commandCLIManager = new CommandCLIManager(sc);
+                commandCLIManager.getDeliveryMessage().startReading();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -209,16 +211,20 @@ class DeliveryMessageTest {
         String message2 = "<message><worker><char>A</char></worker><space><row>1</row><column>4</column>" +
                 "<level>3</level><dome>false</dome></space></message></data>";
         String message3 = "<message><worker><char>A</char></worker><space><row>A</row><column>b</column><level>b</level><dome>false</dome></space></message></data>";
+        String specification3 = "<specification>workerSetting</specification>";
+        String specification4 = "<specification>deleted</specification>";
 
         strings.add(prefix+code+player+specification1+message1);
         strings.add(prefix+code+player+specification2+message2);
         strings.add(prefix+code+player+specification2+message3);
+        strings.add(prefix+code+player+specification3+message1);
+        strings.add(prefix+code+player+specification4+message1);
 
         Thread client = new Thread(()->{
             try {
                 Socket sc = new Socket("localhost", 62100);
-                DeliveryMessage deliveryMessage = new DeliveryMessage(sc);
-                deliveryMessage.startReading();
+                CommandCLIManager commandCLIManager = new CommandCLIManager(sc);
+                commandCLIManager.getDeliveryMessage().startReading();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -246,8 +252,8 @@ class DeliveryMessageTest {
         Thread client = new Thread(()->{
             try {
                 Socket sc = new Socket("localhost", 62100);
-                DeliveryMessage deliveryMessage = new DeliveryMessage(sc);
-                deliveryMessage.startReading();
+                CommandCLIManager commandCLIManager = new CommandCLIManager(sc);
+                commandCLIManager.getDeliveryMessage().startReading();
             } catch (IOException e) {
                 e.printStackTrace();
             }

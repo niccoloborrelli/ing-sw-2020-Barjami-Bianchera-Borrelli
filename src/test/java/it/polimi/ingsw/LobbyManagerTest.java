@@ -43,5 +43,8 @@ class LobbyManagerTest {
         lobbyManager.addPlayer(player1, 2);
         lobbyManager.addPlayer(player3, 3);
         lobbyManager.addPlayer(player2, 2);
+
+        serverSocket.close();
+        socket.close();
     }
 }

@@ -395,6 +395,11 @@ public class CheckingUtility {
         }
     }
 
+    /**
+     * Removes determined spaces due to restriction applied to board.
+     * @param player is player to check
+     */
+
     private static void islandBoardRestriction(Player player){
         if(player.getIslandBoard().isMustMoveUp() && !player.isNotMustMoveUp()){
             if(workersCanGoUp(player)) {
@@ -410,6 +415,12 @@ public class CheckingUtility {
         }
     }
 
+    /**
+     * Finds highest level with a worker in board.
+     * @param islandBoard is field in which research is.
+     * @return highest level with a worker in board
+     */
+
     private static int getWorkerHighestLevel(IslandBoard islandBoard){
         int highestLevel = 0;
         for(int i = 0; i < DIM; i++)
@@ -422,6 +433,13 @@ public class CheckingUtility {
             }
         return highestLevel;
     }
+
+    /**
+     * Finds index of worker in the level passed.
+     * @param islandBoard is game field.
+     * @param highestLevel is level on which worker will be searched.
+     * @return index of worker in the level passed.
+     */
 
     private static int workerAtHighestLevel(IslandBoard islandBoard, int highestLevel){
         int workerAtHighestLevel = 0;
@@ -436,12 +454,24 @@ public class CheckingUtility {
         return workerAtHighestLevel;
     }
 
+    /**
+     * Removes all spaces in which worker can do an action if it's in the level passed.
+     * @param player is player to check.
+     * @param highestLevel is level passed.
+     */
+
     private static void removeSpaceHighestLevel(Player player, int highestLevel){
         for(Worker w: player.getWorkers())
             if(w.getWorkerSpace().getLevel() == highestLevel) {
                 w.getPossibleMovements().clear();
             }
     }
+
+    /**
+     * Finds if worker could go up.
+     * @param player is player to check.
+     * @return true if worker can go up, false otherwise.
+     */
 
     private static boolean workersCanGoUp(Player player){
         boolean result = false;
@@ -455,6 +485,11 @@ public class CheckingUtility {
         }
         return result;
     }
+
+    /**
+     * Removes all spaces whose level is lower than worker space one.
+     * @param player is player to check.
+     */
 
     private static void removeLowerSpace(Player player){
         for(Worker w: player.getWorkers()) {

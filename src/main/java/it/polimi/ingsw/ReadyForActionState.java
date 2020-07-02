@@ -32,6 +32,11 @@ public class ReadyForActionState extends State {
         }
     }
 
+    /**
+     * This method calculate all the available spaces for the next action of the player,
+     * if there are none the player loses and his game finishes
+     * @throws IOException
+     */
     @Override
     public void onStateTransition() throws IOException {
         boolean hasLost = false;

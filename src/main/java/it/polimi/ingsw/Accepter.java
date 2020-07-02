@@ -16,7 +16,16 @@ public class Accepter {
         ServerSocket serverSocket = new ServerSocket(60100);
         HandlerHub globalHub = new HandlerHub();
         LobbyManager lobbyManager = new LobbyManager(globalHub);
+        try {
+            manageAccepter(serverSocket,globalHub,lobbyManager);
+        }
+        catch (IOException e){
+            serverSocket.close();
+        }
 
+    }
+
+    private void manageAccepter(ServerSocket serverSocket,HandlerHub globalHub,LobbyManager lobbyManager) throws IOException {
         while (true) {
             Socket sc = serverSocket.accept();
             Player player = new Player();
@@ -27,7 +36,7 @@ public class Accepter {
             player.setController(controller);
             controller.setPlayer(player);
             globalHub.addHandlerForSocket(sc, controller);
-            new Thread(()->{
+            new Thread(() -> {
                 Thread t = globalHub.createThreadHandle(globalHub.getHandlerControllerHashMap().get(controller));
                 t.start();
                 try {
@@ -39,8 +48,6 @@ public class Accepter {
             player.getStateManager().setCurrent_state(new PreLobbyState(player, lobbyManager));
             player.getState().onStateTransition();
         }
-
-
     }
 
 }

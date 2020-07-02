@@ -1,6 +1,9 @@
 package it.polimi.ingsw;
 
 public class Visitor {
+    /**
+     * Represents the pattern Visitor which could enter in different classes.
+     */
     private WorkerSpaceCouple workerSpaceCouple;
     private String stringInput;
     private int intInput;

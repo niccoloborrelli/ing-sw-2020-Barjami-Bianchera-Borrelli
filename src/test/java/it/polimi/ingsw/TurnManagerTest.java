@@ -5,7 +5,11 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,12 +21,25 @@ class TurnManagerTest {
     e un giocatore ha quel potere allora vince
      */
     @Test
-    void checkWinTest1() throws IOException {
+    void checkWinTest1() throws IOException, ParserConfigurationException, SAXException {
+        ServerSocket serverSocket = new ServerSocket(60102);
+        Socket socket = new Socket("localhost", 60102);
+        HandlerHub handlerHub = new HandlerHub();
+
         IslandBoard islandBoard = new IslandBoard();
         Player ciro = new Player();
         Player francois = new Player();
         ciro.setIslandBoard(islandBoard);
         francois.setIslandBoard(islandBoard);
+
+        Controller controller1 = new Controller();
+        Controller controller2 = new Controller();
+        ciro.setController(controller1);
+        francois.setController(controller2);
+        controller1.setPlayer(ciro);
+        controller2.setPlayer(francois);
+        handlerHub.addHandlerForSocket(socket, controller1);
+        handlerHub.addHandlerForSocket(socket, controller2);
 
         List<Player> players = new ArrayList<>();
         players.add(ciro);
@@ -32,26 +49,69 @@ class TurnManagerTest {
         francois.setWinCondition(new CompleteTowerWin(new BaseWinCondition()));
         ciro.setWinCondition(new BaseWinCondition());
 
-        islandBoard.getSpace(0,0).setLevel(4);
-        islandBoard.getSpace(0,1).setLevel(4);
-        islandBoard.getSpace(0,2).setLevel(4);
-        islandBoard.getSpace(0,3).setLevel(4);
-        islandBoard.getSpace(0,4).setLevel(4);
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        stateManager1.createBaseStates(ciro);
+        stateManager2.createBaseStates(francois);
+        ciro.setStateManager(stateManager1);
+        francois.setStateManager(stateManager2);
 
-        turnManager.checkWin();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, ciro);
+        HashMap<State, List<Line>> table = tableXML.readXML(ciro.getStateManager().getStateHashMap());
+        ciro.getStateManager().setTable(table);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, francois);
+        HashMap<State, List<Line>> table2 = tableXML2.readXML(francois.getStateManager().getStateHashMap());
+        francois.getStateManager().setTable(table2);
+
+        ciro.getStateManager().setCurrent_state(ciro.getStateManager().getState("ReadyForActionState"));
+        francois.getStateManager().setCurrent_state(francois.getStateManager().getState("ReadyForActionState"));
+
+        islandBoard.getSpace(0,0).setLevel(3);
+        islandBoard.getSpace(0,0).setHasDome(true);
+        islandBoard.getSpace(0,1).setLevel(3);
+        islandBoard.getSpace(0,1).setHasDome(true);
+        islandBoard.getSpace(0,2).setLevel(3);
+        islandBoard.getSpace(0,2).setHasDome(true);
+        islandBoard.getSpace(0,3).setLevel(3);
+        islandBoard.getSpace(0,3).setHasDome(true);
+        islandBoard.getSpace(0,4).setLevel(3);
+        islandBoard.getSpace(0,4).setHasDome(true);
+
+        synchronized (francois) {
+            turnManager.checkWin();
+        }
         assertTrue(francois.isHasWon());
+
+        serverSocket.close();
+        socket.close();
     }
 
     /*
     Questo test verifica la win condition di scendere di 2 o più livelli
      */
     @Test
-    void checkWinTest2() throws IOException {
+    void checkWinTest2() throws IOException, ParserConfigurationException, SAXException {
+        ServerSocket serverSocket = new ServerSocket(60102);
+        Socket socket = new Socket("localhost", 60102);
+        HandlerHub handlerHub = new HandlerHub();
+
         IslandBoard islandBoard = new IslandBoard();
         Player ciro = new Player();
         Player francois = new Player();
         ciro.setIslandBoard(islandBoard);
         francois.setIslandBoard(islandBoard);
+
+        Controller controller1 = new Controller();
+        Controller controller2 = new Controller();
+        ciro.setController(controller1);
+        francois.setController(controller2);
+        controller1.setPlayer(ciro);
+        controller2.setPlayer(francois);
+        handlerHub.addHandlerForSocket(socket, controller1);
+        handlerHub.addHandlerForSocket(socket, controller2);
 
         List<Player> players = new ArrayList<>();
         players.add(ciro);
@@ -60,26 +120,63 @@ class TurnManagerTest {
         turnManager.setPlayers(players);
         francois.setWinCondition(new JumpMoreLevelsWin(new BaseWinCondition()));
         ciro.setWinCondition(new BaseWinCondition());
+
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        stateManager1.createBaseStates(ciro);
+        stateManager2.createBaseStates(francois);
+        ciro.setStateManager(stateManager1);
+        francois.setStateManager(stateManager2);
+
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, ciro);
+        HashMap<State, List<Line>> table = tableXML.readXML(ciro.getStateManager().getStateHashMap());
+        ciro.getStateManager().setTable(table);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, francois);
+        HashMap<State, List<Line>> table2 = tableXML2.readXML(francois.getStateManager().getStateHashMap());
+        francois.getStateManager().setTable(table2);
+
+        ciro.getStateManager().setCurrent_state(ciro.getStateManager().getState("ReadyForActionState"));
+        francois.getStateManager().setCurrent_state(francois.getStateManager().getState("ReadyForActionState"));
 
         francois.getWorkers().get(1).setMovedThisTurn(true);
         francois.getWorkers().get(1).setWorkerSpace(islandBoard.getSpace(0,1));
         francois.getWorkers().get(1).setLastSpaceOccupied(islandBoard.getSpace(0,0));
         islandBoard.getSpace(0,0).setLevel(2);
 
-        turnManager.checkWin();
-        assertTrue(francois.isHasWon());
+        synchronized (francois) {
+            turnManager.checkWin();
+        }
+
+        serverSocket.close();
+        socket.close();
     }
 
     /*
     Questo test verifica la base win condition
      */
     @Test
-    void checkWinTest3() throws IOException {
+    void checkWinTest3() throws IOException, ParserConfigurationException, SAXException {
+        ServerSocket serverSocket = new ServerSocket(60102);
+        Socket socket = new Socket("localhost", 60102);
+        HandlerHub handlerHub = new HandlerHub();
+
         IslandBoard islandBoard = new IslandBoard();
         Player ciro = new Player();
         Player francois = new Player();
         ciro.setIslandBoard(islandBoard);
         francois.setIslandBoard(islandBoard);
+
+        Controller controller1 = new Controller();
+        Controller controller2 = new Controller();
+        ciro.setController(controller1);
+        francois.setController(controller2);
+        controller1.setPlayer(ciro);
+        controller2.setPlayer(francois);
+        handlerHub.addHandlerForSocket(socket, controller1);
+        handlerHub.addHandlerForSocket(socket, controller2);
 
         List<Player> players = new ArrayList<>();
         players.add(ciro);
@@ -88,6 +185,26 @@ class TurnManagerTest {
         turnManager.setPlayers(players);
         francois.setWinCondition(new JumpMoreLevelsWin(new BaseWinCondition()));
         ciro.setWinCondition(new BaseWinCondition());
+
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        stateManager1.createBaseStates(ciro);
+        stateManager2.createBaseStates(francois);
+        ciro.setStateManager(stateManager1);
+        francois.setStateManager(stateManager2);
+
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, ciro);
+        HashMap<State, List<Line>> table = tableXML.readXML(ciro.getStateManager().getStateHashMap());
+        ciro.getStateManager().setTable(table);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, francois);
+        HashMap<State, List<Line>> table2 = tableXML2.readXML(francois.getStateManager().getStateHashMap());
+        francois.getStateManager().setTable(table2);
+
+        ciro.getStateManager().setCurrent_state(ciro.getStateManager().getState("ReadyForActionState"));
+        francois.getStateManager().setCurrent_state(francois.getStateManager().getState("ReadyForActionState"));
 
         ciro.getWorkers().get(0).setMovedThisTurn(true);
         ciro.getWorkers().get(0).setWorkerSpace(islandBoard.getSpace(0,0));
@@ -95,8 +212,12 @@ class TurnManagerTest {
         islandBoard.getSpace(0,0).setLevel(3);
         islandBoard.getSpace(0,1).setLevel(2);
 
-        turnManager.checkWin();
-        assertTrue(ciro.isHasWon());
+        synchronized (ciro) {
+            turnManager.checkWin();
+        }
+
+        serverSocket.close();
+        socket.close();
     }
 
     /*
@@ -104,7 +225,11 @@ class TurnManagerTest {
     solo giocatore allora vince
      */
     @Test
-    void checkWinTest4() throws IOException {
+    void checkWinTest4() throws IOException, ParserConfigurationException, SAXException {
+        ServerSocket serverSocket = new ServerSocket(60102);
+        Socket socket = new Socket("localhost", 60102);
+        HandlerHub handlerHub = new HandlerHub();
+
         Player ciro = new Player();
         Player francois = new Player();
         List<Player> players = new ArrayList<>();
@@ -113,11 +238,44 @@ class TurnManagerTest {
         TurnManager turnManager = new TurnManager();
         turnManager.setPlayers(players);
 
+        Controller controller1 = new Controller();
+        Controller controller2 = new Controller();
+        ciro.setController(controller1);
+        francois.setController(controller2);
+        controller1.setPlayer(ciro);
+        controller2.setPlayer(francois);
+        handlerHub.addHandlerForSocket(socket, controller1);
+        handlerHub.addHandlerForSocket(socket, controller2);
+
         francois.setWinCondition(new BaseWinCondition());
         ciro.setInGame(false);
 
-        turnManager.checkWin();
-        assertTrue(francois.isHasWon());
+        StateManager stateManager1 = new StateManager();
+        StateManager stateManager2 = new StateManager();
+        stateManager1.createBaseStates(ciro);
+        stateManager2.createBaseStates(francois);
+        ciro.setStateManager(stateManager1);
+        francois.setStateManager(stateManager2);
+
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, ciro);
+        HashMap<State, List<Line>> table = tableXML.readXML(ciro.getStateManager().getStateHashMap());
+        ciro.getStateManager().setTable(table);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, francois);
+        HashMap<State, List<Line>> table2 = tableXML2.readXML(francois.getStateManager().getStateHashMap());
+        francois.getStateManager().setTable(table2);
+
+        ciro.getStateManager().setCurrent_state(ciro.getStateManager().getState("ReadyForActionState"));
+        francois.getStateManager().setCurrent_state(francois.getStateManager().getState("ReadyForActionState"));
+
+        synchronized (francois) {
+            turnManager.checkWin();
+        }
+
+        serverSocket.close();
+        socket.close();
     }
 
     /*

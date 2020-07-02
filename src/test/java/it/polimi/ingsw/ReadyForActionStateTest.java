@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +18,7 @@ import java.util.Objects;
 class ReadyForActionStateTest {
 
     @Test
-    void onInput() throws IOException {
+    void onInputTest1() throws IOException {
         ServerSocket serverSocket = new ServerSocket(60103);
         Socket socket = new Socket("localhost", 60103);
         HandlerHub handlerHub = new HandlerHub();
@@ -70,8 +71,74 @@ class ReadyForActionStateTest {
         State ready = player1.getStateManager().getState("ReadyForActionState");
         ready.onStateTransition();
         ready.onInput(visitor);
+
         serverSocket.close();
         socket.close();
+    }
+
+    @Test
+    void onInputTest2() throws IOException, ParserConfigurationException, SAXException {
+        ServerSocket serverSocket = new ServerSocket(60103);
+        Socket socket = new Socket("localhost", 60103);
+        HandlerHub handlerHub = new HandlerHub();
+        Player player1 = new Player();
+        player1.setPlayerName("pino");
+        player1.setPlayerColor("red");
+        player1.setPlayerGod("Pan");
+        Controller controller1 = new Controller();
+        Player player2 = new Player();
+        player2.setPlayerName("gigi");
+        player2.setPlayerColor("white");
+        player2.setPlayerGod("Chronus");
+        Controller controller2 = new Controller();
+        handlerHub.addHandlerForSocket(socket, controller1);
+        handlerHub.addHandlerForSocket(socket, controller2);
+        player1.setController(controller1);
+        player2.setController(controller2);
+        controller1.setPlayer(player1);
+        controller2.setPlayer(player2);
+
+        IslandBoard islandBoard = new IslandBoard();
+        player1.setIslandBoard(islandBoard);
+        player2.setIslandBoard(islandBoard);
+
+        StateManager stateManager = new StateManager();
+        StateManager stateManager1 = new StateManager();
+        stateManager.createBaseStates(player1);
+        stateManager1.createBaseStates(player2);
+        player1.setStateManager(stateManager);
+        player2.setStateManager(stateManager1);
+
+        TurnManager turnManager = new TurnManager();
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        turnManager.setPlayers(players);
+        player1.getStateManager().setTurnManager(turnManager);
+        player2.getStateManager().setTurnManager(turnManager);
+
+        Worker worker1 = player1.getWorkers().get(0);
+        Worker worker2 = player1.getWorkers().get(1);
+        worker1.setWorkerSpace(player1.getIslandBoard().getSpace(3,2));
+        player1.getIslandBoard().getSpace(3,2).setOccupator(worker1);
+        worker2.setWorkerSpace(player1.getIslandBoard().getSpace(2,2));
+        player1.getIslandBoard().getSpace(2,2).setOccupator(worker2);
+
+        player1.getActionsToPerform().remove(0);
+        worker1.setMovedThisTurn(true);
+        worker1.setCantBuild(false);
+
+        Visitor visitor = new Visitor();
+        WorkerSpaceCouple workerSpaceCouple = new WorkerSpaceCouple(worker1, player1.getIslandBoard().getSpace(0,0));
+        visitor.setWorkerSpaceCouple(workerSpaceCouple);
+
+        State ready = player1.getStateManager().getState("ReadyForActionState");
+        ready.onStateTransition();
+        ready.onInput(visitor);
+
+        serverSocket.close();
+        socket.close();
+
     }
 
     @Test
@@ -122,12 +189,13 @@ class ReadyForActionStateTest {
 
         State ready = player1.getStateManager().getState("ReadyForActionState");
         ready.onStateTransition();
+
         serverSocket.close();
         socket.close();
     }
-/*
+
     @Test
-    void onStateTransitionTest2() throws IOException, NoSuchMethodException, ClassNotFoundException, ParserConfigurationException, SAXException {
+    void onStateTransitionTest2() throws IOException, ParserConfigurationException, SAXException {
         ServerSocket serverSocket = new ServerSocket(60105);
         Socket socket = new Socket("localhost", 60105);
         HandlerHub handlerHub = new HandlerHub();
@@ -156,10 +224,12 @@ class ReadyForActionStateTest {
         player2.setStateManager(stateManager2);
 
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        TableXML tableXML = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player1);
+        InputStream file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML = new TableXML(file, player1);
         HashMap<State, List<Line>> table = tableXML.readXML(player1.getStateManager().getStateHashMap());
         player1.getStateManager().setTable(table);
-        TableXML tableXML2 = new TableXML(new File(Objects.requireNonNull(classLoader.getResource("table.txt")).getFile()), player2);
+        file = classLoader.getResourceAsStream("table.txt");
+        TableXML tableXML2 = new TableXML(file, player2);
         HashMap<State, List<Line>> table2 = tableXML2.readXML(player2.getStateManager().getStateHashMap());
         player2.getStateManager().setTable(table2);
 
@@ -189,6 +259,9 @@ class ReadyForActionStateTest {
         player1.getStateManager().setCurrent_state(ready);
         player2.getStateManager().setCurrent_state(player2.getStateManager().getState("ColorSettingState"));
         ready.onStateTransition();
+
+        serverSocket.close();
+        socket.close();
     }
-*/
+
 }

@@ -6,6 +6,7 @@ public class FinalCommunication {
      * This class contains most of static final used to parse and deparse message in communication classes.
      */
 
+    public static final String DESCRIPTION = "Description";
     public static final String DISCONNECTION = "disconnection";
     public static final String MESSAGE = "message";
     public static final String SPACE_STRING = " ";

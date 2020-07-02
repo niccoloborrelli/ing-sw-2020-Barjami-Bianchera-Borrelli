@@ -1,4 +1,4 @@
-/*package it.polimi.ingsw;
+package it.polimi.ingsw;
 
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +17,11 @@ class TableXMLTest {
 
     @Test
     void readXML() {
-        File file = new File("C:\\Users\\Rei\\IdeaProjects\\TestMAvenJfx\\src\\main\\java\\resources\\table.txt");
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("Table.txt");
         HashMap<State, List<Line>> hash = null;
         Player player = new Player();
-        TableXML tableXML = new TableXML(file, player);
+        TableXML tableXML = new TableXML(inputStream, player);
         State readyForAction = new ReadyForActionState(player);
         State endTurn = new EndTurnState(player);
         State restriction = new ReadyForActionState(player);
@@ -49,4 +51,4 @@ class TableXMLTest {
 
 
     }
-}*/
+}
