@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Handler extends Thread {
-
+    private static final int waitingTime=400;
     /**
      * Receives and sends messages to client.
      */
@@ -70,7 +70,7 @@ public class Handler extends Thread {
                     }
                 }
                 try {
-                    sleep(400);
+                    sleep(waitingTime);
                 } catch (InterruptedException ignored) {
                 }
             }

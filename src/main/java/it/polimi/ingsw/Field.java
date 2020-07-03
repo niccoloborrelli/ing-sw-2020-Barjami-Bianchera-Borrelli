@@ -9,6 +9,9 @@ import static it.polimi.ingsw.FinalCommunication.*;
 
 
 public class Field{
+    private static final int lowCorrective=2;
+    private static final int highCorrective=4;
+    private static final int unitCorrective=1;
 
     /**
      * Represents the CLI interface. It's composed by a game field.
@@ -16,16 +19,6 @@ public class Field{
 
     private String[][] field = new String[ROW_CLI][COLUMN_CLI];
 
-
-    /*
-        CONVERSIONE ISLANDBOARD -> VIEW
-        Righe:  0 -> 2         Colonne: 0 -> 2
-                1 -> 4                  1 -> 6
-                2 -> 6                  2 -> 10
-                3 -> 8                  3 -> 14
-                4 -> 10                 4 -> 18
-                (2x + 2)                (4x + 2)
-    */
 
     /**
      * The constructor methods initializes a field with all level 0
@@ -73,9 +66,9 @@ public class Field{
      * @param hasDome is true if a dome is built
      */
     public void viewBuild(int row, int column, int level, int hasDome) {
-        row = 2 * row + 2;
-        column = 4 * column + 4;
-        if (hasDome == 1)
+        row = lowCorrective * row + lowCorrective;
+        column = highCorrective * column + highCorrective;
+        if (hasDome == unitCorrective)
             field[row][column] = ANSI_BLUE.escape() + "D";
         else
             field[row][column] = ANSI_BLUE.escape() + level;
@@ -92,10 +85,10 @@ public class Field{
      * @param color     is the color player
      */
     public void viewMove(String worker, int oldRow, int oldColumn, int newRow, int newColumn, String color) {
-        oldRow = 2 * oldRow + 2;
-        oldColumn = 4 * oldColumn + 2;
-        newRow = 2 * newRow + 2;
-        newColumn = 4 * newColumn + 2;
+        oldRow = lowCorrective * oldRow + lowCorrective;
+        oldColumn = highCorrective * oldColumn + lowCorrective;
+        newRow = lowCorrective * newRow + lowCorrective;
+        newColumn = highCorrective * newColumn + lowCorrective;
 
         if(oldRow>=MINROW && oldColumn>=MINCOLUMN)
             field[oldRow][oldColumn] = " ";
@@ -111,8 +104,8 @@ public class Field{
      * @param column is the start space column
      */
     public void viewSetup(int row, int column, String worker, String color) {
-        row = 2 * row + 2;
-        column = 4 * column + 2;
+        row = lowCorrective * row + lowCorrective;
+        column = highCorrective * column + lowCorrective;
 
         field[row][column] = color + worker;
         plot();
@@ -125,8 +118,8 @@ public class Field{
      * @param column is the column of the worker to remove
      */
     public void viewRemoveWorker(int row, int column) {
-        row = 2 * row + 2;
-        column = 4 * column + 2;
+        row = lowCorrective * row + lowCorrective;
+        column = highCorrective * column + lowCorrective;
 
         field[row][column] = " ";
         plot();
@@ -143,104 +136,81 @@ public class Field{
     }
 
     /**
-     *
+     *This method inserts the numbers outside the board
      */
-
     private void outsideNumbers() {
-        for (int i = 2, number = 0; i < ROW_CLI - 1; i = i + 2, number++)
+        for (int i = lowCorrective, number = MINSIZE; i < ROW_CLI - unitCorrective; i = i + lowCorrective, number++)
             field[i][MINCOLUMN] = number + " ";
         field[MINROW][3] = "  0  ";
-        for (int j = 7, number = 1; j < COLUMN_CLI; j = j + 4, number++)
+        for (int j = 7, number = unitCorrective; j < COLUMN_CLI; j = j + highCorrective, number++)
             field[MINROW][j] = " " + number + "  ";
     }
 
+    /**
+     * This method inserts the first column margins
+     */
     private void firstMargins() {
         field[FIRST_ROW_CLI][FIRST_COLUMN_CLI] = " |";
-        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - unitCorrective; j = j + highCorrective)
             field[FIRST_ROW_CLI][j] = "|";
-        field[FIRST_ROW_CLI][COLUMN_CLI - 1] = "|";
+        field[FIRST_ROW_CLI][COLUMN_CLI - unitCorrective] = "|";
     }
 
+    /**
+     * This method inserts all the horizontal margins
+     */
     private void horizontalMargins() {
-        for (int i = FIRST_ROW_CLI; i < ROW_CLI; i = i + 2)
-            for (int j = 2; j < COLUMN_CLI - 1; j++) {
-                if (j % 4 != 1)
+        for (int i = FIRST_ROW_CLI; i < ROW_CLI; i = i + lowCorrective)
+            for (int j = lowCorrective; j < COLUMN_CLI - unitCorrective; j++) {
+                if (j % highCorrective != unitCorrective)
                     field[i][j] = "--";
             }
     }
 
+    /**
+     * This method inserts all the middle vertical margins
+     */
     private void middleMargins() {
-        for (int i = 3; i < ROW_CLI - 2; i = i + 2) {
+        for (int i = 3; i < ROW_CLI - lowCorrective; i = i + lowCorrective) {
             field[i][FIRST_COLUMN_CLI] = " |";
-            for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
+            for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - unitCorrective; j = j + highCorrective)
                 field[i][j] = "+";
-            field[i][COLUMN_CLI - 1] = "|";
+            field[i][COLUMN_CLI - unitCorrective] = "|";
         }
     }
 
+    /**
+     * This method inserts all the final column vertical margins
+     */
     private void finalMargins() {
-        field[ROW_CLI - 1][FIRST_COLUMN_CLI] = " |";
-        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - 1; j = j + 4)
-            field[ROW_CLI - 1][j] = "|";
-        field[ROW_CLI - 1][COLUMN_CLI - 1] = "|";
+        field[ROW_CLI - unitCorrective][FIRST_COLUMN_CLI] = " |";
+        for (int j = SECOND_COLUMN_CLI; j < COLUMN_CLI - unitCorrective; j = j + highCorrective)
+            field[ROW_CLI - unitCorrective][j] = "|";
+        field[ROW_CLI - unitCorrective][COLUMN_CLI - unitCorrective] = "|";
     }
 
+    /**
+     * This method inserts all the remaining vertical margins
+     */
     private void verticalMargins() {
-        for (int i = 2; i < ROW_CLI - 1; i = i + 2)
-            for (int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + 4)
+        for (int i = lowCorrective; i < ROW_CLI - unitCorrective; i = i + lowCorrective)
+            for (int j = FIRST_COLUMN_CLI; j < COLUMN_CLI; j = j + highCorrective)
                 field[i][j] = "|" + "   ";
     }
 
+    /**
+     * This method insert the starting levels on every field
+     */
     private void startingLevels() {
-        for (int i = 2; i < ROW_CLI - 1; i = i + 2)
-            for (int j = 4; j < COLUMN_CLI - 1; j = j + 4)
+        for (int i = lowCorrective; i < ROW_CLI - unitCorrective; i = i + lowCorrective)
+            for (int j = highCorrective; j < COLUMN_CLI - unitCorrective; j = j + highCorrective)
                 field[i][j] = ANSI_BLUE.escape() + "0";
     }
-
-    /*
-
-    public void printParticularSentence(String specification, String playerName, String playerColor) {
-        String data = null;
-        switch (specification) {
-            case ENDTURN:
-                data = getEndTurnPhrase(playerName, playerColor);
-                break;
-            case ERROR:
-                data = getErrorPhrase();
-                break;
-            case WIN:
-                data = won;
-                break;
-            case LOSE:
-                data = lose;
-                break;
-            case LOST:
-                System.out.println("LOST");
-                data = getLostPhrase(playerName, playerColor);
-                break;
-            case NAME:
-                data = nameSent;
-                break;
-            case WORKERSETTING:
-                data = SET_UP;
-                break;
-            case DISCONNECTION:
-                data = disconnection;
-                break;
-            case ENDGAME:
-                data = endGame;
-                break;
-        }
-
-        System.out.println(data);
-    }
-     */
 
     /**
      * Prints the sentence passed.
      * @param sentence is sentence passed.
      */
-
     public void printSentence(String sentence){
         System.out.println(sentence);
     }
@@ -252,7 +222,6 @@ public class Field{
      * @param playerName is player name.
      * @param playerColor is player color.
      */
-
     public void printChoices(List<String> stringList, String specification, String playerName, String playerColor) {
         String data = null;
         String prefix = playerColor + playerName + ANSI_RESET;

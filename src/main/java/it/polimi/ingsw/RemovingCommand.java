@@ -3,7 +3,8 @@ package it.polimi.ingsw;
 import java.util.List;
 
 public class RemovingCommand extends ReplyCommand {
-
+    private static final int rowPos=0;
+    private static final int columnPos=1;
     /**
      * Represents a command which will remove a component in a determined position
      * in interface.
@@ -13,8 +14,8 @@ public class RemovingCommand extends ReplyCommand {
     private int column;
 
     public RemovingCommand(List<Integer> integerList) {
-        this.row = integerList.get(0);
-        this.column = integerList.get(1);
+        this.row = integerList.get(rowPos);
+        this.column = integerList.get(columnPos);
     }
 
     /**

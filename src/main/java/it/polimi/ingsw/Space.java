@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.MINLEVEL;
+
 public class Space {
     private Worker occupator;
     private int row;
@@ -15,7 +17,7 @@ public class Space {
         this.row = row;
         this.column = column;
         this.hasDome = false;
-        this.level = 0;
+        this.level = MINLEVEL;
     }
 
     public Worker getOccupator() {

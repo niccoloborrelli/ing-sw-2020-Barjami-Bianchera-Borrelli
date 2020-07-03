@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import java.io.IOException;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.MAXIMUMLEVEL;
+
 public class BaseWinCondition extends WinConditionAB {
 
     /**
@@ -14,7 +16,7 @@ public class BaseWinCondition extends WinConditionAB {
     public void checkHasWon(Player player) {
         Worker workerChosen = getWorkerChosen(player);
         if(workerChosen != null)
-            if (workerChosen.getLastSpaceOccupied().getLevel() == 2 && workerChosen.getWorkerSpace().getLevel() == 3)
+            if (workerChosen.getLastSpaceOccupied().getLevel() == MAXIMUMLEVEL-1 && workerChosen.getWorkerSpace().getLevel() == MAXIMUMLEVEL)
                 player.setHasWon(true);
     }
 

@@ -33,10 +33,12 @@ public class Cell {
         });
     }
 
+    /**
+     * creates the command for command pattern
+     */
     private void createCommand(){
         SelectPawnRequestCommand selectPawnRequestCommand=null;
         if(worker!=null) {
-            System.out.print("Hai toccato una cell con un worker sopra");
             selectPawnRequestCommand = new SelectPawnRequestCommand(worker.getIdNumber());
         }
         SelectCellRequestCommand selectCellRequestCommand=new SelectCellRequestCommand(row,column);
@@ -44,6 +46,9 @@ public class Cell {
     }
 
 
+    /**
+     * creates the base box of the cell
+     */
     private void createBase(){
         base=new Box(100,1,100);
         standardMaterial=new PhongMaterial();
@@ -59,6 +64,10 @@ public class Cell {
         return worker;
     }
 
+    /**
+     * sets a pawn over this cell
+     * @param pawn the pawn to be setted
+     */
     public void setWorker(Pawn pawn) {
         Thread t = new Thread(new Runnable() {
             @Override
@@ -83,6 +92,33 @@ public class Cell {
         Platform.runLater(t);
     }
 
+    public VBox getvBox() {
+        return vBox;
+    }
+
+    /**
+     * removes the pawn, if it exists, from the cell
+     * @return the pawn removed
+     */
+    public Pawn removeWorker(){
+        Pawn temp=worker;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(worker!=null)
+                    vBox.getChildren().remove(worker.getWorkerMesh());
+                worker=null;
+            }
+        });
+        Platform.runLater(t);
+        return temp;
+    }
+
+
+    /**
+     * sets a building of type 1
+     * @param base the base over which
+     */
     public void setBuildingLvl1(MeshView base){
         this.buildingLvl1=base;
         Platform.runLater(new Runnable() {
@@ -93,25 +129,10 @@ public class Cell {
         });
     }
 
-    public VBox getvBox() {
-        return vBox;
-    }
-
-    public Pawn removeWorker(){
-        Pawn temp=worker;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("Dentro il thread di Remove Worker");
-                if(worker!=null)
-                    vBox.getChildren().remove(worker.getWorkerMesh());
-                worker=null;
-            }
-        });
-        Platform.runLater(t);
-        return temp;
-    }
-
+    /**
+     * sets a building of type 2
+     * @param buildingLvl2 the building to be set
+     */
     public void setBuildingLvl2(MeshView buildingLvl2) {
         this.buildingLvl2 = buildingLvl2;
         buildingLvl2.setTranslateY(-20);
@@ -123,6 +144,10 @@ public class Cell {
         });
     }
 
+    /**
+     * sets a building of type 3
+     * @param buildingLvl3 the building to be set
+     */
     public void setBuildingLvl3(MeshView buildingLvl3) {
         this.buildingLvl3 = buildingLvl3;
         buildingLvl3.setTranslateY(-30);
@@ -134,6 +159,10 @@ public class Cell {
         });
     }
 
+    /**
+     * sets a dome on the cell
+     * @param dome the dome to be set
+     */
     public void setDome(MeshView dome) {
         this.dome = dome;
         if(buildingLvl3!=null)
@@ -150,17 +179,6 @@ public class Cell {
         });
     }
 
-    public MeshView getBuildingLvl1() {
-        return buildingLvl1;
-    }
-
-    public MeshView getBuildingLvl2() {
-        return buildingLvl2;
-    }
-
-    public MeshView getBuildingLvl3() {
-        return buildingLvl3;
-    }
 
     public MeshView getDome() {
         return dome;
@@ -170,10 +188,10 @@ public class Cell {
         setWorker(removeWorker());
     }
 
-    public Box getBase() {
-        return base;
-    }
-
+    /**
+     * colors the entire cell with the phong material
+     * @param lightenedUpMaterial the pongMaterial decoring the cell
+     */
     public void lightenUp(PhongMaterial lightenedUpMaterial){
         base.setMaterial(lightenedUpMaterial);
         if(buildingLvl1!=null)
@@ -184,6 +202,10 @@ public class Cell {
             buildingLvl3.setMaterial(lightenedUpMaterial);
     }
 
+    /**
+     * sets the phonMatiral of the cell to his original PhongMaterial
+     * @param materialBase the orignal Phongmaterial
+     */
     public void switchOff(PhongMaterial materialBase){
         base.setMaterial(standardMaterial);
         if(buildingLvl1!=null)

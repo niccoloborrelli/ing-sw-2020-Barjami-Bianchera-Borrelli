@@ -4,6 +4,7 @@ public abstract class ActionStateDecorator extends AbstractActionState {
      AbstractActionState decorated;
      String effect;
 
+
     ActionStateDecorator(AbstractActionState decorated,String effect) {
         super(decorated.getPlayer());
         this.decorated=decorated;

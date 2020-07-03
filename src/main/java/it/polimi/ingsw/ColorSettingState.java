@@ -3,6 +3,8 @@ package it.polimi.ingsw;
 import java.io.IOException;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.colorSettingState;
+
 public class ColorSettingState extends State {
 
     /**
@@ -22,7 +24,6 @@ public class ColorSettingState extends State {
         TurnManager turnManager=player.getStateManager().getTurnManager();
         synchronized (player.getStateManager().getTurnManager()){
             if(turnManager.getAllowedColors().contains(input)) {
-                //turnManager.setColor(player, input);
                 player.setPlayerColor(input);
                 player.getStateManager().setNextState(player);
                 turnManager.getAllowedColors().remove(input);
@@ -52,6 +53,6 @@ public class ColorSettingState extends State {
 
 
     public String toString(){
-        return "ColorSettingState";
+        return colorSettingState;
     }
 }

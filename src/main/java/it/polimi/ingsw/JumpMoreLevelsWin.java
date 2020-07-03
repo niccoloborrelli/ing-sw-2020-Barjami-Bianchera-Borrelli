@@ -31,6 +31,10 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
             checkHasWonJump(player);
     }
 
+    /**
+     * This method checks if a player won by "JumpMoreLevelsWin"
+     * @param player is the player who have the power "JumpMoreLevelsWin"
+     */
     private void checkHasWonJump(Player player) {
         Worker workerChosen = getWorkerChosen(player);
         if(workerChosen != null)
@@ -38,11 +42,15 @@ public class JumpMoreLevelsWin extends PowerWinDecorator {
                 player.setHasWon(true);
     }
 
+    /**
+     * This method returns the worker moved in this turn
+     * @param player is the player who has moved
+     */
     private Worker getWorkerChosen(Player player){
-        if(player.getWorkers().get(0).isMovedThisTurn())
-            return player.getWorkers().get(0);
-        else if(player.getWorkers().get(1).isMovedThisTurn())
-            return player.getWorkers().get(1);
+        if(player.getWorkers().get(firstWorker).isMovedThisTurn())
+            return player.getWorkers().get(firstWorker);
+        else if(player.getWorkers().get(secondWorker).isMovedThisTurn())
+            return player.getWorkers().get(secondWorker);
         return null;
     }
 

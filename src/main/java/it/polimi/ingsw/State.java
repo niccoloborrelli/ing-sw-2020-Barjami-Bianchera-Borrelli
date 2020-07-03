@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.UPDATE_TO_PRINT;
+
+
 public abstract class State {
-    private static final String move="move";
-    private static final String build="build";
     private static final String ERRORSPECIFICATION = "error";
     List<String> allowedInputs;
     Player player;
@@ -55,7 +56,7 @@ public abstract class State {
      **/
     public void uselessInputNotify(){
         LastChange uselessInput = new LastChange();
-        uselessInput.setCode(0);
+        uselessInput.setCode(UPDATE_TO_PRINT);
         uselessInput.setSpecification(ERRORSPECIFICATION);
         player.notify(uselessInput);
     }

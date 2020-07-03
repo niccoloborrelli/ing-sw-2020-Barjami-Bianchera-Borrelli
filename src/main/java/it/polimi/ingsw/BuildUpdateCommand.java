@@ -7,6 +7,10 @@ import static it.polimi.ingsw.FinalCommunication.BUILD;
 
 public class BuildUpdateCommand extends ReplyCommand {
 
+    private static final int rowPos=0;
+    private  static final int columnPos=1;
+    private  static final int levelPos=2;
+    private  static final int domePos=3;
     /**
      * Represents a update command caused by a build in the game field.
      */
@@ -19,10 +23,10 @@ public class BuildUpdateCommand extends ReplyCommand {
     private String playerColor;
 
     public BuildUpdateCommand(List<Integer> parameters, String playerName, String playerColor) {
-        this.row = parameters.get(0);
-        this.column = parameters.get(1);
-        this.level = parameters.get(2);
-        this.dome = parameters.get(3);
+        this.row = parameters.get(rowPos);
+        this.column = parameters.get(columnPos);
+        this.level = parameters.get(levelPos);
+        this.dome = parameters.get(domePos);
         this.playerName = playerName;
         this.playerColor = playerColor;
     }

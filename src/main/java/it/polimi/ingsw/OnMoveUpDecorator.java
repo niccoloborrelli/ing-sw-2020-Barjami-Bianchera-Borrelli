@@ -22,19 +22,24 @@ public class OnMoveUpDecorator extends ActionStateDecorator {
         String action=decorated.getAction();
         if(action.equals(ACTIONTYPE1)&&decorated.getSpaceToAct().getLevel()>decorated.getStartingSpace().getLevel()) { //attivo gli effetti di oneMoveUp se il livello in cui si agisce e' superiore
             ability();
-            System.out.println("entraa");
         }
     }
 
+    /**
+     * Denies upper movement if the effect is that.
+     */
     private void ability(){
         if(effect.equals(DENYUPPERMOVE))
             denyUppermoves();
     }
 
+    /**
+     * Denies every possible upper movement.
+     */
     public void denyUppermoves(){
         Worker tempWorker;
-        for(int i = 0; i < DIM; i++)
-            for(int j = 0; j < DIM; j++) {
+        for(int i = MINSIZE; i < DIM; i++)
+            for(int j = MINSIZE; j < DIM; j++) {
                 tempWorker = player.getIslandBoard().getSpace(i, j).getOccupator();
                 if(tempWorker!=null&&tempWorker.getWorkerPlayer()!=player)
                     tempWorker.setCantMoveUp(true);

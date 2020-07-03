@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
+import static it.polimi.ingsw.DefinedValues.nameSettingState;
+
 public class LobbyManager {
 
     private List<Lobby> lobbies;
@@ -25,7 +28,7 @@ public class LobbyManager {
      * @param numberOfPlayers is the number of players of the game the player wants to play
      */
     public void addPlayer(Player player, int numberOfPlayers){
-        if(lobbies.size() == 0){
+        if(lobbies.size() == MINSIZE){
             lobbies.add(new Lobby(player, numberOfPlayers));
             return;
         }
@@ -40,6 +43,12 @@ public class LobbyManager {
         lobbies.add(new Lobby(player, numberOfPlayers));
     }
 
+    /**
+     * This method returns true if a player can be added to a lobby, false otherwise
+     * @param l is a lobby
+     * @param player is the player to add
+     * @param numberOfPlayers is the maximum player of the lobby
+     */
     private boolean canAddPlayer(Lobby l, Player player, int numberOfPlayers){
             for (Player p : l.getPlayers()) {
                 try {
@@ -54,10 +63,18 @@ public class LobbyManager {
 
     }
 
+    /**
+     * This method returns true if a lobby has its maximum number of players, false otherwise
+     * @param lobby is the lobby to check
+     */
     private boolean lobbyFull(Lobby lobby){
         return lobby.getPlayers().size() == lobby.getNumberOfPlayers();
     }
 
+    /**
+     * This method returns true if a lobby has its maximum number of players, false otherwise
+     * @param lobby is the lobby to check
+     */
     private void createGame(Lobby lobby){
         IslandBoard islandBoard = new IslandBoard();
         TurnManager turnManager = new TurnManager();
@@ -66,7 +83,7 @@ public class LobbyManager {
         turnManager.setPlayers(lobby.getPlayers());
         for (Player p: lobby.getPlayers()) {
             p.setIslandBoard(islandBoard);
-            State name = p.getStateManager().getState("NameSettingState");
+            State name = p.getStateManager().getState(nameSettingState);
             p.getStateManager().setCurrent_state(name);
             try {
                 p.getState().onStateTransition();
@@ -77,8 +94,12 @@ public class LobbyManager {
         lobbies.remove(lobby);
     }
 
+    /**
+     * This method set the player from the globalHub to the game handlerHub
+     * @param handlerHub is the game handlerHub
+     * @param playerList is the list of the players
+     */
     private void createLocalHub(HandlerHub handlerHub, List<Player> playerList) {
-        System.out.print("Ho creato il game");
         for(Player p: playerList){
             Handler handler = globalHub.getHandlerControllerHashMap().get(p.getController());
             handlerHub.getHandlerControllerHashMap().put(p.getController(), handler);

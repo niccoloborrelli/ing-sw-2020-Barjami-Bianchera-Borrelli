@@ -13,6 +13,8 @@ public class AdditionalBuildFlow extends FlowChanger {
     private static final String DOME = "dome";
     private static final String FALSE = "false";
     private static final String TRUE = "true";
+
+
     /*
     Your worker may build one additional time, but not in the same space
     DEMETER
@@ -56,7 +58,7 @@ public class AdditionalBuildFlow extends FlowChanger {
     @Override
     public void changeFlow(Player player) {
         if(beforeMove){
-            player.getActionsToPerform().add(0, actionType2);
+            player.getActionsToPerform().add(MINSIZE, actionType2);
             setFlagBeforeMove(player);
             return;
         }
@@ -91,16 +93,25 @@ public class AdditionalBuildFlow extends FlowChanger {
         else if(noDome){
             return workerChosen.getLastSpaceBuilt().getLevel() < MAXIMUMLEVEL;
         }
-        return building.size() > 0;
+        return building.size() > MINSIZE;
     }
 
+    /**
+     * Finds which worker is chosen.
+     * @param player owns workers.
+     * @return the worker chosen.
+     */
     private Worker getWorkerChosen(Player player){
-        if(!player.getWorkers().get(0).isCantBuild())
-            return player.getWorkers().get(0);
+        if(!player.getWorkers().get(firstWorker).isCantBuild())
+            return player.getWorkers().get(firstWorker);
         else
-            return player.getWorkers().get(1);
+            return player.getWorkers().get(secondWorker);
     }
 
+    /**
+     * Sets the flag of worker.
+     * @param worker is worker checked.
+     */
     private void setFlag(Worker worker){
         if(noInitialSpace)
             worker.setCantBuildFirstSpace(true);
@@ -112,17 +123,26 @@ public class AdditionalBuildFlow extends FlowChanger {
         }
     }
 
+    /**
+     * This method checks if a player with "BuildAlsoBeforeIfNotMoveUp" can use his power
+     * @param player is the player with the "BuildAlsoBeforeIfNotMoveUp" power
+     * @return true if possible, false otherwise
+     */
     private boolean playerCanBuildAndNotGoUp(Player player){
         CheckingUtility.calculateValidSpace(player, player.getIslandBoard(), actionType1);
-        List<Space> movement0 = new ArrayList<>(player.getWorkers().get(0).getPossibleMovements());
-        movement0.removeIf(space -> space.getLevel() > player.getWorkers().get(0).getWorkerSpace().getLevel());
-        List<Space> movement1 = new ArrayList<>(player.getWorkers().get(1).getPossibleMovements());
-        movement1.removeIf(space -> space.getLevel() > player.getWorkers().get(1).getWorkerSpace().getLevel());
+        List<Space> movement0 = new ArrayList<>(player.getWorkers().get(firstWorker).getPossibleMovements());
+        movement0.removeIf(space -> space.getLevel() > player.getWorkers().get(firstWorker).getWorkerSpace().getLevel());
+        List<Space> movement1 = new ArrayList<>(player.getWorkers().get(secondWorker).getPossibleMovements());
+        movement1.removeIf(space -> space.getLevel() > player.getWorkers().get(secondWorker).getWorkerSpace().getLevel());
 
-        return ((player.getWorkers().get(0).getPossibleBuilding().size() > 0 && movement0.size() > 0) ||
-                (player.getWorkers().get(1).getPossibleBuilding().size() > 0 && movement1.size() > 0));
+        return ((player.getWorkers().get(firstWorker).getPossibleBuilding().size() > MINSIZE && movement0.size() > MINSIZE) ||
+                (player.getWorkers().get(secondWorker).getPossibleBuilding().size() > MINSIZE && movement1.size() > MINSIZE));
     }
 
+    /**
+     * Sets flag befor move.
+     * @param player is set flags' player.
+     */
     private void setFlagBeforeMove(Player player){
         for (Worker w: player.getWorkers()) {
             w.setCantMoveUp(true);
@@ -130,6 +150,11 @@ public class AdditionalBuildFlow extends FlowChanger {
         }
     }
 
+    /**
+     * Sets flag "can't build" to player.
+     * @param player is player with flags.
+     * @param type is type of setting.
+     */
     private void setPlayerCantBuild(Player player, String type){
         for(Worker w: player.getWorkers()) {
             if(type.equals(TRUE))

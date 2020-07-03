@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class MoveOnOccupiedDecorator extends ActionStateDecorator{
@@ -26,7 +27,7 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
     @Override
     public void onStateTransition() throws IOException {
-        String action=player.getActionsToPerform().get(0);
+        String action=player.getActionsToPerform().get(MINSIZE);
         decorated.onStateTransition();
         Space spaceToAct=decorated.getSpaceToAct();
         Worker actingWorker=decorated.getActingWorker();
@@ -106,7 +107,7 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
 
     private void notifySwap(Player player, Worker worker){
         LastChange lastChange = new LastChange();
-        lastChange.setCode(2);
+        lastChange.setCode(UPDATE_GAME_FIELD);
         lastChange.setSpecification(WORKERSETTING);
         lastChange.setWorker(worker);
         lastChange.setSpace(worker.getWorkerSpace());
@@ -122,9 +123,9 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
     private void notifyDeleted(Player player, Worker worker){
         LastChange lastChange = new LastChange();
         Space spaceOfWorker = worker.getWorkerSpace();
-        worker.setWorkerSpace(new Space(-1,-1));
+        worker.setWorkerSpace(new Space(INVALID_VALUE,INVALID_VALUE));
         lastChange.setSpecification(DELETED);
-        lastChange.setCode(2);
+        lastChange.setCode(UPDATE_GAME_FIELD);
         lastChange.setWorker(worker);
         lastChange.setSpace(spaceOfWorker);
         player.notify(lastChange);
@@ -183,7 +184,7 @@ public class MoveOnOccupiedDecorator extends ActionStateDecorator{
     private void notifyPushed(Worker worker, Space space){
         Player player = findPlayer(worker);
         LastChange lastChange = new LastChange();
-        lastChange.setCode(2);
+        lastChange.setCode(UPDATE_GAME_FIELD);
         lastChange.setSpecification(MOVE);
         lastChange.setWorker(worker);
         lastChange.setSpace(space);

@@ -18,4 +18,19 @@ public class DefinedValues {
     protected static final int COMPLETE_TOWER_TO_WIN = 5;
     protected static final int DOME_LEVEL = 3;
     protected static final int JUMP_LEVELS_TO_WIN = 2;
+    protected static final int MINSIZE=0;
+    protected static final int firstWorker=0;
+    protected static final int secondWorker=1;
+    protected static final int MINLEVEL=0;
+
+    protected static final String actionState = "ActionState";
+    protected static final String readyForActionState = "ReadyForActionState";
+    protected static final String colorSettingState = "ColorSettingState";
+    protected static final String nameSettingState = "NameSettingState";
+    protected static final String powerActivationState = "PowerActivationState";
+    protected static final String endGameState = "EndGameState";
+    protected static final String workerSettingState = "WorkerSettingState";
+    protected static final String godSetState = "GodSetState";
+    protected static final String godChoice = "GodChoiceState";
+    protected static final String endTurn = "EndTurnState";
 }

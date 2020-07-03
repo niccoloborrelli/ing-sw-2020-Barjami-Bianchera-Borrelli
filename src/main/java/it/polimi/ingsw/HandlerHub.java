@@ -62,7 +62,6 @@ public class HandlerHub {
                     Handler leftHandler = iterator.next();
                     if (!leftHandler.equals(handler)) {
                         if (!awareness) {
-                            System.out.println("Qualcuno ha quittato per sbaglio");
                             findControllerFromHandler(handler).communicateDisconnectionMessage();
                         }
                     }

@@ -66,6 +66,9 @@ public class App extends Application {
     private Image colorWhite =  loadImage(WHITE_BUTTON);
     private CommandGUIManager commandGUIManager;
 
+    /**
+     * Create the dynamic scenes with images and buttons
+     */
     @Override
     public void start(Stage stage){
         Socket socket;
@@ -289,10 +292,20 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method closes the application
+     */
     public void quitApplication(){
         Platform.exit();
     }
 
+    /**
+     * This method set the imageview in the canvas
+     * @param imageView is the imageview to set
+     * @param row is the row of the canvas
+     * @param column is the column of the canvas
+     * @param list is the list of the imageviews with same behavior
+     */
     private void createCard(ImageView imageView, int row, int column, List<ImageView> list){
         imageView.setFitWidth(imageView.getImage().getWidth()/6);
         imageView.setFitHeight(imageView.getImage().getHeight()/6);
@@ -331,6 +344,12 @@ public class App extends Application {
 
     }
 
+    /**
+     * This method set the buttons in the canvas
+     * @param imageView is the imageview of the button
+     * @param players is the number of players of the button
+     * @param hashMap is the hashmap of all players buttons
+     */
     private void createButton(ImageView imageView, int players, HashMap<ImageView, Integer> hashMap){
         imageView.setFitHeight(imageView.getImage().getHeight()/2);
         imageView.setFitWidth(imageView.getImage().getWidth()/6);
@@ -346,6 +365,10 @@ public class App extends Application {
         hashMap.put(imageView, players);
     }
 
+    /**
+     * This method create the quit button
+     * @param imageView is the imageview of the quit
+     */
     private void quitButton(ImageView imageView){
         imageView.setFitHeight(imageView.getImage().getHeight()/8);
         imageView.setFitWidth(imageView.getImage().getWidth()/8);
@@ -358,6 +381,14 @@ public class App extends Application {
         imageView.setY(30);
     }
 
+    /**
+     * This method create a banner with a question on it
+     * @param graphicsContext is the graphic context of the canvas
+     * @param string is to set the right question
+     * @param background is the background of the scene
+     * @param askPlayers is the image of the banner
+     * @return the banner
+     */
     private ImageView insertQuestion(GraphicsContext graphicsContext, String string, Image background, Image askPlayers){
         graphicsContext.drawImage(background, 0 , 0, 1024, 700);
         graphicsContext.drawImage(askPlayers, 365, 430, askPlayers.getWidth()/2, askPlayers.getHeight()/2);
@@ -377,6 +408,10 @@ public class App extends Application {
         return text;
     }
 
+    /**
+     * This method set all the condition for the textfield
+     * @param textField is the textfield to set
+     */
     private void insertTextField(TextField textField){
         textField.setAlignment(Pos.CENTER);
         textField.setTranslateX(382);
@@ -389,6 +424,9 @@ public class App extends Application {
         this.stage = stage;
     }
 
+    /**
+     * This method set the selectionName root as scene root
+     */
     public void setNameStage(){
         Platform.runLater(()  -> {
                     if (!selectionName.getChildren().contains(quit))
@@ -407,6 +445,10 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method create the button of the available color and set the selectionColor root as scene root
+     * @param colorList is the list of available color
+     */
     public void setColorStage(List<String> colorList){
         Object objectCanvas = selectionColor.getChildren().get(0);
         selectionColor.getChildren().removeIf(s-> !s.equals(objectCanvas));
@@ -489,6 +531,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method set the gods root as scene root
+     */
     public void setGodsStage(){
         quit.setY(310);
         Platform.runLater(() -> gods.getChildren().add(quit));
@@ -504,6 +549,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method set the exit root as scene root
+     */
     public void setOnExitStage(){
         quit.setY(30);
         Platform.runLater(() -> exit.getChildren().add(quit));
@@ -517,9 +565,12 @@ public class App extends Application {
             GeneralStringRequestCommand generalStringRequestCommand = new GeneralStringRequestCommand(QUIT);
             commandGUIManager.manageCommand(generalStringRequestCommand);
         });
-
     }
 
+    /**
+     * This method create the button of the available gods and set the selectionGods root as scene root
+     * @param godsList is the list of available gods
+     */
     public void changeGods(List<String> godsList){
         Group root = new Group();
         Canvas canvas = new Canvas(1024, 700);
@@ -650,6 +701,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method create a waiting color root and set it as scene root
+     */
     public void setWaitingColor(){
         Group root = new Group();
         Canvas waitingColor = new Canvas(1024, 700);
@@ -670,6 +724,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method create a waiting player root and set it as scene root
+     */
     public void setWaitingPlayer(){
         Group root = new Group();
         Canvas waitingPlayer = new Canvas(1024, 700);
@@ -690,6 +747,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method create a waiting game root and set it as scene root
+     */
     public void setWaitingGame(){
         Group root = new Group();
         Canvas waitingGame = new Canvas(1024, 700);
@@ -710,6 +770,9 @@ public class App extends Application {
         });
     }
 
+    /**
+     * This method create a waiting scene with a phrase concerning the wait
+     */
     public void createWaitScene(String string, GraphicsContext context){
         context.drawImage(background, 0, 0, 1024, 700);
         context.drawImage(askPlayers, 335, 320, askPlayers.getWidth()/1.5, askPlayers.getHeight()/2);
@@ -732,12 +795,23 @@ public class App extends Application {
         this.commandGUIManager = commandGUIManager;
     }
 
+    /**
+     * This method load an image from resource folder
+     * @param name is the name of the png file
+     * @return the loaded image
+     */
     private Image loadImage(String name){
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(name);
         return new Image(inputStream);
     }
 
+    /**
+     * This method insert an imageview in the scene
+     * @param number is the position of the imageview
+     * @param imageView is the imageview to insert
+     * @param list is the list with all imageview with same behavior
+     */
     private void insertColorButton(int number, ImageView imageView, List<ImageView> list){
         imageView.setFitWidth(imageView.getImage().getWidth()/4);
         imageView.setFitHeight(imageView.getImage().getHeight()/2);
@@ -766,6 +840,9 @@ public class App extends Application {
     }
 
 
+    /**
+     * This method create a graphicInterface object, set it as attribute and finally start it
+     */
     public void set3DGui(){
         GraphicInterface gui=new GraphicInterface();
         commandGUIManager.setGraphicInterface(gui);

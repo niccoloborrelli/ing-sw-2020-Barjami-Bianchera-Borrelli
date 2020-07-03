@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
+import static it.polimi.ingsw.DefinedValues.endTurn;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class EndTurnState extends State {
@@ -20,11 +22,17 @@ public class EndTurnState extends State {
         player.getStateManager().getTurnManager().setNextPlayer(player);
     }
 
+    /**
+     * Resets flags.
+     */
     private void resetFlags(){
         resetWorkers();
         resetPlayerActions();
     }
 
+    /**
+     * Resets workers' flag.
+     */
     private void resetWorkers(){
         for (Worker tempWorker:player.getWorkers()) {
             tempWorker.resetWorker();
@@ -34,21 +42,27 @@ public class EndTurnState extends State {
         }
     }
 
+    /**
+     * Resets player possible action.
+     */
     private void resetPlayerActions(){
-        if(player.getActionsToPerform().size()==0) {
+        if(player.getActionsToPerform().size()==MINSIZE) {
             player.getActionsToPerform().add(MOVE);
             player.getActionsToPerform().add(BUILD);
         }
     }
 
+    /**
+     * Notifies the end of turn.
+     */
     private void notifyTurnFinished(){
         LastChange finishedTurn = player.getLastChange();
-        finishedTurn.setCode(0);
+        finishedTurn.setCode(UPDATE_TO_PRINT);
         finishedTurn.setSpecification(ENDTURN);
         player.notifyController();
     }
 
     public String toString(){
-        return "EndTurnState";
+        return endTurn;
     }
 }

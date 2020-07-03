@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.*;
+
 public class Player implements Observed{
     private String playerName;
     private String playerColor;
@@ -43,12 +45,12 @@ public class Player implements Observed{
         powerUsed=false;
         domeEveryWhere=false;
         stateManager = new StateManager();
-        for(int i=0;i<NUMBEROFWORKERS;i++) {
+        for(int i=MINSIZE;i<NUMBEROFWORKERS;i++) {
             workers.add(new Worker());
             workers.get(i).setWorkerPlayer(this);
         }
-        actionsToPerform.add("move");
-        actionsToPerform.add("build");
+        actionsToPerform.add(actionType1);
+        actionsToPerform.add(actionType2);
         playerGod=null;
         winCondition = new BaseWinCondition();
     }
@@ -89,14 +91,14 @@ public class Player implements Observed{
         return tempList.pollFirst();
     }
 
-    private void workerSetup(){
+   /* private void workerSetup(){
         Worker tempWorker=new Worker();
         tempWorker.setWorkerPlayer(this);
         workers.add(tempWorker);
         tempWorker=new Worker();
         tempWorker.setWorkerPlayer(this);
         workers.add(tempWorker);
-    }
+    }/*
 
 
     /**
@@ -279,7 +281,7 @@ public class Player implements Observed{
     }
 
     public boolean isChallenger(){
-        return this.equals(stateManager.getTurnManager().getPlayers().get(0));
+        return this.equals(stateManager.getTurnManager().getPlayers().get(MINSIZE));
     }
 
     public boolean isValidGod() {
@@ -306,7 +308,7 @@ public class Player implements Observed{
     public boolean isLastGod(){return stateManager.getTurnManager().getAvailableGods().size()==1;}
 
     public boolean isChallengerWorkerSet(){
-        return stateManager.getTurnManager().getPlayers().get(0).getWorkers().get(0).getWorkerSpace()!=null;
+        return stateManager.getTurnManager().getPlayers().get(MINSIZE).getWorkers().get(MINSIZE).getWorkerSpace()!=null;
     }
 
     public boolean isNotHigherNoMove() {
@@ -329,12 +331,12 @@ public class Player implements Observed{
         return lastChange;
     }
 
+    /**
+     * Notifies victory.
+     */
     public void notifyWin(){
         lastChange.setCode(3);
         lastChange.setSpecification("win");
         notify();
     }
-
-
-
 }

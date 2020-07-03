@@ -24,63 +24,77 @@ public class GodFactory {
     private static final String ANOTHERACTION="hasActionsToPerform";
     private static final String INPUTFORACTION="ReadyForActionState";
     private static final String WORKERPLACED = "isWorkerPlaced";
+    private static final String SWAPWORKERS="SwapWorkers";
+    private static final String ADDMOVE="AdditionalMove";
+    private static final String DENYMOVE="DenyUpperMove";
+    private static final String DOME="DomeEverywhere";
+    private static final String ABNOINITIAL="AdditionalBuildNoInitial";
+    private static final String BUILDTWICE="CanBuildTwiceNotDome";
+    private static final String PUSHBACK="PushBack";
+    private static final String WINJUMP="JumpMoreLevelsWin";
+    private static final String BUILDBEFORE="BuildAlsoBeforeIfNotMoveUp";
+    private static final String TOWERWIN="CompleteTowerWin";
+    private static final String ADDBUILDNOPERIMETER="AdditionalBuildNotPerimeter";
+    private static final String HIGHERNOMOVE="IfHigherNoMove";
+    private static final String MOVEUP="MustMoveUp";
+    private static final String BUILDUNDER="BuildUnderYou";
 
     public void decoratePlayer(HashMap<String, List<String>> godMap,Player player) throws NoSuchMethodException, ClassNotFoundException {
         StateManager stateManager=player.getStateManager();
         List<String> effects=godMap.get(player.getPlayerGod());
         if(effects!=null) {
-            if (effects.contains("SwapWorkers")) {
+            if (effects.contains(SWAPWORKERS)) {
                 swapWorkers(player, stateManager);
             }
 
-            if (effects.contains("AdditionalMove")) {
+            if (effects.contains(ADDMOVE)) {
                 additionalMove(player, stateManager);
             }
 
-            if (effects.contains("DenyUpperMove")) {
+            if (effects.contains(DENYMOVE)) {
                 denyUpperMove(player, stateManager);
             }
 
-            if (effects.contains("DomeEverywhere")) {
+            if (effects.contains(DOME)) {
                 domeEveryWhere(player);
             }
 
-            if (effects.contains("AdditionalBuildNoInitial")) {
+            if (effects.contains(ABNOINITIAL)) {
                 additionalBuildNoInitial(player, stateManager);
             }
-            if (effects.contains("CanBuildTwiceNotDome")) {
+            if (effects.contains(BUILDTWICE)) {
                 CanBuildTwiceNotDome(player, stateManager);
             }
-            if (effects.contains("PushBack")) {
+            if (effects.contains(PUSHBACK)) {
                 pushBack(player, stateManager);
             }
-            if (effects.contains("JumpMoreLevelsWin")) {
+            if (effects.contains(WINJUMP)) {
                 jumpMoreLevelsWin(player);
             }
 
-            if (effects.contains("BuildAlsoBeforeIfNotMoveUp")) {
+            if (effects.contains(BUILDBEFORE)) {
                 buildAlsoBefore(player, stateManager);
             }
 
-            if (effects.contains("CompleteTowerWin")) {
+            if (effects.contains(TOWERWIN)) {
                 completeTowerWin(player);
             }
 
-            if (effects.contains("AdditionalBuildNotPerimeter")) {
+            if (effects.contains(ADDBUILDNOPERIMETER)) {
                 additionalBuildsNoPerimeter(player, stateManager);
             }
 
-            if (effects.contains("IfHigherNoMove")) {
+            if (effects.contains(HIGHERNOMOVE)) {
                 player.getIslandBoard().setHigherNoMove(true);
                 player.setNotHigherNoMove(true);
             }
 
-            if (effects.contains("MustMoveUp")) {
+            if (effects.contains(MOVEUP)) {
                 player.getIslandBoard().setMustMoveUp(true);
                 player.setNotMustMoveUp(true);
             }
 
-            if (effects.contains("BuildUnderYou")) {
+            if (effects.contains(BUILDUNDER)) {
                 buildUnderYou(player);
             }
         }
@@ -88,12 +102,27 @@ public class GodFactory {
     }
 
 
+    /**
+     * adds the power to move twice to a player
+     * @param player the player to be decorated
+     * @param stateManager the state manager of the player
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void additionalMove(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
         PowerActivationState activationState=new PowerActivationState(player,new AdditionalMoveFlow());
         afterActionActivation(stateManager, activationState, ANOTHERMOVE);
 
     }
 
+    /**
+     * permits to create a power activated after an action
+     * @param stateManager state manager of the player receiving the power
+     * @param activationState the state for activating the power
+     * @param hasToDo the string name of the power
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void afterActionActivation(StateManager stateManager, PowerActivationState activationState, String hasToDo) throws ClassNotFoundException, NoSuchMethodException {
         stateManager.addNewState(activationState);
         State readyForActionState=stateManager.getState(INPUTFORACTION);
@@ -109,6 +138,11 @@ public class GodFactory {
         stateManager.addNewFinishSpace(activationState,endTurnState,m4,false,3);
     }
 
+    /**
+     * decorates a player move with the swap power
+     * @param player player to be decorated
+     * @param stateManager player's state manager
+     */
     private void swapWorkers(Player player,StateManager stateManager){
         AbstractActionState actionState;
         actionState=(AbstractActionState) stateManager.getState(ACTION);
@@ -117,14 +151,24 @@ public class GodFactory {
         stateManager.changeStates(decorator,actionState); //metodo che cambia tutte le occurrenze di actionState in decorator
     }
 
+    /**
+     * gives a player the uppermovePower
+     * @param player player to be given the power
+     * @param stateManager stateManager of the player
+     */
     private void denyUpperMove(Player player,StateManager stateManager){
         AbstractActionState actionState;
         actionState=(AbstractActionState) stateManager.getState(ACTION);
-        System.out.println(actionState.toString());
         OnMoveUpDecorator decorator=new OnMoveUpDecorator(actionState,DENYUPPERMOVE);
         stateManager.changeStates(decorator,actionState);
     }
 
+    /**
+     * gives a player the power to build everywhere
+     * @param player player receiving the power
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void domeEveryWhere(Player player) throws ClassNotFoundException, NoSuchMethodException {
         PowerActivationState activationState=new PowerActivationState(player,new DomeOnEveryLevel());
         StateManager stateManager=player.getStateManager();
@@ -140,20 +184,47 @@ public class GodFactory {
         stateManager.addNewFinishSpace(activationState,endTurnState,m4,false,3);
     }
 
+    /**
+     * gives a player the power to build multiple times, not in the initial space
+     * @param player player to be given the power
+     * @param stateManager stateManager of the player
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void additionalBuildNoInitial(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
         PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOINITIAL));
         additionalBuilds(player,stateManager,activationState);
     }
 
+    /**
+     * gives a player the power to build twice but not a dome
+     * @param player player to be given the power
+     * @param stateManager stateManager of the player
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void CanBuildTwiceNotDome(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
         PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NODOME));
         additionalBuilds(player,stateManager,activationState);
     }
 
+    /**
+     * gives a player a power for multiple times
+     * @param player the player receiving the power
+     * @param stateManager the player's state manager
+     * @param activationState the activation state of the player
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void additionalBuilds(Player player,StateManager stateManager, PowerActivationState activationState) throws ClassNotFoundException, NoSuchMethodException {
         afterActionActivation(stateManager, activationState, ANOTHERBUILD);
     }
 
+    /**
+     * gives a player the power to pushBack an other enemy worker
+     * @param player player to be given the power
+     * @param stateManager stateManager of the player
+     */
     private void pushBack(Player player,StateManager stateManager){
         AbstractActionState actionState;
         actionState=(AbstractActionState) stateManager.getState(ACTION);
@@ -162,27 +233,53 @@ public class GodFactory {
         stateManager.changeStates(decorator,actionState); //metodo che cambia tutte le occurrenze di actionState in decorator
     }
 
+    /**
+     * gives a player the power to win by jumping 2 levels down
+     * @param player player to be given the power
+     */
     private void jumpMoreLevelsWin(Player player){
         JumpMoreLevelsWin jmw=new JumpMoreLevelsWin(player.getWinCondition());
         player.setWinCondition(jmw);
     }
 
+    /**
+     * gives a player the power to win by having 5 complete towers in the board
+     * @param player player to be given the power
+     */
     private void completeTowerWin(Player player){
         CompleteTowerWin ctw=new CompleteTowerWin(player.getWinCondition());
         player.setWinCondition(ctw);
     }
 
+    /**
+     * gives a player the ability to build multiple times but not in the perimeter
+     * @param player  player to be given the power
+     * @param stateManager the stat manager of the player
+     * @throws NoSuchMethodException
+     * @throws ClassNotFoundException
+     */
     private void additionalBuildsNoPerimeter(Player player,StateManager stateManager) throws NoSuchMethodException, ClassNotFoundException {
         PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOPERIMETER));
         additionalBuilds(player,stateManager,activationState);
     }
 
+    /**
+     * gives a player the power to build under himself
+     * @param player player to be given the power
+     */
     private void buildUnderYou(Player player){
         for(Worker tempWorker:player.getWorkers()){
             tempWorker.setCantBuildUnder(false);
         }
     }
 
+    /**
+     * gives a player the power to build before moving
+     * @param player player receiving the power
+     * @param stateManager state manager of the player
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     */
     private void buildAlsoBefore(Player player,StateManager stateManager) throws ClassNotFoundException, NoSuchMethodException {
         PowerActivationState activationState=new PowerActivationState(player,new AdditionalBuildFlow(NOMOVEUP));
         stateManager.addNewState(activationState);
@@ -191,7 +288,6 @@ public class GodFactory {
         Class cl = Class.forName(CLASSNAME1);
         Method m = cl.getDeclaredMethod(INGAME);
         Method m1 = cl.getDeclaredMethod(WORKERPLACED);
-        System.out.println("IL NOME DEL METODO " + m.getName());
         stateManager.addNewFinishSpace(endTurnState,activationState,m,true,2);
         stateManager.addNewFinishSpace(activationState,readyForActionState,m,true,3);
         stateManager.addNewConditions(endTurnState, activationState, m1, true, 2);

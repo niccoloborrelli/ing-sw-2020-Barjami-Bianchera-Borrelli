@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.DefinedValues.endGameState;
 import static it.polimi.ingsw.FinalCommunication.ENDGAME;
 import static it.polimi.ingsw.FinalCommunication.UPDATE_ENDGAME;
 
@@ -26,6 +27,6 @@ public class EndGameState extends State {
     }
 
     public String toString(){
-        return "EndGameState";
+        return endGameState;
     }
 }

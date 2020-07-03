@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.polimi.ingsw.CommunicationSentences.createAll;
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommandGUIManager implements Command {
@@ -13,6 +14,8 @@ public class CommandGUIManager implements Command {
     /**
      * Manages every possible command that could generate client or server side.
      */
+    private static final int maxSizeList=2;
+    private static final int settingValue=1;
 
     private DeliveryMessage deliveryMessage;
     private GraphicInterface graphicInterface;
@@ -40,10 +43,15 @@ public class CommandGUIManager implements Command {
     }
 
 
+    /**
+     * Selects a command between two command passed.
+     * @param pawnSelected is command that represents pawn selected.
+     * @param cellSelected is command that represents cell selected.
+     */
     public void selectAction(SelectPawnRequestCommand pawnSelected, SelectCellRequestCommand cellSelected){
         if(pawnChosen == null && pawnSelected!=null) {
             pawnChosen = pawnSelected;
-            if(showAvCellsList.size()>0)
+            if(showAvCellsList.size()>MINSIZE)
                 showCells();
         }else {
             graphicInterface.resetColorBoard();
@@ -52,6 +60,10 @@ public class CommandGUIManager implements Command {
         }
     }
 
+    /**
+     * Sends action request to server.
+     * @param cellSelected is command that represented cell selected.
+     */
     private void sendActionToServer(SelectCellRequestCommand cellSelected){
         if(pawnChosen!=null) {
             String pawn = pawnChosen.execute();
@@ -63,8 +75,11 @@ public class CommandGUIManager implements Command {
     }
 
 
+    /**
+     * Shows available cells for pawn chosen.
+     */
     private void showCells(){
-        String indexOfPawn = pawnChosen.execute().substring(1);
+        String indexOfPawn = pawnChosen.execute().substring(MINSIZE+1);
         int pawnSelected = Integer.parseInt(indexOfPawn);
         if(pawnSelected<showAvCellsList.size()) {
             if (showAvCellsList.get(pawnSelected) != null)
@@ -73,9 +88,9 @@ public class CommandGUIManager implements Command {
     }
 
     public void manageCommand(GeneralStringRequestCommand generalString){
-        if(switchingScene.size()>0) {
-                switchingScene.get(0).execute(app);
-                switchingScene.remove(0);
+        if(switchingScene.size()>MINSIZE) {
+                switchingScene.get(MINSIZE).execute(app);
+                switchingScene.remove(MINSIZE);
             }
         deliveryMessage.send(generalString.execute());
     }
@@ -139,21 +154,21 @@ public class CommandGUIManager implements Command {
     public void manageCommand(SettingPawnCommand settingPawnCommand){
         if(graphicInterface==null)
             app.set3DGui();
-        if(settingPawnCommands.size()==1 && removingCommandList.size()==2){
+        if(settingPawnCommands.size()==settingValue && removingCommandList.size()==maxSizeList){
             settingPawnCommands.add(settingPawnCommand);
             createSwap();
             settingPawnCommands.clear();
             removingCommandList.clear();
             showAvCellsList.clear();
-        }else if(removingCommandList.size()==2){
+        }else if(removingCommandList.size()==maxSizeList){
             settingPawnCommands.add(settingPawnCommand);
         }else
             settingPawnCommand.execute(graphicInterface);
     }
 
     private void createSwap(){
-        graphicInterface.move(settingPawnCommands.get(0).getRow(), settingPawnCommands.get(0).getColumn(),
-                settingPawnCommands.get(1).getRow(), settingPawnCommands.get(1).getColumn(), settingPawnCommands.get(1).getWorker());
+        graphicInterface.move(settingPawnCommands.get(MINSIZE).getRow(), settingPawnCommands.get(MINSIZE).getColumn(),
+                settingPawnCommands.get(MINSIZE+1).getRow(), settingPawnCommands.get(MINSIZE+1).getColumn(), settingPawnCommands.get(MINSIZE+1).getWorker());
     }
 
     @Override

@@ -198,7 +198,6 @@ public class DeliveryMessage {
         String playerColor = getCodeColor(findPlayerAttribute(doc, COLOR));
 
         if (code == UPDATE_TO_PRINT || code == UPDATE_ENDGAME) {
-            System.out.println(message);
             sendToInterface(specification, playerName, playerColor);
         } else if (code == UPDATE_CHOICE) {
             decodePossibleChoice(doc, specification, playerName, playerColor);

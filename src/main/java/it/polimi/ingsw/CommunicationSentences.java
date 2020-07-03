@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 import java.util.*;
 
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
 import static it.polimi.ingsw.FinalCommunication.*;
 
 public class CommunicationSentences {
@@ -10,8 +11,8 @@ public class CommunicationSentences {
      */
 
     public static final String ANSI_RESET = "\u001B[0m";
-    private static final String waiting_move = "It's time to move. Hurry up!";
-    private static final String waiting_build = "You have to build. Come on!";
+    private static final String waiting_move = ". It's time to move. Hurry up!";
+    private static final String waiting_build = ". You have to build. Come on!";
     private static final String preLobbySent = "You can play a 1 vs 1 game or a three-players crossed game.\nIf you wanna play first one " +
             "insert ";
     private static final String welcomeToSantorini = "Welcome to Santorini.\nGods sanctioned you as chosen one.\n" +
@@ -19,7 +20,7 @@ public class CommunicationSentences {
     private static final String colorSent = "You have to choose color with which your workers paint themselves.\n" +
             "From your decision, your worker will have that color. Those are available: \n";
     private static final String setup = "Choose positions for your worker. Write w_+_-_ where first _ is the number of worker you want to place." +
-            "Second _ is the row of space and third _ is the column\n";
+            "Second _ is the row of space and third _ is the column\n w0 is your first worker(A) w1 is your second one(B)\n";
     public static final String disconnection = "Somebody crashed. You're gonna be disconnected. Press any button.";
     public static final String disconnectionGui = "Somebody crashed\n. Press quit to exit.";
     public static final String endGame = "Game finished. Press any button";
@@ -141,7 +142,7 @@ public class CommunicationSentences {
     public static String getGodChoicePhrase(List<String> stringList){
         if(stringList.size()>1)
             return  "," + godChoiceSent1 + "\n" + buildChoiceSent(stringList, "\n", "");
-        else return ", "  + stringList.get(0) + godChosen1;
+        else return ", "  + stringList.get(MINSIZE) + godChosen1;
     }
 
     /**
@@ -159,8 +160,8 @@ public class CommunicationSentences {
      */
 
     private static String buildChoiceSent(List<String> stringList, String conjunction, String punctuation){
-        if(stringList.size()<=2)
-            return stringList.get(0) + punctuation + conjunction + stringList.get(1);
+        if(stringList.size()<=MINSIZE+2)
+            return stringList.get(MINSIZE) + punctuation + conjunction + stringList.get(1);
         else{
             StringBuilder stringBuilder = new StringBuilder();
             for (String s : stringList)
@@ -238,7 +239,7 @@ public class CommunicationSentences {
      */
     private static String insertWorker(String content, String number){
         int index = content.lastIndexOf("worker");
-        return content.substring(0, index+6) + " " + number  + content.substring(index+6);
+        return content.substring(MINSIZE, index+6) + " " + number  + content.substring(index+6);
     }
 
     /**
@@ -346,7 +347,7 @@ public class CommunicationSentences {
      */
 
     private static void createBaseEndTurnSentence(){
-        endTurnIndex = 0;
+        endTurnIndex = MINSIZE;
         endTurnSentences = new ArrayList<>();
         endTurnSentences.add(endSent1);
         endTurnSentences.add(endSent2);
@@ -358,7 +359,7 @@ public class CommunicationSentences {
      */
 
     private static void createBaseErrorSentence(){
-        errorIndex = 0;
+        errorIndex = MINSIZE;
         errorSentence = new ArrayList<>();
         errorSentence.add(errorSent1);
         errorSentence.add(errorSent2);
@@ -371,7 +372,7 @@ public class CommunicationSentences {
      */
 
     private static void createBaseActivationPowerSentence(){
-        activationIndex = 0;
+        activationIndex = MINSIZE;
         activationPowerSentence = new ArrayList<>();
         activationPowerSentence.add(activateSent1);
         activationPowerSentence.add(activateSent2);
@@ -383,7 +384,7 @@ public class CommunicationSentences {
      */
 
     private static void createBaseActionSentence(){
-        actionIndex = 0;
+        actionIndex = MINSIZE;
         actionSentences = new ArrayList<>();
         actionSentences.add(actionSent1_1);
         actionSentences.add(actionSent1_2);
@@ -402,7 +403,7 @@ public class CommunicationSentences {
         if(index<stringList.size()-1)
             index++;
         else
-            index=0;
+            index=MINSIZE;
 
         return index;
     }

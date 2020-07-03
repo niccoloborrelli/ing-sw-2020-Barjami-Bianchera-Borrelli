@@ -80,6 +80,7 @@ class TurnManagerTest {
         islandBoard.getSpace(0,4).setLevel(3);
         islandBoard.getSpace(0,4).setHasDome(true);
 
+        turnManager.isEndGame();
         synchronized (francois) {
             turnManager.checkWin();
         }

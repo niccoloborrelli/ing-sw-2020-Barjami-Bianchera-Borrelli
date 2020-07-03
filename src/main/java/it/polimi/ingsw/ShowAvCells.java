@@ -33,7 +33,6 @@ public class ShowAvCells extends ReplyCommand {
     public void execute(GraphicInterface gui) {
         String key ="";
         String value = "";
-        System.out.println("Sto eseguendo avCellList");
         for(HashMap<String, String> hashMap: avCellsList){
             key = pickLastKey(hashMap);
             value = hashMap.get(key);

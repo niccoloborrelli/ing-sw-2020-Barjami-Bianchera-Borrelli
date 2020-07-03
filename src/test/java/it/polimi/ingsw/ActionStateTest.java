@@ -57,11 +57,13 @@ class ActionStateTest {
         synchronized (player) {
             actionState.onStateTransition();
         }
+        islandBoard.getSpace(0,0).toString();
 
         assertTrue(player.getActionsToPerform().size()==oldSize-1 && player.getWorkers().get(0).getWorkerSpace().equals(islandBoard.getSpace(2,1)) &&
                 islandBoard.getSpace(0,0).getOccupator()==null && actionState.getActingWorker().equals(player.getWorkers().get(0)) &&
                 actionState.getSpaceToAct().equals(islandBoard.getSpace(2,1)) && actionState.getStartingSpace().equals(islandBoard.getSpace(0,0)) &&
                 actionState.getAction().equals("move"));
+
 
     }
 

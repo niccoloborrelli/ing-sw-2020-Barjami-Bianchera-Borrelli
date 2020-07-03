@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.DefinedValues.powerActivationState;
+import static it.polimi.ingsw.FinalCommunication.UPDATE_CHOICE;
+
 public class PowerActivationState extends State {
 
     private FlowChanger flowPower;
     private static final String POWERACTIVATION="power";
+    private static final int usePower=1;
+    private static final int noPower=0;
 
     /**
      * flow power is the power actionable by this class
@@ -27,9 +32,9 @@ public class PowerActivationState extends State {
     @Override
     public void onInput(Visitor visitor) throws IOException {
         int input=visitor.visit(this);
-        if(input==1||input==0){
+        if(input==usePower||input==noPower){
             player.setPowerUsed(true);
-            if (input==1) {
+            if (input==usePower) {
                 player.setPowerActivated(true);
                 flowPower.changeFlow(player);
             }
@@ -52,7 +57,7 @@ public class PowerActivationState extends State {
     }
 
     public String toString(){
-        return "PowerActivationState";
+        return powerActivationState;
     }
 
     /**
@@ -60,10 +65,10 @@ public class PowerActivationState extends State {
      */
     private void notifyAcceptableInputs(){
         List<Integer> allowedInt=new ArrayList<Integer>();
-        allowedInt.add(1);
-        allowedInt.add(0);
+        allowedInt.add(usePower);
+        allowedInt.add(noPower);
         LastChange powerAllowedInputs = player.getLastChange();
-        powerAllowedInputs.setCode(1);
+        powerAllowedInputs.setCode(UPDATE_CHOICE);
         powerAllowedInputs.setSpecification(POWERACTIVATION);
         powerAllowedInputs.setIntegerList(allowedInt);
         player.notifyController();

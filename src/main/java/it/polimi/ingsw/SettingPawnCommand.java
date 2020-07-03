@@ -4,6 +4,8 @@ import java.util.List;
 
 public class SettingPawnCommand extends ReplyCommand {
 
+    private static final int rowPos=0;
+    private static final int columnPost=1;
     /**
      * Represents a reply to a request of a setting pawn.
      */
@@ -14,8 +16,8 @@ public class SettingPawnCommand extends ReplyCommand {
     private int column;
 
     public SettingPawnCommand(List<Integer> parameters, String worker, String playerColor) {
-        this.row = parameters.get(0);
-        this.column = parameters.get(1);
+        this.row = parameters.get(rowPos);
+        this.column = parameters.get(columnPost);
         this.worker=worker;
         this.playerColor = playerColor;
     }

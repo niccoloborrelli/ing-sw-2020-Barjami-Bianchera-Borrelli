@@ -6,6 +6,7 @@ import java.net.Socket;
 
 public class Accepter {
 
+    private static final int ServerPort=60100;
     /**
      * The method accepts socket, create a player with a state manager and a controller and
      * then add the socket and the controller to a globalhub that contains all players waiting
@@ -13,8 +14,8 @@ public class Accepter {
      * player state to PreLobbyState
      */
     public void accept() throws IOException {
-
-        ServerSocket serverSocket = new ServerSocket(60100);
+        ServerSocket serverSocket = new ServerSocket(ServerPort);
+        System.out.println("SERVER ONLINE");
         HandlerHub globalHub = new HandlerHub();
         LobbyManager lobbyManager = new LobbyManager(globalHub);
         try {
@@ -26,6 +27,13 @@ public class Accepter {
 
     }
 
+    /**
+     * Creates a player with his communicative infrastructure and adds him to a global hub.
+     * @param serverSocket is server socket.
+     * @param globalHub is global hub.
+     * @param lobbyManager manages lobbies.
+     * @throws IOException is server socket aren't valid.
+     */
     private void manageAccepter(ServerSocket serverSocket,HandlerHub globalHub,LobbyManager lobbyManager) throws IOException {
         while (true) {
             Socket sc = serverSocket.accept();

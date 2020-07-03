@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
+import static it.polimi.ingsw.DefinedValues.nameSettingState;
 import static it.polimi.ingsw.FinalCommunication.NAME;
 import static it.polimi.ingsw.FinalCommunication.UPDATE_TO_PRINT;
 
@@ -47,9 +48,12 @@ public class NameSettingState extends State {
     }
 
     public String toString(){
-        return "NameSettingState";
+        return nameSettingState ;
     }
 
+    /**
+     * Sends a notify indicating that the current state is name setting.
+     */
     private void nameNotify(){
         LastChange inputExpected = player.getLastChange();
         inputExpected.setCode(UPDATE_TO_PRINT);

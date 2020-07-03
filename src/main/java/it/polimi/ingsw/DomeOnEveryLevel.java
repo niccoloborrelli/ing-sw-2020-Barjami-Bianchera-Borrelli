@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import static it.polimi.ingsw.DefinedValues.actionType2;
+
 public class DomeOnEveryLevel extends FlowChanger {
     @Override
     public void changeFlow(Player player) {
@@ -10,13 +12,11 @@ public class DomeOnEveryLevel extends FlowChanger {
 
     @Override
     public boolean isUsable(Player player) {
-        System.out.println("arriva qui");
-        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),"build");
+        CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),actionType2);
         for (Worker tempWorker:player.getWorkers()) {
             if(tempWorker.getPossibleBuilding().size()>0)
                 return true;
         }
-        System.out.println("arriva  anche qui");
         return false;
     }
 }

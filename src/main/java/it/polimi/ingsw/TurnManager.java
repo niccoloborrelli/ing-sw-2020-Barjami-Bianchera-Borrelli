@@ -51,32 +51,6 @@ public class TurnManager {
         notAllowedNames.add(name);
     }
 
-    /*public void removeColor(String color){
-        allowedColors.remove(color);
-    }*/
-
-    /*
-    public void setColor(Player player, String color){
-        switch (color){
-            case RED:
-                player.setPlayerColor(RED);
-                break;
-            case PURPLE:
-                player.setPlayerColor(PURPLE);
-                break;
-            case WHITE:
-                player.setPlayerColor(WHITE);
-                break;
-            case CYAN:
-                player.setPlayerColor(CYAN);
-                break;
-            case GREY:
-                player.setPlayerColor(GREY);
-                break;
-        }
-    }
-
-     */
 
     /**
      * This method check if someone has won after an action

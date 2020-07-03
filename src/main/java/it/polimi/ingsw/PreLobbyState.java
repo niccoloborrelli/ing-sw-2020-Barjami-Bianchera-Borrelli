@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.FinalCommunication.UPDATE_CHOICE;
+
 public class PreLobbyState extends State{
+    private static final String PRELOBBY="preLobby";
     private List<Integer> allowedInts;
     private LobbyManager lobbyManager;
     private boolean enteredGame;
@@ -32,7 +35,6 @@ public class PreLobbyState extends State{
     public void onStateTransition() throws IOException {
         for(int i=MINNUMBEROFPLAYERS;i<=MAXNUMBEROFPLAYERS;i++)
             allowedInts.add(i);
-
         notifyAcceptableInputs();
     }
 
@@ -41,8 +43,8 @@ public class PreLobbyState extends State{
      */
     private void notifyAcceptableInputs(){
         LastChange powerAllowedInputs =player.getLastChange();
-        powerAllowedInputs.setCode(1);
-        powerAllowedInputs.setSpecification("preLobby");
+        powerAllowedInputs.setCode(UPDATE_CHOICE);
+        powerAllowedInputs.setSpecification(PRELOBBY);
         powerAllowedInputs.setIntegerList(allowedInts);
         player.notifyController();
     }

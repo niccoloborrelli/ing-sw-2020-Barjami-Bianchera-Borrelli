@@ -25,8 +25,8 @@ public  class  IslandBoard {
      */
     public IslandBoard() {
         spaces = new Space[MAXROW+1][MAXCOLUMN+1];
-        for(int i = 0; i <= MAXROW; i++)
-            for(int j = 0; j <= MAXCOLUMN; j++)
+        for(int i = MINSIZE; i <= MAXROW; i++)
+            for(int j = MINSIZE; j <= MAXCOLUMN; j++)
                 spaces[i][j]= new Space(i,j);
     }
 

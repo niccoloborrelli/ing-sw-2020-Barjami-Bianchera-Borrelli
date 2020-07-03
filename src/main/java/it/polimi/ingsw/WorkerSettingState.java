@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.polimi.ingsw.FinalCommunication.SET_UP;
-import static it.polimi.ingsw.FinalCommunication.WORKERSETTING;
+import static it.polimi.ingsw.DefinedValues.workerSettingState;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class WorkerSettingState extends State {
     private final int STARTINGNUMBER=0;
@@ -45,12 +45,17 @@ public class WorkerSettingState extends State {
         notifySetUp();
     }
 
+    /**
+     * Sets a worker in a space and sends the notify to players.
+     * @param worker is worker to set.
+     * @param input contains information of setting
+     */
     private void setSpaceIfPossible(Worker worker, WorkerSpaceCouple input){
         if(worker.getWorkerSpace()==null){
             settingSpaceWorker(worker, input);
             removeFromInput(worker,input.getSpace());;
             LastChange workerPlacedChange = player.getLastChange();
-            workerPlacedChange.setCode(2);
+            workerPlacedChange.setCode(UPDATE_GAME_FIELD);
             workerPlacedChange.setSpecification(WORKERSETTING);
             workerPlacedChange.setWorker(input.getWorker());
             workerPlacedChange.setSpace(input.getSpace());
@@ -60,6 +65,10 @@ public class WorkerSettingState extends State {
         }
     }
 
+    /**
+     * Checks if all worker are occupied.
+     * @return true if they are, otherwise false.
+     */
     private boolean allWorkerOccupied(){
         for(Worker worker: player.getWorkers()){
             if(worker.getWorkerSpace()==null)
@@ -68,17 +77,33 @@ public class WorkerSettingState extends State {
         return true;
     }
 
+
+    /**
+     * Removes a worker and a space from acceptable inputs.
+     * @param worker is worker to remove.
+     * @param space is space to remove.
+     */
     private void removeFromInput(Worker worker, Space space){
         removeWorkerFromInput(worker); //needed to remove this worker from the available inputs cause it is already setted
         removeSpaceFromInput(space);
     }
 
+
+    /**
+     * Sets the space of worker.
+     * @param worker is worker to set.
+     * @param input contains information of setting.
+     */
     private void settingSpaceWorker(Worker worker, WorkerSpaceCouple input){
         Space space=input.getSpace();
         worker.setWorkerSpace(space);
         space.setOccupator(worker);
     }
 
+    /**
+     * Adds worker and avaiable spaces as possible inputs.
+     * @param worker is worker to add.
+     */
     public void addWorkerAvailableSpaces(Worker worker){
         for(int i=STARTINGNUMBER;i<=ROWS;i++){
             for(int j=STARTINGNUMBER;j<=COLUMNS;j++){
@@ -89,6 +114,10 @@ public class WorkerSettingState extends State {
         }
     }
 
+    /**
+     * Removes a determined space from input.
+     * @param space is space to remove.
+     */
     public void removeSpaceFromInput(Space space){
         for(int i = STARTINGNUMBER; i< workerSpaceCoupleList.size(); i++){
             if(workerSpaceCoupleList.get(i).getSpace().equals(space)) {
@@ -98,6 +127,10 @@ public class WorkerSettingState extends State {
         }
     }
 
+    /**
+     * Removes a determined worker from possible inputs.
+     * @param worker is worker to remove.
+     */
     public void removeWorkerFromInput(Worker worker){
         for(int i = STARTINGNUMBER; i< workerSpaceCoupleList.size(); i++){
             if(workerSpaceCoupleList.get(i).getWorker().equals(worker)) {
@@ -108,10 +141,15 @@ public class WorkerSettingState extends State {
     }
 
     public String toString(){
-        return "WorkerSettingState";
+        return workerSettingState;
     }
 
 
+    /**
+     * Controls if input is acceptable.
+     * @param workerSpaceCouple is input.
+     * @return true if it is, otherwise false.
+     */
     public boolean inputAcceptable(WorkerSpaceCouple workerSpaceCouple){
         for (WorkerSpaceCouple temp: workerSpaceCoupleList) {
             if(temp.getSpace()== workerSpaceCouple.getSpace()&&temp.getWorker()== workerSpaceCouple.getWorker())
@@ -120,10 +158,15 @@ public class WorkerSettingState extends State {
         return false;
     }
 
+
+    /**
+     * Notifies that player is in worker setting state.
+     */
     private void notifySetUp(){
         LastChange settingWorker = player.getLastChange();
-        settingWorker.setCode(0);
+        settingWorker.setCode(UPDATE_TO_PRINT);
         settingWorker.setSpecification(SET_UP);
         player.notifyController();
+
     }
 }

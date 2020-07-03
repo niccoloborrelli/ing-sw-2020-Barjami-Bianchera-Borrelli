@@ -21,16 +21,17 @@ class StateManagerTest {
      */
 
     @Test
-    void addNewStateTest1() throws ParserConfigurationException, SAXException, IOException {
+    void addNewStateTest1() {
         Controller controller = new Controller();
         Player player = new Player();
         controller.setPlayer(player);
         StateManager stateManager = new StateManager();
         player.setStateManager(stateManager);
         stateManager.createBaseStates(player);
-
-        controller.createFluxTable();
-        State state = new StateTest(player);
+        
+        stateManager.createBaseStates(player);
+        State state = new EndGameState(player);
+        stateManager.getStateHashMap().remove(state.toString());
         stateManager.addNewState(state);
 
         assertTrue(stateManager.getStateHashMap().containsKey(state.toString()) && stateManager.getTable().containsKey(state) &&
@@ -74,9 +75,9 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         stateManager.addNewState(stateTest);
-        State action = stateManager.getStateHashMap().get("ActionState");
+        State action = stateManager.getStateHashMap().get("NameSettingState");
         int sizeAction = stateManager.getTable().get(action).size();
 
         stateManager.addNewFinishSpace(action,stateTest,null, false, 1);
@@ -100,7 +101,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         stateManager.addNewState(stateTest);
         State action = stateManager.getStateHashMap().get("ActionState");
         int sizeAction = stateManager.getTable().get(action).size();
@@ -125,7 +126,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         stateManager.addNewState(stateTest);
         State action = stateManager.getStateHashMap().get("ActionState");
         int sizeAction = stateManager.getTable().get(action).size();
@@ -138,9 +139,6 @@ class StateManagerTest {
                 lineList.get(0).getConditions().containsKey(method) && lineList.get(0).getConditions().containsValue(true) );
     }
 
-    /*
-    Tests if a non-existing arrival state isn't added.
-     */
     @Test
     void addNewFinishSpaceTest4() throws ParserConfigurationException, SAXException, IOException, NoSuchMethodException {
         Controller controller = new Controller();
@@ -151,28 +149,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
-        State action = stateManager.getStateHashMap().get("ActionState");
-        int sizeAction = stateManager.getTable().get(action).size();
-        Method method = player.getClass().getDeclaredMethod("isLastGod");
-
-        stateManager.addNewFinishSpace(action, stateTest, method, true, 1);
-        List<Line> lineList = stateManager.searchFinishState(stateManager.getTable().get(action), stateTest);
-
-        assertTrue(stateManager.getTable().get(action).size() == sizeAction  && lineList == null);
-    }
-
-    @Test
-    void addNewFinishSpaceTest5() throws ParserConfigurationException, SAXException, IOException, NoSuchMethodException {
-        Controller controller = new Controller();
-        Player player = new Player();
-        controller.setPlayer(player);
-        StateManager stateManager = new StateManager();
-        player.setStateManager(stateManager);
-        stateManager.createBaseStates(player);
-        controller.createFluxTable();
-
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         State action = stateManager.getStateHashMap().get("ActionState");
         Method method = player.getClass().getDeclaredMethod("isLastGod");
         int sizeTable = stateManager.getTable().size();
@@ -253,7 +230,7 @@ class StateManagerTest {
         controller.createFluxTable();
 
         State action = stateManager.getStateHashMap().get("ActionState");
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         stateManager.addNewState(stateTest);
         Method m = player.getClass().getDeclaredMethod("hasAction");
         int oldSize = stateManager.getTable().get(action).size();
@@ -264,34 +241,11 @@ class StateManagerTest {
 
         assertEquals(stateManager.getTable().get(action).size(), oldSize);
     }
-    /*
-    Tests if it's added a new start state with an existing finish state and with a new  condition.
-     */
-
-    @Test
-    void addAllInOneTime() throws ParserConfigurationException, SAXException, IOException, NoSuchMethodException {
-        Controller controller = new Controller();
-        Player player = new Player();
-        controller.setPlayer(player);
-        StateManager stateManager = new StateManager();
-        player.setStateManager(stateManager);
-        stateManager.createBaseStates(player);
-        controller.createFluxTable();
-
-        State action = stateManager.getStateHashMap().get("ActionState");
-        State testState = new StateTest(player);
-        Method m = player.getClass().getDeclaredMethod("hasAction");
-        int oldSizeTable = stateManager.getTable().size();
-
-        stateManager.addAllInOneTime(testState,action,m,true,5);
-
-        assertTrue(stateManager.getTable().size()==oldSizeTable+1 && stateManager.getTable().get(testState).get(0).getPriority()==5 &&
-                stateManager.getTable().get(testState).get(0).getConditions().containsKey(m) && stateManager.getTable().get(testState).get(0).getConditions().containsValue(true));
-    }
 
     /*
     Tests if correctly return a list of line with the existing finish state passed.
      */
+
 
     @Test
     void searchFinishStateTest1() throws ParserConfigurationException, SAXException, IOException {
@@ -348,7 +302,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
 
         List<Line> lineList = stateManager.searchFinishState(stateManager.getTable().get(stateTest), stateTest);
 
@@ -473,29 +427,6 @@ class StateManagerTest {
         assertTrue(3==stateManager.getTable().keySet().size() && sizeMap-1==stateManager.getStateHashMap().size());
     }
 
-    /*
-    Tests if table doesn't change if state to remove isn't in there.
-     */
-
-    @Test
-    void removeStartStateTest2() throws ParserConfigurationException, SAXException, IOException {
-        Controller controller = new Controller();
-        Player player = new Player();
-        controller.setPlayer(player);
-        StateManager stateManager = new StateManager();
-        player.setStateManager(stateManager);
-        stateManager.createBaseStates(player);
-        controller.createFluxTable();
-
-        State stateTest = new StateTest(player);
-        int sizeMap = stateManager.getStateHashMap().size();
-        int sizeTable = stateManager.getTable().keySet().size();
-
-        stateManager.removeStartState(stateTest);
-
-        assertTrue(sizeTable==stateManager.getTable().keySet().size() && sizeMap==stateManager.getStateHashMap().size());
-    }
-
     @Test
     void removeFromOtherFinishSpaceTest1() throws ParserConfigurationException, SAXException, IOException {
         Controller controller = new Controller();
@@ -529,7 +460,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State testState = new StateTest(player);
+        State testState = new EndGameState(player);
         int size = stateManager.getTable().keySet().size();
 
         stateManager.removeFromOtherFinishSpace(testState);
@@ -663,7 +594,7 @@ class StateManagerTest {
         controller.createFluxTable();
 
         State endTurn = stateManager.getState("EndTurnState");
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         Method method1 = player.getClass().getDeclaredMethod("isInGame");
         Method method2 = player.getClass().getDeclaredMethod("isWorkerPlaced");
         Method newMethod = player.getClass().getDeclaredMethod("isChallenger");
@@ -723,7 +654,7 @@ class StateManagerTest {
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         State endTurn = stateManager.getState("EndTurnState");
 
         for (State inState : stateManager.getTable().keySet()) {
@@ -749,13 +680,16 @@ class StateManagerTest {
     void setNextStateTest1() throws ParserConfigurationException, SAXException, IOException {
         Controller controller = new Controller();
         Player player = new Player();
+        HandlerHub handlerHub = new HandlerHub();
+        controller.setHandlerHub(handlerHub);
         controller.setPlayer(player);
+        player.setController(controller);
         StateManager stateManager = new StateManager();
         player.setStateManager(stateManager);
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest = new StateTest(player);
+        State stateTest = new EndGameState(player);
         State endTurn = stateManager.getState("EndTurnState");
         stateManager.addNewState(stateTest);
         stateManager.addNewFinishSpace(endTurn, stateTest, null, false, 20);
@@ -770,14 +704,17 @@ class StateManagerTest {
     void setNextStateTest2() throws ParserConfigurationException, SAXException, IOException, NoSuchMethodException {
         Controller controller = new Controller();
         Player player = new Player();
+        HandlerHub handlerHub = new HandlerHub();
+        controller.setHandlerHub(handlerHub);
         controller.setPlayer(player);
+        player.setController(controller);
         StateManager stateManager = new StateManager();
         player.setStateManager(stateManager);
         stateManager.createBaseStates(player);
         controller.createFluxTable();
 
-        State stateTest1 = new StateTest(player);
-        State stateTest2 = new StateTest(player);
+        State stateTest1 = new EndGameState(player);
+        State stateTest2 = new EndGameState(player);
         State endTurn = stateManager.getState("EndTurnState");
         stateManager.addNewState(stateTest1);
         Method method = player.getWorkers().get(0).getClass().getDeclaredMethod("isCantMove");

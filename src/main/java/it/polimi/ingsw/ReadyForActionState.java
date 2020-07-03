@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.polimi.ingsw.FinalCommunication.LOSE;
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
+import static it.polimi.ingsw.DefinedValues.readyForActionState;
+import static it.polimi.ingsw.FinalCommunication.*;
 
 public class ReadyForActionState extends State {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
+    private static final int invalidCoordinate=-1;
+
     private List <WorkerSpaceCouple> allowedSpaces;
 
     ReadyForActionState(Player player) {
@@ -51,13 +55,21 @@ public class ReadyForActionState extends State {
         }
     }
 
+    /**
+     * Calculates available spaces that player can do an action on,
+     * depending what action is.
+     * @return a list of avaiable spaces for each worker
+     */
     private List<ArrayList<Space>> calculateAvailableSpace(){
-        String action = player.getActionsToPerform().get(0);
+        String action = player.getActionsToPerform().get(MINSIZE);
         clearAvailableSpacePlayer();
         CheckingUtility.calculateValidSpace(player,player.getIslandBoard(),action);
         return CheckingUtility.getLists(player,action);
     }
 
+    /**
+     * Clears list of possible movements and buildings of every worker.
+     */
     private void clearAvailableSpacePlayer(){
         for(Worker w: player.getWorkers()){
             w.getPossibleMovements().clear();
@@ -65,33 +77,45 @@ public class ReadyForActionState extends State {
         }
     }
 
+    /**
+     * Elaborates lose procedure. Notifies players.
+     * @throws IOException if notify goes wrong.
+     */
     private void loseProcedure() throws IOException {
         player.setInGame(false);
         deleteWorkersFromBoard();
         LastChange lastChange = player.getLastChange();
-        lastChange.setCode(3);
+        lastChange.setCode(UPDATE_ENDGAME);
         lastChange.setSpecification(LOSE);
         player.notifyController();
         player.getStateManager().setNextState(player);
         player.getStateManager().getTurnManager().setNextPlayer(player);
     }
 
+    /**
+     * Deletes workers from board.
+     */
     private void deleteWorkersFromBoard(){
         for(Worker w: player.getWorkers()) {
             Space space = w.getWorkerSpace();
             space.setOccupator(null);
-            w.setWorkerSpace(new Space(-1,-1));
+            w.setWorkerSpace(new Space(invalidCoordinate,invalidCoordinate));
             notifyDeletedWorker(w, space);
             w.setWorkerSpace(null);
         }
 
     }
 
+    /**
+     * Notifies that worker are deleted.
+     * @param worker is worker deleted.
+     * @param space is space of worker.
+     */
     private void notifyDeletedWorker(Worker worker, Space space){
         LastChange lastChange = new LastChange();
-        lastChange.setCode(2);
+        lastChange.setCode(UPDATE_GAME_FIELD);
         lastChange.setWorker(worker);
-        lastChange.setSpecification("deleted");
+        lastChange.setSpecification(DELETED);
         lastChange.setSpace(space);
 
         player.notify(lastChange);
@@ -104,7 +128,7 @@ public class ReadyForActionState extends State {
      * this method sets the inputs this state of the FSM is allowed to receive and which from this can evolve
      */
     private void setAllowedSpaces() {
-        String action=player.getActionsToPerform().get(0);
+        String action=player.getActionsToPerform().get(MINSIZE);
         List<WorkerSpaceCouple> allowed=new ArrayList<WorkerSpaceCouple>();
         for(Worker tempWorker:player.getWorkers()){
             if(action.equals(actionType1)){
@@ -126,7 +150,7 @@ public class ReadyForActionState extends State {
      */
     private boolean checkForLosing(List<ArrayList<Space>> possibleActions) {
         for (ArrayList<Space> spaceList : possibleActions) {
-            if (spaceList.size()>0)
+            if (spaceList.size()>MINSIZE)
                 return false;
         }
         player.setInGame(false);
@@ -135,7 +159,7 @@ public class ReadyForActionState extends State {
 
     @Override
     public String toString() {
-        return "ReadyForActionState";
+        return readyForActionState;
     }
 
 
@@ -156,12 +180,12 @@ public class ReadyForActionState extends State {
      * this methods notifies the controller for the input this state expects
      */
     private void notifyInputs(){
-        String action=player.getActionsToPerform().get(0);
+        String action=player.getActionsToPerform().get(MINSIZE);
         for(Worker tempWorker: player.getWorkers()){
             LastChange workerActionsNotify=player.getLastChange();
             workerActionsNotify.setWorker(tempWorker);
             workerActionsNotify.setSpecification(action);
-            workerActionsNotify.setCode(1);
+            workerActionsNotify.setCode(UPDATE_CHOICE);
             if(action.equals(actionType1)){
                 workerActionsNotify.setListSpace(tempWorker.getPossibleMovements());
             }

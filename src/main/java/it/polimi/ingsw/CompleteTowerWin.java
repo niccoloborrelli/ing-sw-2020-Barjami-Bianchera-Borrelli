@@ -30,8 +30,12 @@ public class CompleteTowerWin extends PowerWinDecorator {
             checkHasWonTower(player);
     }
 
+    /**
+     * Controls if there's enough complete tower.
+     * @param player is player that invoke the control.
+     */
     private void checkHasWonTower(Player player) {
-        int completeTower = 0;
+        int completeTower = MINSIZE;
         for(int row = MINROW; row < DIM; row++)
             for(int column = MINCOLUMN; column < DIM; column++)
                 if(player.getIslandBoard().getSpace(row, column).getLevel() == DOME_LEVEL && player.getIslandBoard().getSpace(row, column).HasDome())

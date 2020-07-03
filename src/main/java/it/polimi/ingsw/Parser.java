@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
+import static it.polimi.ingsw.DefinedValues.MINSIZE;
 import static it.polimi.ingsw.FinalCommunication.DESCRIPTION;
 
 public class Parser {
@@ -27,7 +28,9 @@ public class Parser {
      * Permits to search into a inputstream (formed as XML).
      */
 
-    InputStream inputFile;
+    private static final String GOD="God";
+    private static final String NAME="Name";
+    private InputStream inputFile;
     public Parser(InputStream input){
         this.inputFile=input;
     }
@@ -46,27 +49,25 @@ public class Parser {
             HashMap<String, List<String>> map=new HashMap<String, List<String>>();
             String key;
             doc.getDocumentElement().normalize();
-            NodeList nList = doc.getElementsByTagName("God");
+            NodeList nList = doc.getElementsByTagName(GOD);
 
-            for (int temp = 0; temp < nList.getLength(); temp++) {
+            for (int temp = MINSIZE; temp < nList.getLength(); temp++) {
                 Node nNode = nList.item(temp);
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    key=eElement.getElementsByTagName("Name").item(0).getTextContent();
+                    key=eElement.getElementsByTagName(NAME).item(MINSIZE).getTextContent();
 
-                    Node n=eElement.getElementsByTagName(target).item(0);
+                    Node n=eElement.getElementsByTagName(target).item(MINSIZE);
                     NodeList nn=n.getChildNodes();
                     ArrayList<String> s=new ArrayList<String>();
-                    for (int t = 0; t < nn.getLength(); t++) {
+                    for (int t = MINSIZE; t < nn.getLength(); t++) {
                         Node nodo = nn.item(t);
                         if(!target.equals(DESCRIPTION)) {
                             if (nodo.getNodeType() == Node.ELEMENT_NODE) {
                                 Element ee = (Element) nodo;
                                 s.add(ee.getTextContent());
-                                System.out.println("Dentro: " + ee.getTextContent());
                             }
                         }else {
-                            System.out.println("Fuori: " + nodo.getTextContent());
                             s.add(nodo.getTextContent());
                         }
                     }

@@ -9,9 +9,13 @@ import java.util.zip.ZipInputStream;
 
 public class AAAServer {
 
+    /**
+     * Starts and runs the server.
+     */
     public void runServer(){
         try {
             Accepter accepter = new Accepter();
+            System.out.println("SERVER STARTED\n");
             accepter.accept();
         }catch (IOException e){
             return;

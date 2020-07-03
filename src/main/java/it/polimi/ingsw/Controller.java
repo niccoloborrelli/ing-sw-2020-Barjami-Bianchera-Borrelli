@@ -32,7 +32,6 @@ public class Controller{
 
     private static final int INT_IF_BOOLEAN_TRUE = 1;
     private static final int INT_IF_BOOLEAN_FALSE = 0;
-
     private static final int ADJUSTMENT_INDEX_OF = 1;
 
 
@@ -221,10 +220,6 @@ public class Controller{
         if(powerGodMap==null)
             createPowerGodMap();
 
-        System.out.println(index);
-        System.out.println(powerGodMap.size());
-        System.out.println(request.substring(index));
-        System.out.println(powerGodMap.get(request.substring(index)).size());
         if (powerGodMap.get(request.substring(index)) != null) {
             lastChange.getStringList().add(powerGodMap.get(request.substring(index)).get(FIRST_INDEX));
             update(lastChange);
@@ -607,7 +602,6 @@ public class Controller{
         LastChange lastChange = player.getLastChange();
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
-        System.out.println("B" + data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 
@@ -619,7 +613,6 @@ public class Controller{
     public void update(LastChange lastChange){
         String data = buildUpdate(lastChange);
         int codeCommunication = howToCommunicate(lastChange.getCode(), lastChange);
-        System.out.println("A" + data);
         handlerHub.sendData(PREFIX + data, this, codeCommunication);
     }
 

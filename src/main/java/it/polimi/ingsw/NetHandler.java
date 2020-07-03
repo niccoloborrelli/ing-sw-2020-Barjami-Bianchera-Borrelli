@@ -13,6 +13,7 @@ public class NetHandler {
      * Receives and sends message to server.
      */
 
+    private static final int timeToSleep=400;
     private DeliveryMessage deliveryMessage;
     private Socket socket;
     private DataOutputStream dataOutputStream;
@@ -75,7 +76,7 @@ public class NetHandler {
                     deliveryMessage.quitGame(false);
                 }
                 try {
-                    sleep(400);
+                    sleep(timeToSleep);
                 } catch (InterruptedException ignored) {
                 }
             }

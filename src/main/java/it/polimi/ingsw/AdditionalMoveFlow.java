@@ -3,7 +3,7 @@ package it.polimi.ingsw;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.polimi.ingsw.DefinedValues.actionType1;
+import static it.polimi.ingsw.DefinedValues.*;
 
 public class AdditionalMoveFlow extends FlowChanger {
 
@@ -17,7 +17,7 @@ public class AdditionalMoveFlow extends FlowChanger {
      */
     @Override
     public void changeFlow(Player player) {
-        player.getActionsToPerform().add(0, actionType1);
+        player.getActionsToPerform().add(MINSIZE, actionType1);
         Worker workerChosen = getWorkerChosen(player);
         setFlag(workerChosen);
     }
@@ -33,16 +33,25 @@ public class AdditionalMoveFlow extends FlowChanger {
         List<Space> movement = new ArrayList<>(workerChosen.getPossibleMovements());
         movement.remove(workerChosen.getLastSpaceOccupied());
 
-        return movement.size() > 0;
+        return movement.size() > MINSIZE;
     }
 
+    /**
+     * Finds which worker is chosen.
+     * @param player owns workers.
+     * @return the worker chosen.
+     */
     private Worker getWorkerChosen(Player player){
-        if(player.getWorkers().get(0).isMovedThisTurn())
-            return player.getWorkers().get(0);
+        if(player.getWorkers().get(firstWorker).isMovedThisTurn())
+            return player.getWorkers().get(firstWorker);
         else
-            return player.getWorkers().get(1);
+            return player.getWorkers().get(secondWorker);
     }
 
+    /**
+     * Sets the flag of worker.
+     * @param worker is worker checked.
+     */
     private void setFlag(Worker worker){
         worker.setCantMoveFirstSpace(true);
     }

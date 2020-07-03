@@ -2,6 +2,9 @@ package it.polimi.ingsw;
 
 import java.io.IOException;
 
+import static it.polimi.ingsw.DefinedValues.MAXIMUMLEVEL;
+import static it.polimi.ingsw.DefinedValues.actionState;
+
 public class ActionState extends AbstractActionState {
     private static final String actionType1 = "move";
     private static final String actionType2 = "build";
@@ -23,6 +26,10 @@ public class ActionState extends AbstractActionState {
         concreteActing(input);
     }
 
+    /**
+     * sets the worker and the position in which is acting
+     * @param input the couple of worker and space acting
+     */
     private void actingSetting(WorkerSpaceCouple input){
         action=player.getActionsToPerform().get(firstIndex);
         this.actingWorker=input.getWorker();
@@ -30,6 +37,11 @@ public class ActionState extends AbstractActionState {
         this.startingSpace=actingWorker.getWorkerSpace();
     }
 
+    /**
+     * method for invoking move or build
+     * @param input the worker and space involved in the action
+     * @throws IOException
+     */
     private void concreteActing(WorkerSpaceCouple input) throws IOException {
         if(spaceToAct.getOccupator()==null&&action.equals(actionType1))
             movingAction(input);
@@ -37,6 +49,11 @@ public class ActionState extends AbstractActionState {
             buildingAction(input);
     }
 
+    /**
+     * permits the effective move
+     * @param input the couple worker position involved
+     * @throws IOException
+     */
     private void movingAction(WorkerSpaceCouple input) throws IOException {
         input.setSpace(actingWorker.getWorkerSpace());
         move(actingWorker, spaceToAct);
@@ -52,6 +69,11 @@ public class ActionState extends AbstractActionState {
         }
     }
 
+    /**
+     * permits the effective build
+     * @param input the couple worker position involved
+     * @throws IOException
+     */
     private void buildingAction(WorkerSpaceCouple input) throws IOException {
         input.setSpace(spaceToAct);
         build(actingWorker, spaceToAct);
@@ -88,6 +110,11 @@ public class ActionState extends AbstractActionState {
         finishSpace.setOccupator(worker);
     }
 
+    /**
+     * method the permits to build
+     * @param buildingWorker worker performing the building action
+     * @param finishSpace space in which is being built
+     */
     private void build(Worker buildingWorker,Space finishSpace){
         player.removeAction();
         buildingWorker.setCantMove(false);
@@ -102,7 +129,7 @@ public class ActionState extends AbstractActionState {
      * @param buildSpace is the space where the level is going to change
      */
     private void upgradeLevel(Space buildSpace,Worker worker){
-        if(buildSpace.getLevel()==3)
+        if(buildSpace.getLevel()==MAXIMUMLEVEL)
             worker.setMustBuildDome(true);
 
         if(!worker.isMustBuildDome())
@@ -124,6 +151,10 @@ public class ActionState extends AbstractActionState {
             buildSpace.setHasDome(true);
     }
 
+    /**
+     * sets the flags for the worker not involved in the action
+     * @param activeWorker worker acting
+     */
     private void setOtherWorkers(Worker activeWorker){
         Player player=activeWorker.getWorkerPlayer();
         for (Worker w:player.getWorkers()) {
@@ -147,7 +178,7 @@ public class ActionState extends AbstractActionState {
     }
 
     public String toString(){
-        return "ActionState";
+        return actionState;
     }
 
     @Override
